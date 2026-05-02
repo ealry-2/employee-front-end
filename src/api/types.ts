@@ -8,6 +8,20 @@ export type EmployeeCompensationType = 'HOURLY' | 'MONTHLY' | 'ANNUAL'
 export type PayrollStatus = 'DRAFT' | 'CONFIRMED' | 'PAID'
 export type ContractStatus = 'DRAFT' | 'PENDING' | 'SIGNED' | 'CANCELLED' | 'EXPIRED'
 export type ContractPresetType = 'NONE' | 'LABOR_STANDARD'
+export type AppNotificationType =
+  | 'CONTRACT_SIGNING_REQUEST'
+  | 'CONTRACT_COMPLETED'
+  | 'SCHEDULE_UPDATED'
+  | 'PAYROLL_AVAILABLE'
+  | 'ATTENDANCE_STATUS_CHANGED'
+  | 'SYSTEM'
+export type AppNotificationTargetType =
+  | 'NONE'
+  | 'CONTRACT'
+  | 'SCHEDULE'
+  | 'PAYROLL'
+  | 'ATTENDANCE'
+  | 'STORE'
 export type AppAttendanceCurrentStatus =
   | 'NO_SCHEDULE'
   | 'READY_TO_CLOCK_IN'
@@ -182,4 +196,24 @@ export interface AppContractListResponse {
   page: number
   size: number
   empty: boolean
+}
+
+export interface AppNotificationResponse {
+  notificationId: string
+  type: AppNotificationType
+  title: string
+  body: string
+  targetType: AppNotificationTargetType
+  targetId: string | null
+  read: boolean
+  readAt: string | null
+  createdAt: string | null
+}
+
+export interface AppNotificationListResponse {
+  items: AppNotificationResponse[]
+  page: number
+  size: number
+  empty: boolean
+  unreadCount: number
 }

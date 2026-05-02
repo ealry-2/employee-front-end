@@ -5,6 +5,7 @@ import AttendanceView from '@/views/AttendanceView.vue'
 import ContractsView from '@/views/ContractsView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
+import NotificationsView from '@/views/NotificationsView.vue'
 import PayrollView from '@/views/PayrollView.vue'
 import ScheduleView from '@/views/ScheduleView.vue'
 
@@ -39,6 +40,11 @@ export const router = createRouter({
           path: 'contracts',
           name: 'contracts',
           component: ContractsView,
+        },
+        {
+          path: 'notifications',
+          name: 'notifications',
+          component: NotificationsView,
         },
       ],
     },

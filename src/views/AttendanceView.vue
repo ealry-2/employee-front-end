@@ -169,6 +169,7 @@ import { isForbidden, isStateConflict, isUnauthorized } from '@/api/client'
 import { clockInEmployee, clockOutEmployee, loadAttendanceCurrent } from '@/api/attendance'
 import type { AppAttendanceCurrentResponse, AttendanceResponse, ScheduleResponse } from '@/api/types'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
+import { registerBrowserResumeHandler, type ResumeHandlerCleanup } from '@/runtime/appResume'
 import {
   attendanceActionLabelKey,
   attendanceCurrentStatusKey,
@@ -193,6 +194,7 @@ const actionError = ref('')
 const actionSubmitting = ref(false)
 const breakMinutesInput = ref('')
 let currentRequestId = 0
+let cleanupResumeHandler: ResumeHandlerCleanup | null = null
 
 const attendanceAction = computed(() => resolveAttendanceAction(current.value))
 const currentDescriptionKey = computed(() => {
@@ -232,14 +234,15 @@ watch(
 
 onMounted(() => {
   if (typeof document !== 'undefined') {
-    document.addEventListener('visibilitychange', handleVisibilityChange)
+    cleanupResumeHandler = registerBrowserResumeHandler(() => {
+      void loadCurrent()
+    })
   }
 })
 
 onBeforeUnmount(() => {
-  if (typeof document !== 'undefined') {
-    document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }
+  cleanupResumeHandler?.()
+  cleanupResumeHandler = null
 })
 
 async function loadCurrent(): Promise<void> {
@@ -322,12 +325,6 @@ async function submitAction(): Promise<void> {
   } finally {
     await loadCurrent()
     actionSubmitting.value = false
-  }
-}
-
-function handleVisibilityChange(): void {
-  if (document.visibilityState === 'visible') {
-    void loadCurrent()
   }
 }
 

@@ -24,6 +24,11 @@ export const employeeNavItems = [
     labelKey: 'nav.contracts',
     shortLabelKey: 'nav.contractsShort',
   },
+  {
+    routeName: 'notifications',
+    labelKey: 'nav.notifications',
+    shortLabelKey: 'nav.notificationsShort',
+  },
 ] as const
 
 export type EmployeeNavRouteName = (typeof employeeNavItems)[number]['routeName']
