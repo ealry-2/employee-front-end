@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { isEmployeeDemoModeEnabled } from '@/demo/employeeDemoMode'
 import { hasAccessToken } from '@/session/tokenStorage'
 import EmployeeAppShell from '@/component/EmployeeAppShell.vue'
 import AttendanceView from '@/views/AttendanceView.vue'
@@ -57,10 +58,12 @@ export const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  if (to.name !== 'login' && !hasAccessToken()) {
+  const canUseEmployeeApp = isEmployeeDemoModeEnabled() || hasAccessToken()
+
+  if (to.name !== 'login' && !canUseEmployeeApp) {
     return { name: 'login' }
   }
-  if (to.name === 'login' && hasAccessToken()) {
+  if (to.name === 'login' && canUseEmployeeApp) {
     return { name: 'home' }
   }
   return true

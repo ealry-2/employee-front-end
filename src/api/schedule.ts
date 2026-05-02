@@ -1,5 +1,10 @@
 import { apiClient } from './client'
 import type { AppScheduleListResponse, ScheduleResponse } from './types'
+import {
+  loadDemoScheduleDetail,
+  loadDemoSchedules,
+} from '../demo/employeeDemoData'
+import { isEmployeeDemoModeEnabled } from '../demo/employeeDemoMode'
 
 export interface LoadEmployeeSchedulesRequest {
   storeId: string
@@ -12,6 +17,10 @@ export interface LoadEmployeeSchedulesRequest {
 export async function loadEmployeeSchedules(
   request: LoadEmployeeSchedulesRequest,
 ): Promise<AppScheduleListResponse> {
+  if (isEmployeeDemoModeEnabled()) {
+    return loadDemoSchedules(request)
+  }
+
   const response = await apiClient.get<AppScheduleListResponse>(
     `/api/app/stores/${encodeURIComponent(request.storeId)}/schedules`,
     {
@@ -30,6 +39,10 @@ export async function loadEmployeeScheduleDetail(
   storeId: string,
   scheduleId: string,
 ): Promise<ScheduleResponse> {
+  if (isEmployeeDemoModeEnabled()) {
+    return loadDemoScheduleDetail(storeId, scheduleId)
+  }
+
   const response = await apiClient.get<ScheduleResponse>(
     `/api/app/stores/${encodeURIComponent(storeId)}/schedules/${encodeURIComponent(scheduleId)}`,
   )

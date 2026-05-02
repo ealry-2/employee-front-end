@@ -1,11 +1,22 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { employeeNavItems, isEmployeeNavRouteName } from '../src/app/navigation.ts'
+import {
+  employeeNavItems,
+  employeeTabItems,
+  isEmployeeNavRouteName,
+} from '../src/app/navigation.ts'
 
 test('employee nav exposes the planned primary app slices in order', () => {
   assert.deepEqual(
     employeeNavItems.map((item) => item.routeName),
     ['home', 'schedule', 'attendance', 'payroll', 'contracts', 'notifications'],
+  )
+})
+
+test('employee tab bar excludes notifications because alerts live in the top bar', () => {
+  assert.deepEqual(
+    employeeTabItems.map((item) => item.routeName),
+    ['home', 'schedule', 'attendance', 'payroll', 'contracts'],
   )
 })
 

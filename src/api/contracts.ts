@@ -4,6 +4,11 @@ import type {
   AppContractListResponse,
   ContractStatus,
 } from './types'
+import {
+  loadDemoContractDetail,
+  loadDemoContracts,
+} from '../demo/employeeDemoData'
+import { isEmployeeDemoModeEnabled } from '../demo/employeeDemoMode'
 
 export interface LoadMyContractsRequest {
   storeId: string
@@ -20,6 +25,10 @@ export interface LoadMyContractDetailRequest {
 export async function loadMyContracts(
   request: LoadMyContractsRequest,
 ): Promise<AppContractListResponse> {
+  if (isEmployeeDemoModeEnabled()) {
+    return loadDemoContracts(request)
+  }
+
   const response = await apiClient.get<AppContractListResponse>(
     `/api/app/stores/${encodeURIComponent(request.storeId)}/contracts`,
     {
@@ -36,6 +45,10 @@ export async function loadMyContracts(
 export async function loadMyContractDetail(
   request: LoadMyContractDetailRequest,
 ): Promise<AppContractDetailResponse> {
+  if (isEmployeeDemoModeEnabled()) {
+    return loadDemoContractDetail(request)
+  }
+
   const response = await apiClient.get<AppContractDetailResponse>(
     `/api/app/stores/${encodeURIComponent(request.storeId)}/contracts/${encodeURIComponent(
       request.contractId,

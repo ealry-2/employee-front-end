@@ -37,7 +37,7 @@
           </button>
         </div>
 
-        <div class="employee-schedule-range">
+        <div v-if="mode !== 'month'" class="employee-schedule-range">
           <button
             class="employee-icon-button employee-schedule-range__button"
             type="button"
@@ -88,6 +88,27 @@
           class="employee-schedule-month"
           :aria-label="t('schedule.monthView')"
         >
+          <header class="employee-schedule-month__header">
+            <h3>{{ rangeLabel }}</h3>
+            <div class="employee-schedule-month__nav">
+              <button
+                class="employee-schedule-month__nav-button"
+                type="button"
+                :aria-label="t('schedule.previous')"
+                @click="movePeriod(-1)"
+              >
+                <span aria-hidden="true">‹</span>
+              </button>
+              <button
+                class="employee-schedule-month__nav-button"
+                type="button"
+                :aria-label="t('schedule.next')"
+                @click="movePeriod(1)"
+              >
+                <span aria-hidden="true">›</span>
+              </button>
+            </div>
+          </header>
           <div class="employee-schedule-month__weekdays" aria-hidden="true">
             <span v-for="weekday in weekdayLabels" :key="weekday">{{ weekday }}</span>
           </div>
@@ -107,8 +128,16 @@
               @click="openSchedule(cell.schedules[0])"
             >
               <span class="employee-schedule-day__number">{{ dayNumber(cell.date) }}</span>
-              <span v-if="cell.schedules.length > 0" class="employee-schedule-day__count">
-                {{ cell.schedules.length }}
+              <span
+                v-if="cell.schedules.length > 0"
+                class="employee-schedule-day__indicators"
+                aria-hidden="true"
+              >
+                <span
+                  v-for="dot in scheduleDots(cell.schedules.length)"
+                  :key="dot"
+                  class="employee-schedule-day__dot"
+                ></span>
               </span>
             </button>
           </div>
@@ -453,6 +482,10 @@ function monthCellLabel(date: string, count: number): string {
 
 function dayNumber(date: string): string {
   return String(Number(date.slice(8, 10)))
+}
+
+function scheduleDots(count: number): number[] {
+  return Array.from({ length: Math.min(count, 2) }, (_, index) => index)
 }
 
 function toLocalDate(value: string): Date {

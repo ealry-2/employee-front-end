@@ -33,6 +33,10 @@ export const employeeNavItems = [
 
 export type EmployeeNavRouteName = (typeof employeeNavItems)[number]['routeName']
 
+export const employeeTabItems = employeeNavItems.filter(
+  (item) => item.routeName !== 'notifications',
+)
+
 export function isEmployeeNavRouteName(value: unknown): value is EmployeeNavRouteName {
   return employeeNavItems.some((item) => item.routeName === value)
 }
