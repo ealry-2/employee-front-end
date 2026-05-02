@@ -8,6 +8,51 @@ export const messages = {
       retry: '다시 시도',
       logout: '로그아웃',
     },
+    nav: {
+      primary: '직원 앱 주요 메뉴',
+      home: '홈',
+      homeShort: '홈',
+      schedule: '일정',
+      scheduleShort: '일정',
+      attendance: '출퇴근',
+      attendanceShort: '출퇴근',
+      payroll: '급여',
+      payrollShort: '급여',
+      contracts: '계약',
+      contractsShort: '계약',
+    },
+    screen: {
+      home: {
+        title: '오늘의 근무',
+      },
+      schedule: {
+        title: '내 일정',
+      },
+      attendance: {
+        title: '출퇴근',
+      },
+      payroll: {
+        title: '내 급여',
+      },
+      contracts: {
+        title: '내 계약',
+      },
+    },
+    feature: {
+      eyebrow: '다음 단계 준비됨',
+      schedule: {
+        description: '선택한 사업장 기준으로 내 근무 일정 화면을 연결할 자리입니다.',
+      },
+      attendance: {
+        description: '현재 근무 상태와 출퇴근 체크 화면을 연결할 자리입니다.',
+      },
+      payroll: {
+        description: '월별 급여 목록과 상세 금액 화면을 연결할 자리입니다.',
+      },
+      contracts: {
+        description: '서명 필요 계약과 계약 상세 화면을 연결할 자리입니다.',
+      },
+    },
     login: {
       title: '직원 로그인',
       subtitle: '근무 일정, 출퇴근, 급여와 계약을 확인합니다.',
@@ -42,6 +87,51 @@ export const messages = {
       loading: 'Loading',
       retry: 'Retry',
       logout: 'Log out',
+    },
+    nav: {
+      primary: 'Employee app primary menu',
+      home: 'Home',
+      homeShort: 'Home',
+      schedule: 'Schedule',
+      scheduleShort: 'Schedule',
+      attendance: 'Attendance',
+      attendanceShort: 'Clock',
+      payroll: 'Payroll',
+      payrollShort: 'Pay',
+      contracts: 'Contracts',
+      contractsShort: 'Contracts',
+    },
+    screen: {
+      home: {
+        title: 'Today at work',
+      },
+      schedule: {
+        title: 'My schedule',
+      },
+      attendance: {
+        title: 'Attendance',
+      },
+      payroll: {
+        title: 'My payroll',
+      },
+      contracts: {
+        title: 'My contracts',
+      },
+    },
+    feature: {
+      eyebrow: 'Ready for the next slice',
+      schedule: {
+        description: 'This area is ready for the selected store schedule screen.',
+      },
+      attendance: {
+        description: 'This area is ready for current attendance and clock actions.',
+      },
+      payroll: {
+        description: 'This area is ready for monthly payroll list and detail screens.',
+      },
+      contracts: {
+        description: 'This area is ready for signing-needed contracts and contract details.',
+      },
     },
     login: {
       title: 'Employee login',

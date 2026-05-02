@@ -1,32 +1,29 @@
 :root {
-  --employee-color-text: #080808;
-  --employee-color-text-secondary: #222222;
-  --employee-color-text-muted: #5a5a5a;
+  --employee-color-text: #1d1d1f;
+  --employee-color-text-secondary: #333333;
+  --employee-color-text-muted: #7a7a7a;
   --employee-color-text-placeholder: #ababab;
   --employee-color-surface: #ffffff;
   --employee-color-surface-raised: #ffffff;
-  --employee-color-surface-subtle: #f7faff;
-  --employee-color-border: #d8d8d8;
-  --employee-color-border-hover: #898989;
-  --employee-color-primary: #146ef5;
-  --employee-color-primary-hover: #0055d4;
-  --employee-color-primary-soft: rgba(20, 110, 245, 0.1);
-  --employee-color-blue-light: #3b89ff;
-  --employee-color-blue-dark: #006acc;
+  --employee-color-surface-subtle: #f5f5f7;
+  --employee-color-surface-pearl: #fafafc;
+  --employee-color-border: #e0e0e0;
+  --employee-color-border-hover: #7a7a7a;
+  --employee-color-primary: #0066cc;
+  --employee-color-primary-hover: #0071e3;
+  --employee-color-primary-soft: rgba(0, 102, 204, 0.1);
+  --employee-color-focus: #0071e3;
+  --employee-color-blue-light: #2997ff;
+  --employee-color-blue-dark: #0066cc;
   --employee-color-purple: #7a3dff;
   --employee-color-green: #00d722;
   --employee-color-orange: #ff6b00;
   --employee-color-red: #ee1d36;
-  --employee-shadow-elevated:
-    rgba(0, 0, 0, 0) 0 84px 24px,
-    rgba(0, 0, 0, 0.01) 0 54px 22px,
-    rgba(0, 0, 0, 0.04) 0 30px 18px,
-    rgba(0, 0, 0, 0.08) 0 13px 13px,
-    rgba(0, 0, 0, 0.09) 0 3px 7px;
+  --employee-shadow-artifact: rgba(0, 0, 0, 0.22) 3px 5px 30px 0;
   color: var(--employee-color-text);
   background: var(--employee-color-surface);
   font-family:
-    "WF Visual Sans Variable", Arial, ui-sans-serif, system-ui, -apple-system,
+    "SF Pro Text", "SF Pro Display", ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 10px;
   line-height: 1.5;
@@ -46,7 +43,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -61,7 +59,7 @@ button {
   padding:
     max(2.4rem, env(safe-area-inset-top))
     2rem
-    max(2.4rem, env(safe-area-inset-bottom));
+    max(10rem, calc(2.4rem + env(safe-area-inset-bottom)));
 }
 
 .employee-auth {
@@ -75,7 +73,6 @@ button {
   border-radius: 0.8rem;
   background: var(--employee-color-surface-raised);
   padding: 2.4rem;
-  box-shadow: var(--employee-shadow-elevated);
 }
 
 .employee-auth__brand,
@@ -107,7 +104,7 @@ button {
 .employee-state p {
   margin: 1.2rem 0 0;
   color: var(--employee-color-text-muted);
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: 400;
   line-height: 1.6;
 }
@@ -140,16 +137,18 @@ button {
   background: var(--employee-color-surface);
   color: var(--employee-color-text);
   padding: 0 1.4rem;
-  font-size: 1.6rem;
-  font-weight: 500;
+  font-size: 1.7rem;
+  font-weight: 400;
 }
 
 .employee-field__control:focus,
 .employee-primary-button:focus-visible,
 .employee-secondary-button:focus-visible,
 .employee-icon-button:focus-visible,
-.employee-store-card:focus-visible {
-  outline: 3px solid rgba(59, 137, 255, 0.35);
+.employee-store-card:focus-visible,
+.employee-store-select:focus-visible,
+.employee-tabbar__item:focus-visible {
+  outline: 2px solid var(--employee-color-focus);
   outline-offset: 2px;
 }
 
@@ -194,16 +193,16 @@ button {
 .employee-primary-button,
 .employee-secondary-button {
   min-height: 4.8rem;
-  border-radius: 0.4rem;
+  border-radius: 9999px;
   padding: 0 1.6rem;
-  font-size: 1.6rem;
-  font-weight: 500;
+  font-size: 1.7rem;
+  font-weight: 400;
   line-height: 1.6;
 }
 
 .employee-primary-button {
   background: var(--employee-color-primary);
-  color: white;
+  color: #ffffff;
 }
 
 .employee-primary-button:hover:not(:disabled) {
@@ -255,13 +254,58 @@ button {
   color: #ffffff;
 }
 
+.employee-store-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 2rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 1.8rem;
+  background: var(--employee-color-surface-pearl);
+  padding: 1.2rem 1.4rem;
+}
+
+.employee-store-strip__label,
+.employee-feature-panel__eyebrow {
+  margin: 0;
+  color: var(--employee-color-text-muted);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.employee-store-strip__value {
+  margin: 0.2rem 0 0;
+  overflow-wrap: anywhere;
+  color: var(--employee-color-text);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.employee-store-select {
+  max-width: 16rem;
+  min-height: 4.4rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 9999px;
+  background: var(--employee-color-surface);
+  color: var(--employee-color-text);
+  padding: 0 1.4rem;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
 .employee-hero,
 .employee-section,
 .employee-next-panel,
-.employee-state {
+.employee-state,
+.employee-feature-panel {
   margin-top: 2rem;
   border: 1px solid var(--employee-color-border);
-  border-radius: 0.8rem;
+  border-radius: 1.8rem;
   background: var(--employee-color-surface-raised);
   padding: 1.8rem;
 }
@@ -373,9 +417,115 @@ button {
   gap: 1.2rem;
 }
 
+.employee-state__copy {
+  min-width: 0;
+}
+
+.employee-state__eyebrow {
+  margin: 0 0 0.6rem;
+  color: var(--employee-color-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  text-transform: uppercase;
+}
+
 .employee-state--error {
   border-color: rgba(238, 29, 54, 0.24);
   background: rgba(238, 29, 54, 0.06);
+}
+
+.employee-feature-panel {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.employee-feature-panel h2,
+.employee-feature-panel p {
+  margin: 0;
+}
+
+.employee-feature-panel h2 {
+  color: var(--employee-color-text);
+  font-size: 2.4rem;
+  font-weight: 600;
+  line-height: 1.18;
+}
+
+.employee-feature-panel p:not(.employee-feature-panel__eyebrow) {
+  color: var(--employee-color-text-muted);
+  font-size: 1.7rem;
+  line-height: 1.55;
+}
+
+.employee-feature-panel__context {
+  margin: 0;
+  border-top: 1px solid var(--employee-color-border);
+  padding-top: 1.2rem;
+}
+
+.employee-feature-panel__context div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.employee-feature-panel__context dt {
+  color: var(--employee-color-text-muted);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  text-transform: uppercase;
+}
+
+.employee-feature-panel__context dd {
+  margin: 0;
+  color: var(--employee-color-text);
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.employee-tabbar {
+  position: fixed;
+  right: max(1.2rem, env(safe-area-inset-right));
+  bottom: max(1.2rem, env(safe-area-inset-bottom));
+  left: max(1.2rem, env(safe-area-inset-left));
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.4rem;
+  max-width: 54rem;
+  margin: 0 auto;
+  border: 1px solid rgba(224, 224, 224, 0.82);
+  border-radius: 9999px;
+  background: rgba(245, 245, 247, 0.86);
+  padding: 0.5rem;
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+.employee-tabbar__item {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 4.4rem;
+  border-radius: 9999px;
+  color: var(--employee-color-text-muted);
+  text-decoration: none;
+}
+
+.employee-tabbar__item span {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  color: inherit;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.employee-tabbar__item.router-link-active {
+  background: var(--employee-color-primary);
+  color: #ffffff;
 }
 
 @media (max-width: 380px) {
@@ -388,13 +538,23 @@ button {
   .employee-profile-grid {
     grid-template-columns: 1fr;
   }
+
+  .employee-store-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .employee-store-select {
+    width: 100%;
+    max-width: none;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .employee-primary-button,
   .employee-secondary-button,
   .employee-icon-button,
-  .employee-store-card {
+  .employee-store-card,
+  .employee-tabbar__item {
     transition:
       background-color 0.2s ease,
       border-color 0.2s ease,
@@ -404,14 +564,16 @@ button {
   .employee-store-card:hover,
   .employee-primary-button:hover:not(:disabled),
   .employee-secondary-button:hover,
-  .employee-icon-button:hover {
+  .employee-icon-button:hover,
+  .employee-tabbar__item:hover {
     transform: translateX(0.6rem);
   }
 
   .employee-store-card:active,
   .employee-primary-button:active,
   .employee-secondary-button:active,
-  .employee-icon-button:active {
+  .employee-icon-button:active,
+  .employee-tabbar__item:active {
     transform: translateX(0.6rem) translateY(1px);
   }
 }
