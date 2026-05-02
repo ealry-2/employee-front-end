@@ -9,21 +9,22 @@ import {
 test('employee nav exposes the planned primary app slices in order', () => {
   assert.deepEqual(
     employeeNavItems.map((item) => item.routeName),
-    ['home', 'schedule', 'attendance', 'payroll', 'contracts', 'notifications'],
+    ['home', 'attendance', 'payroll', 'contracts', 'notifications', 'settings'],
   )
 })
 
-test('employee tab bar excludes notifications because alerts live in the top bar', () => {
+test('employee tab bar excludes top-bar and settings routes', () => {
   assert.deepEqual(
     employeeTabItems.map((item) => item.routeName),
-    ['home', 'schedule', 'attendance', 'payroll', 'contracts'],
+    ['home', 'attendance', 'payroll', 'contracts'],
   )
 })
 
 test('isEmployeeNavRouteName accepts only shell tab route names', () => {
   assert.equal(isEmployeeNavRouteName('home'), true)
-  assert.equal(isEmployeeNavRouteName('schedule'), true)
+  assert.equal(isEmployeeNavRouteName('schedule'), false)
   assert.equal(isEmployeeNavRouteName('notifications'), true)
+  assert.equal(isEmployeeNavRouteName('settings'), true)
   assert.equal(isEmployeeNavRouteName('login'), false)
   assert.equal(isEmployeeNavRouteName(undefined), false)
 })

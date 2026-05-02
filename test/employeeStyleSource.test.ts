@@ -118,9 +118,19 @@ test('employee shell uses top store picker, notification bell, and plain bottom 
   assert.ok(shellSource.includes('class="employee-topbar__brand-logo"'))
   assert.ok(shellSource.includes('class="employee-branch-picker__chevron-icon"'))
   assert.equal(shellSource.includes('class="employee-topbar__brand"'), false)
+  assert.ok(shellSource.includes(':to="{ name: \'home\' }"'))
   assert.ok(shellSource.includes(':to="{ name: \'notifications\' }"'))
+  assert.ok(shellSource.includes(':to="{ name: \'settings\' }"'))
+  assert.ok(shellSource.includes(':aria-label="t(\'nav.settings\')"'))
+  assert.ok(shellSource.includes('class="employee-tabbar__qr-action"'))
+  assert.ok(shellSource.includes(':to="{ name: \'attendance\', query: { qr: \'1\' } }"'))
+  assert.ok(shellSource.includes(':aria-label="t(\'attendance.qrScan\')"'))
+  assert.ok(shellSource.includes('class="employee-tabbar__qr-icon"'))
+  assert.ok(shellSource.includes('class="employee-tabbar__qr-icon-scanline"'))
   assert.ok(shellSource.includes('class="employee-topbar__svg-icon employee-bell-icon"'))
-  assert.ok(shellSource.includes('class="employee-topbar__svg-icon employee-menu-icon"'))
+  assert.ok(shellSource.includes('class="employee-topbar__svg-icon employee-settings-icon"'))
+  assert.equal(shellSource.includes('employee-menu-icon'), false)
+  assert.equal(shellSource.includes('@click="logout"'), false)
   assert.ok(shellSource.includes('viewBox="0 0 32 32"'))
   assert.ok(shellSource.includes('v-for="item in employeeTabItems"'))
   assert.ok(shellSource.includes("{ 'is-active': route.name === item.routeName }"))
@@ -129,7 +139,8 @@ test('employee shell uses top store picker, notification bell, and plain bottom 
   assert.ok(shellSource.includes('employee-tabbar__icon-stroke'))
   assert.ok(shellSource.includes('employee-tabbar__icon-fill'))
   assert.equal(shellSource.includes('class="employee-store-strip"'), false)
-  assert.ok(navSource.includes("item.routeName !== 'notifications'"))
+  assert.ok(navSource.includes("item.routeName !== 'notifications' && item.routeName !== 'settings'"))
+  assert.equal(navSource.includes("routeName: 'schedule'"), false)
   assert.match(
     appStyle,
     /\.employee-topbar\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?backdrop-filter:\s*saturate\(180%\) blur\(18px\);[\s\S]*?\}/,
@@ -153,7 +164,39 @@ test('employee shell uses top store picker, notification bell, and plain bottom 
   )
   assert.match(
     appStyle,
+    /\.employee-tabbar__qr-action\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?top:\s*-2\.8rem;[\s\S]*?width:\s*6\.4rem;[\s\S]*?border-radius:\s*2rem;[\s\S]*?background:\s*var\(--employee-color-primary\);[\s\S]*?transform:\s*translateX\(-50%\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-tabbar__qr-icon-stroke\s*\{[\s\S]*?stroke:\s*var\(--employee-color-on-primary\);[\s\S]*?stroke-width:\s*2;[\s\S]*?stroke-linecap:\s*round;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-tabbar__qr-icon-scanline\s*\{[\s\S]*?stroke:\s*#54b2e9;[\s\S]*?stroke-width:\s*2;[\s\S]*?stroke-linecap:\s*round;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-tabbar__item--home\s*\{[\s\S]*?grid-column:\s*1;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-tabbar__item--attendance\s*\{[\s\S]*?grid-column:\s*2;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-tabbar__item--payroll\s*\{[\s\S]*?grid-column:\s*4;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-tabbar__item--contracts\s*\{[\s\S]*?grid-column:\s*5;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
     /\.employee-tabbar__item\.is-active\s*\{[\s\S]*?color:\s*var\(--employee-color-primary\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-tabbar__qr-icon\s*\{[\s\S]*?width:\s*5\.1rem;[\s\S]*?height:\s*5\.1rem;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
@@ -167,6 +210,7 @@ test('employee shell uses top store picker, notification bell, and plain bottom 
   assert.equal(appStyle.includes('.employee-bell-icon::after'), false)
   assert.equal(appStyle.includes('.employee-logout-icon::before'), false)
   assert.equal(appStyle.includes('.employee-logout-icon::after'), false)
+  assert.equal(appStyle.includes('.employee-topbar__icon-button'), false)
   assert.equal(appStyle.includes('.employee-tabbar__icon--home::before'), false)
   assert.equal(appStyle.includes('.employee-tabbar__icon--schedule::before'), false)
   assert.equal(appStyle.includes("content: '⌂'"), false)

@@ -176,7 +176,7 @@ button {
 .employee-store-select:focus-visible,
 .employee-branch-picker__select:focus-visible,
 .employee-topbar__icon-link:focus-visible,
-.employee-topbar__icon-button:focus-visible,
+.employee-tabbar__qr-action:focus-visible,
 .employee-tabbar__item:focus-visible,
 .employee-schedule-month__nav-button:focus-visible,
 .employee-segmented__button:focus-visible,
@@ -394,8 +394,7 @@ button {
   line-height: 1.2;
 }
 
-.employee-topbar__icon-link,
-.employee-topbar__icon-button {
+.employee-topbar__icon-link {
   position: relative;
   display: grid;
   place-items: center;
@@ -1966,6 +1965,43 @@ button {
   backdrop-filter: saturate(180%) blur(18px);
 }
 
+.employee-tabbar__qr-action {
+  position: absolute;
+  top: -2.8rem;
+  left: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 6.4rem;
+  height: 6.4rem;
+  border: 0.4rem solid var(--employee-color-surface);
+  border-radius: 2rem;
+  background: var(--employee-color-primary);
+  text-decoration: none;
+  transform: translateX(-50%);
+}
+
+.employee-tabbar__qr-icon {
+  display: block;
+  width: 5.1rem;
+  height: 5.1rem;
+}
+
+.employee-tabbar__qr-icon-stroke {
+  fill: none;
+  stroke: var(--employee-color-on-primary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.employee-tabbar__qr-icon-scanline {
+  fill: none;
+  stroke: #54b2e9;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
 .employee-tabbar__item {
   display: grid;
   grid-template-rows: 3.4rem auto;
@@ -1976,6 +2012,22 @@ button {
   border-radius: 0;
   color: var(--employee-color-text-muted);
   text-decoration: none;
+}
+
+.employee-tabbar__item--home {
+  grid-column: 1;
+}
+
+.employee-tabbar__item--attendance {
+  grid-column: 2;
+}
+
+.employee-tabbar__item--payroll {
+  grid-column: 4;
+}
+
+.employee-tabbar__item--contracts {
+  grid-column: 5;
 }
 
 .employee-tabbar__icon {
@@ -2026,6 +2078,216 @@ button {
 
 .employee-tabbar__item.is-active span:last-child {
   font-weight: 700;
+}
+
+body.employee-qr-scanner-active {
+  overflow: hidden;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10000 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  background:
+    linear-gradient(rgba(5, 12, 26, 0.28), rgba(5, 12, 26, 0.48)),
+    var(--employee-color-brand-navy) !important;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-dialog {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10000 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+body.employee-qr-scanner-active .scanner-dialog-inner {
+  position: fixed !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+body.employee-qr-scanner-active .scanner-dialog-inner > p {
+  display: none !important;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner {
+  position: fixed !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  border: 0 !important;
+  background: transparent !important;
+  overflow: hidden !important;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner > div,
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner__scan_region {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner video {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  object-fit: cover !important;
+  filter: saturate(0.92) contrast(0.98) brightness(0.74) blur(0.12rem);
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner canvas,
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner img {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner__dashboard,
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner__dashboard_section_csr,
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner__dashboard_section_swaplink {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: calc(6.2rem + env(safe-area-inset-bottom)) !important;
+  z-index: 10004 !important;
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner__dashboard_section_csr span,
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner__dashboard_section_csr br,
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner__dashboard_section_csr select,
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container-scanner__dashboard_section_swaplink a {
+  display: none !important;
+}
+
+body.employee-qr-scanner-active #html5-qrcode-button-camera-permission,
+body.employee-qr-scanner-active #html5-qrcode-button-camera-start,
+body.employee-qr-scanner-active #html5-qrcode-button-file-selection {
+  min-height: 4.4rem !important;
+  border: 0 !important;
+  border-radius: 999rem !important;
+  background: rgba(5, 12, 26, 0.74) !important;
+  box-shadow: 0 1.6rem 3.2rem rgba(0, 0, 0, 0.24) !important;
+  color: var(--employee-color-on-primary) !important;
+  padding: 0 1.8rem !important;
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+
+body.employee-qr-scanner-active #html5-qrcode-button-camera-stop {
+  display: none !important;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-close-button {
+  position: fixed !important;
+  top: calc(2rem + env(safe-area-inset-top)) !important;
+  left: 2rem !important;
+  z-index: 10006 !important;
+  display: grid !important;
+  place-items: center !important;
+  float: none !important;
+  width: 4.4rem !important;
+  height: 4.4rem !important;
+  border-radius: 999rem !important;
+  color: var(--employee-color-on-primary) !important;
+  font-size: 0 !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  text-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.35);
+  cursor: pointer !important;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-close-button::before,
+body.employee-qr-scanner-active #cap-os-barcode-scanner-close-button::after {
+  content: "";
+  position: absolute;
+  width: 2.2rem;
+  height: 0.2rem;
+  border-radius: 999rem;
+  background: currentColor;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-close-button::before {
+  transform: rotate(45deg);
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-close-button::after {
+  transform: rotate(-45deg);
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container::before {
+  content: "";
+  position: fixed;
+  top: 38%;
+  left: 50%;
+  z-index: 10003;
+  width: min(62vw, 26rem);
+  max-width: calc(100vw - 8rem);
+  aspect-ratio: 1;
+  border-radius: 3.2rem;
+  transform: translate(-50%, -50%);
+  box-shadow:
+    0 0 0 999rem rgba(5, 12, 26, 0.38),
+    inset 0 0 0 0.1rem rgba(255, 255, 255, 0.32);
+  background:
+    linear-gradient(var(--employee-color-on-primary), var(--employee-color-on-primary)) left top / 7.2rem 0.28rem no-repeat,
+    linear-gradient(var(--employee-color-on-primary), var(--employee-color-on-primary)) right top / 7.2rem 0.28rem no-repeat,
+    linear-gradient(var(--employee-color-on-primary), var(--employee-color-on-primary)) left bottom / 7.2rem 0.28rem no-repeat,
+    linear-gradient(var(--employee-color-on-primary), var(--employee-color-on-primary)) right bottom / 7.2rem 0.28rem no-repeat,
+    linear-gradient(var(--employee-color-on-primary), var(--employee-color-on-primary)) left top / 0.28rem 7.2rem no-repeat,
+    linear-gradient(var(--employee-color-on-primary), var(--employee-color-on-primary)) right top / 0.28rem 7.2rem no-repeat,
+    linear-gradient(var(--employee-color-on-primary), var(--employee-color-on-primary)) left bottom / 0.28rem 7.2rem no-repeat,
+    linear-gradient(var(--employee-color-on-primary), var(--employee-color-on-primary)) right bottom / 0.28rem 7.2rem no-repeat;
+  pointer-events: none;
+}
+
+body.employee-qr-scanner-active #cap-os-barcode-scanner-container::after {
+  content: var(--employee-qr-scanner-label, "");
+  position: fixed;
+  top: calc(38% + min(31vw, 13rem) + 4rem);
+  left: 50%;
+  z-index: 10003;
+  width: min(80vw, 32rem);
+  color: var(--employee-color-on-primary);
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-align: center;
+  text-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.45);
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 @media (max-width: 380px) {
@@ -2091,6 +2353,7 @@ button {
   .employee-icon-button,
   .employee-store-card,
   .employee-tabbar__item,
+  .employee-tabbar__qr-action,
   .employee-segmented__button,
   .employee-schedule-day,
   .employee-schedule-card,
@@ -2117,6 +2380,10 @@ button {
     transform: translateY(-1px);
   }
 
+  .employee-tabbar__qr-action:hover {
+    transform: translate(-50%, -1px);
+  }
+
   .employee-store-card:active,
   .employee-primary-button:active,
   .employee-secondary-button:active,
@@ -2127,5 +2394,9 @@ button {
   .employee-contract-card:active,
   .employee-notification-card:active {
     transform: translateY(1px);
+  }
+
+  .employee-tabbar__qr-action:active {
+    transform: translate(-50%, 1px);
   }
 }

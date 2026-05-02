@@ -22,10 +22,12 @@ export const messages = {
       contractsShort: '계약',
       notifications: '알림',
       notificationsShort: '알림',
+      settings: '설정',
+      settingsShort: '설정',
     },
     screen: {
       home: {
-        title: '오늘의 근무',
+        title: '내 일정',
       },
       schedule: {
         title: '내 일정',
@@ -41,6 +43,9 @@ export const messages = {
       },
       notifications: {
         title: '알림',
+      },
+      settings: {
+        title: '설정',
       },
     },
     feature: {
@@ -149,6 +154,14 @@ export const messages = {
       stateConflict: '상태가 이미 변경되었습니다. 최신 상태를 다시 확인했습니다.',
       actionFailed: '출퇴근 처리를 완료하지 못했습니다. 잠시 뒤 다시 시도해주세요.',
       noAvailableAction: '지금 수행할 수 있는 출퇴근 동작이 없습니다.',
+      qrScan: '출근 QR 스캔',
+      qrScanning: 'QR 스캔 중',
+      qrInstructions: '출근 QR을 화면 중앙에 맞춰주세요.',
+      qrScanButton: '스캔',
+      qrNoStore: '선택된 사업장이 없어 QR 출근을 시작할 수 없습니다.',
+      qrEmpty: 'QR 내용을 읽지 못했습니다.',
+      qrCancelled: 'QR 스캔을 취소했습니다.',
+      qrFailed: 'QR 출근을 완료하지 못했습니다.',
       currentLabel: '현재 상태',
       serverTime: '서버 시간',
       workDate: '근무일',
@@ -342,10 +355,12 @@ export const messages = {
       contractsShort: 'Contracts',
       notifications: 'Notifications',
       notificationsShort: 'Alerts',
+      settings: 'Settings',
+      settingsShort: 'Settings',
     },
     screen: {
       home: {
-        title: 'Today at work',
+        title: 'My schedule',
       },
       schedule: {
         title: 'My schedule',
@@ -361,6 +376,9 @@ export const messages = {
       },
       notifications: {
         title: 'Notifications',
+      },
+      settings: {
+        title: 'Settings',
       },
     },
     feature: {
@@ -469,6 +487,14 @@ export const messages = {
       stateConflict: 'The attendance state already changed. The latest status has been reloaded.',
       actionFailed: 'Could not complete the attendance action. Try again shortly.',
       noAvailableAction: 'No attendance action is available now.',
+      qrScan: 'Scan clock-in QR',
+      qrScanning: 'Scanning QR',
+      qrInstructions: 'Place the clock-in QR in the center of the screen.',
+      qrScanButton: 'Scan',
+      qrNoStore: 'A store is not selected, so QR clock-in cannot start.',
+      qrEmpty: 'Could not read the QR contents.',
+      qrCancelled: 'QR scan was cancelled.',
+      qrFailed: 'Could not complete QR clock-in.',
       currentLabel: 'Current status',
       serverTime: 'Server time',
       workDate: 'Work date',

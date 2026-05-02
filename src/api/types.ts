@@ -3,7 +3,7 @@ export type UserStatus = 'PENDING' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'LOCK
 export type EmployeeStatus = 'ACTIVE' | 'INACTIVE' | 'RESIGNED'
 export type ScheduleStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED'
 export type AttendanceStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
-export type AttendanceSource = 'MANUAL' | 'AUTO_SCHEDULE'
+export type AttendanceSource = 'MANUAL' | 'AUTO_SCHEDULE' | 'QR_SCAN'
 export type EmployeeCompensationType = 'HOURLY' | 'MONTHLY' | 'ANNUAL'
 export type PayrollStatus = 'DRAFT' | 'CONFIRMED' | 'PAID'
 export type ContractStatus = 'DRAFT' | 'PENDING' | 'SIGNED' | 'CANCELLED' | 'EXPIRED'
@@ -129,6 +129,12 @@ export interface AppAttendanceCurrentResponse {
   openAttendance: AttendanceResponse | null
   latestAttendance: AttendanceResponse | null
   todayAttendances: AttendanceResponse[]
+}
+
+export interface AttendanceQrClockInResponse {
+  attendance: AttendanceResponse
+  distanceMeters: number
+  radiusMeters: number
 }
 
 export interface PayrollResponse {

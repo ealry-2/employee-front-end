@@ -1,7 +1,12 @@
 import { apiClient } from './client'
-import type { AppAttendanceCurrentResponse, AttendanceResponse } from './types'
+import type {
+  AppAttendanceCurrentResponse,
+  AttendanceQrClockInResponse,
+  AttendanceResponse,
+} from './types'
 import {
   clockInDemoEmployee,
+  clockInQrDemoEmployee,
   clockOutDemoEmployee,
   loadDemoAttendanceCurrent,
 } from '../demo/employeeDemoData'
@@ -17,6 +22,14 @@ export interface ClockInEmployeeRequest {
 export interface ClockOutEmployeeRequest {
   recordId: string
   breakMinutes?: number | null
+}
+
+export interface ClockInByQrRequest {
+  storeId: string
+  qrToken: string
+  latitude: number
+  longitude: number
+  accuracyMeters?: number | null
 }
 
 export async function loadAttendanceCurrent(
@@ -61,6 +74,25 @@ export async function clockOutEmployee(
     `/api/alba/attendance/${encodeURIComponent(request.recordId)}/clock-out`,
     {
       breakMinutes: request.breakMinutes ?? null,
+    },
+  )
+  return response.data
+}
+
+export async function clockInEmployeeByQr(
+  request: ClockInByQrRequest,
+): Promise<AttendanceQrClockInResponse> {
+  if (isEmployeeDemoModeEnabled()) {
+    return clockInQrDemoEmployee(request)
+  }
+
+  const response = await apiClient.post<AttendanceQrClockInResponse>(
+    `/api/app/stores/${encodeURIComponent(request.storeId)}/attendance/qr-clock-in`,
+    {
+      qrToken: request.qrToken,
+      latitude: request.latitude,
+      longitude: request.longitude,
+      accuracyMeters: request.accuracyMeters ?? null,
     },
   )
   return response.data

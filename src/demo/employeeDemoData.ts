@@ -6,12 +6,17 @@ import type {
   AppNotificationListResponse,
   AppNotificationResponse,
   AppScheduleListResponse,
+  AttendanceQrClockInResponse,
   AttendanceResponse,
   LoginResponse,
   PayrollResponse,
   ScheduleResponse,
 } from '../api/types'
-import type { ClockInEmployeeRequest, ClockOutEmployeeRequest } from '../api/attendance'
+import type {
+  ClockInByQrRequest,
+  ClockInEmployeeRequest,
+  ClockOutEmployeeRequest,
+} from '../api/attendance'
 import type { LoadMyContractsRequest } from '../api/contracts'
 import type { LoadMyNotificationsRequest, MarkNotificationReadRequest } from '../api/notifications'
 import type { LoadMyPayrollsRequest } from '../api/payroll'
@@ -153,6 +158,26 @@ export function clockInDemoEmployee(request: ClockInEmployeeRequest): Attendance
     clockOutAt: null,
     totalWorkMinutes: null,
   })
+}
+
+export function clockInQrDemoEmployee(
+  request: ClockInByQrRequest,
+): AttendanceQrClockInResponse {
+  const attendance = createAttendance({
+    recordId: 'demo-attendance-qr-clock-in',
+    storeId: request.storeId,
+    workDate: formatDate(new Date()),
+    clockInAt: new Date().toISOString(),
+    clockOutAt: null,
+    totalWorkMinutes: null,
+    source: 'QR_SCAN',
+  })
+
+  return {
+    attendance,
+    distanceMeters: 12,
+    radiusMeters: 500,
+  }
 }
 
 export function clockOutDemoEmployee(request: ClockOutEmployeeRequest): AttendanceResponse {

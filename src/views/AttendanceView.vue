@@ -8,7 +8,7 @@
       <EmployeeRefreshButton
         class="employee-attendance__refresh"
         :label="t('attendance.refresh')"
-        :disabled="loading || actionSubmitting"
+        :disabled="loading || actionSubmitting || qrScanSubmitting"
         @click="loadCurrent"
       />
     </div>
@@ -100,7 +100,7 @@
             class="employee-primary-button employee-attendance-action"
             type="button"
             :disabled="actionDisabled"
-            :aria-busy="actionSubmitting"
+            :aria-busy="actionSubmitting || qrScanSubmitting"
             @click="submitAction"
           >
             {{ primaryActionLabel }}
@@ -160,15 +160,23 @@
 </template>
 
 <script setup lang="ts">
+import axios from 'axios'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 import { useEmployeeAppContext } from '@/app/employeeAppContext'
 import { isForbidden, isStateConflict, isUnauthorized } from '@/api/client'
-import { clockInEmployee, clockOutEmployee, loadAttendanceCurrent } from '@/api/attendance'
+import {
+  clockInEmployee,
+  clockInEmployeeByQr,
+  clockOutEmployee,
+  loadAttendanceCurrent,
+} from '@/api/attendance'
 import type { AppAttendanceCurrentResponse, AttendanceResponse, ScheduleResponse } from '@/api/types'
 import EmployeeRefreshButton from '@/component/EmployeeRefreshButton.vue'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
 import { registerBrowserResumeHandler, type ResumeHandlerCleanup } from '@/runtime/appResume'
+import { getCurrentQrLocation, scanAttendanceQr } from '@/attendance/qrScanner'
 import {
   attendanceActionLabelKey,
   attendanceCurrentStatusKey,
@@ -184,6 +192,8 @@ import {
 } from '@/attendance/attendanceViewModel'
 
 const { t, locale } = useI18n()
+const route = useRoute()
+const router = useRouter()
 const { selectedStore, logout } = useEmployeeAppContext()
 
 const current = ref<AppAttendanceCurrentResponse | null>(null)
@@ -191,6 +201,7 @@ const loading = ref(false)
 const errorMessage = ref('')
 const actionError = ref('')
 const actionSubmitting = ref(false)
+const qrScanSubmitting = ref(false)
 const breakMinutesInput = ref('')
 let currentRequestId = 0
 let cleanupResumeHandler: ResumeHandlerCleanup | null = null
@@ -210,10 +221,14 @@ const actionDisabled = computed(
   () =>
     loading.value ||
     actionSubmitting.value ||
+    qrScanSubmitting.value ||
     attendanceAction.value === 'NONE' ||
     (attendanceAction.value === 'CLOCK_OUT' && breakMinutesInvalid.value),
 )
 const primaryActionLabel = computed(() => {
+  if (qrScanSubmitting.value) {
+    return t('attendance.qrScanning')
+  }
   if (actionSubmitting.value) {
     return t('attendance.action.submitting')
   }
@@ -227,6 +242,16 @@ watch(
     breakMinutesInput.value = ''
     actionError.value = ''
     void loadCurrent()
+  },
+  { immediate: true },
+)
+
+watch(
+  () => [route.query.qr, selectedStore.value?.storeId] as const,
+  ([qr]) => {
+    if (qr === '1') {
+      void startQrClockIn()
+    }
   },
   { immediate: true },
 )
@@ -325,6 +350,86 @@ async function submitAction(): Promise<void> {
     await loadCurrent()
     actionSubmitting.value = false
   }
+}
+
+async function startQrClockIn(): Promise<void> {
+  if (qrScanSubmitting.value) {
+    return
+  }
+
+  const storeId = selectedStore.value?.storeId
+  await clearQrQuery()
+  if (!storeId) {
+    actionError.value = t('attendance.qrNoStore')
+    return
+  }
+
+  qrScanSubmitting.value = true
+  actionError.value = ''
+
+  try {
+    const qrToken = await scanAttendanceQr({
+      instructions: t('attendance.qrInstructions'),
+      button: t('attendance.qrScanButton'),
+    })
+    if (!qrToken) {
+      actionError.value = t('attendance.qrEmpty')
+      return
+    }
+
+    const location = await getCurrentQrLocation()
+    await clockInEmployeeByQr({
+      storeId,
+      qrToken,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      accuracyMeters: location.accuracyMeters,
+    })
+  } catch (error) {
+    if (isUnauthorized(error)) {
+      await logout()
+      return
+    }
+    actionError.value = resolveQrErrorMessage(error)
+  } finally {
+    await loadCurrent()
+    qrScanSubmitting.value = false
+  }
+}
+
+async function clearQrQuery(): Promise<void> {
+  if (route.query.qr !== '1') {
+    return
+  }
+  const query = { ...route.query }
+  delete query.qr
+  await router.replace({ query })
+}
+
+function resolveQrErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data
+    if (data && typeof data === 'object') {
+      const message = (data as { message?: unknown; error?: unknown }).message
+      const fallback = (data as { message?: unknown; error?: unknown }).error
+      if (typeof message === 'string' && message.length > 0) {
+        return message
+      }
+      if (typeof fallback === 'string' && fallback.length > 0) {
+        return fallback
+      }
+    }
+  }
+  if (error instanceof Error && /cancel/i.test(error.message)) {
+    return t('attendance.qrCancelled')
+  }
+  if (isForbidden(error)) {
+    return t('attendance.permissionDenied')
+  }
+  if (isStateConflict(error)) {
+    return t('attendance.stateConflict')
+  }
+  return t('attendance.qrFailed')
 }
 
 function formatDate(value: string): string {

@@ -25,11 +25,12 @@ export interface EmployeeRuntimeCapabilities {
 
 const routeByPath = new Map<string, EmployeeNavRouteName>([
   ['/', 'home'],
-  ['/schedule', 'schedule'],
+  ['/schedule', 'home'],
   ['/attendance', 'attendance'],
   ['/payroll', 'payroll'],
   ['/contracts', 'contracts'],
   ['/notifications', 'notifications'],
+  ['/settings', 'settings'],
 ])
 
 export function getEmployeeRuntimeCapabilities(

@@ -84,24 +84,25 @@
             />
           </svg>
         </RouterLink>
-        <button
-          class="employee-topbar__icon-button"
-          type="button"
-          :aria-label="t('app.logout')"
-          :title="t('app.logout')"
-          @click="logout"
+        <RouterLink
+          class="employee-topbar__icon-link"
+          :to="{ name: 'settings' }"
+          :aria-label="t('nav.settings')"
+          :title="t('nav.settings')"
         >
           <svg
-            class="employee-topbar__svg-icon employee-menu-icon"
+            class="employee-topbar__svg-icon employee-settings-icon"
             viewBox="0 0 32 32"
             focusable="false"
             aria-hidden="true"
           >
-            <path class="employee-topbar__icon-stroke" d="M7 10h18" />
-            <path class="employee-topbar__icon-stroke" d="M7 16h18" />
-            <path class="employee-topbar__icon-stroke" d="M7 22h18" />
+            <circle class="employee-topbar__icon-stroke" cx="16" cy="16" r="3.5" />
+            <path
+              class="employee-topbar__icon-stroke"
+              d="M16 5.8v3M16 23.2v3M7.3 16h-3M27.7 16h-3M9.8 9.8 7.7 7.7M24.3 24.3l-2.1-2.1M22.2 9.8l2.1-2.1M7.7 24.3l2.1-2.1"
+            />
           </svg>
-        </button>
+        </RouterLink>
       </div>
     </header>
 
@@ -125,6 +126,22 @@
 
       <nav class="employee-tabbar" :aria-label="t('nav.primary')">
         <RouterLink
+          class="employee-tabbar__qr-action"
+          :to="{ name: 'attendance', query: { qr: '1' } }"
+          :aria-label="t('attendance.qrScan')"
+          :title="t('attendance.qrScan')"
+        >
+          <svg
+            class="employee-tabbar__qr-icon"
+            viewBox="0 0 32 32"
+            focusable="false"
+            aria-hidden="true"
+          >
+            <path class="employee-tabbar__qr-icon-stroke" d="M7.2 12V9.2c0-1.1.9-2 2-2h4.6M18.2 7.2h4.6c1.1 0 2 .9 2 2V12M7.2 20v2.8c0 1.1.9 2 2 2h4.6M18.2 24.8h4.6c1.1 0 2-.9 2-2V20" />
+            <path class="employee-tabbar__qr-icon-scanline" d="M6.4 16h19.2" />
+          </svg>
+        </RouterLink>
+        <RouterLink
           v-for="item in employeeTabItems"
           :key="item.routeName"
           class="employee-tabbar__item"
@@ -146,18 +163,6 @@
                 class="employee-tabbar__icon-fill"
                 d="M4.4 12.8 14 5.1l9.6 7.7v10.6h-6.2v-6.8h-6.8v6.8H4.4V12.8Z"
               />
-            </g>
-            <g v-else-if="item.routeName === 'schedule'">
-              <rect
-                class="employee-tabbar__icon-stroke"
-                x="6.1"
-                y="6.9"
-                width="15.8"
-                height="17"
-                rx="2.2"
-              />
-              <path class="employee-tabbar__icon-stroke" d="M9.4 4.6v4.6M18.6 4.6v4.6M6.7 11.3h14.6" />
-              <path class="employee-tabbar__icon-dot" d="M10 15.2h.1M14 15.2h.1M18 15.2h.1M10 19.1h.1M14 19.1h.1M18 19.1h.1" />
             </g>
             <g v-else-if="item.routeName === 'attendance'">
               <circle class="employee-tabbar__icon-stroke" cx="14" cy="14" r="8.8" />

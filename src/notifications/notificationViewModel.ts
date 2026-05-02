@@ -54,7 +54,7 @@ export function resolveNotificationRoute(
     case 'CONTRACT':
       return 'contracts'
     case 'SCHEDULE':
-      return 'schedule'
+      return 'home'
     case 'PAYROLL':
       return 'payroll'
     case 'ATTENDANCE':

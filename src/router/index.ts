@@ -4,11 +4,11 @@ import { hasAccessToken } from '@/session/tokenStorage'
 import EmployeeAppShell from '@/component/EmployeeAppShell.vue'
 import AttendanceView from '@/views/AttendanceView.vue'
 import ContractsView from '@/views/ContractsView.vue'
-import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import NotificationsView from '@/views/NotificationsView.vue'
 import PayrollView from '@/views/PayrollView.vue'
 import ScheduleView from '@/views/ScheduleView.vue'
+import SettingsView from '@/views/HomeView.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -20,12 +20,11 @@ export const router = createRouter({
         {
           path: '',
           name: 'home',
-          component: HomeView,
+          component: ScheduleView,
         },
         {
           path: 'schedule',
-          name: 'schedule',
-          component: ScheduleView,
+          redirect: { name: 'home' },
         },
         {
           path: 'attendance',
@@ -46,6 +45,11 @@ export const router = createRouter({
           path: 'notifications',
           name: 'notifications',
           component: NotificationsView,
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: SettingsView,
         },
       ],
     },

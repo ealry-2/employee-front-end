@@ -5,11 +5,6 @@ export const employeeNavItems = [
     shortLabelKey: 'nav.homeShort',
   },
   {
-    routeName: 'schedule',
-    labelKey: 'nav.schedule',
-    shortLabelKey: 'nav.scheduleShort',
-  },
-  {
     routeName: 'attendance',
     labelKey: 'nav.attendance',
     shortLabelKey: 'nav.attendanceShort',
@@ -29,12 +24,17 @@ export const employeeNavItems = [
     labelKey: 'nav.notifications',
     shortLabelKey: 'nav.notificationsShort',
   },
+  {
+    routeName: 'settings',
+    labelKey: 'nav.settings',
+    shortLabelKey: 'nav.settingsShort',
+  },
 ] as const
 
 export type EmployeeNavRouteName = (typeof employeeNavItems)[number]['routeName']
 
 export const employeeTabItems = employeeNavItems.filter(
-  (item) => item.routeName !== 'notifications',
+  (item) => item.routeName !== 'notifications' && item.routeName !== 'settings',
 )
 
 export function isEmployeeNavRouteName(value: unknown): value is EmployeeNavRouteName {
