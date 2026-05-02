@@ -5,14 +5,12 @@
         <p class="employee-contracts__eyebrow">{{ t('contracts.eyebrow') }}</p>
         <h2 id="contracts-heading">{{ t('screen.contracts.title') }}</h2>
       </div>
-      <button
-        class="employee-secondary-button employee-contracts__refresh"
-        type="button"
+      <EmployeeRefreshButton
+        class="employee-contracts__refresh"
+        :label="t('contracts.refresh')"
         :disabled="loading"
         @click="loadContracts"
-      >
-        {{ t('contracts.refresh') }}
-      </button>
+      />
     </div>
 
     <EmployeeStatePanel
@@ -176,6 +174,7 @@ import { useEmployeeAppContext } from '@/app/employeeAppContext'
 import { isForbidden, isUnauthorized } from '@/api/client'
 import { loadMyContractDetail, loadMyContracts } from '@/api/contracts'
 import type { AppContractDetailResponse, AppContractListItemResponse } from '@/api/types'
+import EmployeeRefreshButton from '@/component/EmployeeRefreshButton.vue'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
 import {
   contractActionKey,

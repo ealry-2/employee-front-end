@@ -294,15 +294,17 @@ button {
 }
 
 .employee-topbar__branch {
-  display: grid;
-  justify-items: start;
-  gap: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 1 1 auto;
   min-width: 0;
 }
 
 .employee-topbar__brand-link {
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
   width: 5.2rem;
   height: 2rem;
   border-radius: 0.8rem;
@@ -337,7 +339,8 @@ button {
   position: relative;
   display: inline-flex;
   align-items: center;
-  max-width: min(100%, 28rem);
+  min-width: 0;
+  max-width: min(100%, 30rem);
 }
 
 .employee-branch-picker__select {
@@ -358,11 +361,29 @@ button {
 
 .employee-branch-picker__chevron {
   position: absolute;
+  top: 50%;
   right: 0;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
   color: var(--employee-color-text-muted);
-  font-size: 2rem;
-  line-height: 1;
+  transform: translateY(-50%);
   pointer-events: none;
+}
+
+.employee-branch-picker__chevron-icon {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+}
+
+.employee-branch-picker__chevron-stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .employee-branch-picker__fallback {
@@ -402,8 +423,7 @@ button {
   background: var(--employee-color-orange);
 }
 
-.employee-topbar__svg-icon,
-.employee-logout-icon {
+.employee-topbar__svg-icon {
   position: relative;
   display: block;
   width: 2.6rem;
@@ -416,26 +436,6 @@ button {
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-.employee-logout-icon::before,
-.employee-logout-icon::after {
-  content: '';
-  position: absolute;
-  left: 0.3rem;
-  width: 2rem;
-  height: 0.28rem;
-  border-radius: 9999px;
-  background: currentColor;
-}
-
-.employee-logout-icon::before {
-  top: 0.75rem;
-  box-shadow: 0 0.85rem 0 currentColor;
-}
-
-.employee-logout-icon::after {
-  top: 2.45rem;
 }
 
 .employee-icon-button {
@@ -453,6 +453,43 @@ button {
 .employee-icon-button:hover {
   background: var(--employee-color-primary);
   color: var(--employee-color-on-primary);
+}
+
+.employee-refresh-button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 4.4rem;
+  height: 4.4rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 0.8rem;
+  background: var(--employee-color-surface);
+  color: var(--employee-color-text-secondary);
+}
+
+.employee-refresh-button:hover:not(:disabled) {
+  border-color: var(--employee-color-primary-border);
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+}
+
+.employee-refresh-button:disabled {
+  color: var(--employee-color-text-placeholder);
+  cursor: not-allowed;
+}
+
+.employee-refresh-button__icon {
+  display: block;
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.employee-refresh-button__stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .employee-store-strip {
@@ -693,7 +730,6 @@ button {
   margin-top: 2rem;
 }
 
-.employee-schedule__header,
 .employee-schedule-detail__header {
   display: flex;
   align-items: flex-start;
@@ -701,7 +737,6 @@ button {
   gap: 1.2rem;
 }
 
-.employee-schedule__header h2,
 .employee-schedule-detail__header h2 {
   margin: 0;
   color: var(--employee-color-text);
@@ -721,17 +756,9 @@ button {
   text-transform: uppercase;
 }
 
-.employee-schedule__today {
-  min-height: 4.4rem;
-  padding-inline: 1.4rem;
-  font-size: 1.4rem;
-  white-space: nowrap;
-}
-
 .employee-schedule__controls {
   display: grid;
   gap: 1.2rem;
-  margin-top: 1.6rem;
 }
 
 .employee-segmented {
@@ -787,48 +814,54 @@ button {
 }
 
 .employee-schedule-month {
-  margin-top: 1.8rem;
-  border-radius: 2.8rem;
+  margin-top: 1.4rem;
+  border-radius: 2.4rem;
   background: var(--employee-color-surface-raised);
-  padding: 2.2rem 2rem 2.8rem;
+  padding: 1.8rem 1.2rem 2rem;
 }
 
 .employee-schedule-month__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1.6rem;
-  margin-bottom: 2.2rem;
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr) 4.4rem;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.8rem;
 }
 
 .employee-schedule-month__header h3 {
+  grid-column: 1 / -1;
+  grid-row: 1;
   margin: 0;
   color: var(--employee-color-text);
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   font-weight: 700;
   letter-spacing: 0;
   line-height: 1.25;
+  text-align: center;
 }
 
 .employee-schedule-month__nav {
+  grid-column: 1 / -1;
+  grid-row: 1;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding-top: 4.2rem;
+  justify-content: space-between;
+  pointer-events: none;
 }
 
 .employee-schedule-month__nav-button {
   display: grid;
   place-items: center;
-  width: 4.8rem;
-  height: 4.8rem;
-  border: 1px solid var(--employee-color-border);
+  width: 4.4rem;
+  height: 4.4rem;
+  border: 0;
   border-radius: 0.8rem;
-  background: var(--employee-color-surface);
+  background: transparent;
   color: var(--employee-color-text-secondary);
-  font-size: 3rem;
+  font-size: 2.6rem;
   font-weight: 500;
   line-height: 1;
+  pointer-events: auto;
 }
 
 .employee-schedule-month__weekdays,
@@ -839,7 +872,7 @@ button {
 
 .employee-schedule-month__weekdays {
   gap: 0;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.4rem;
 }
 
 .employee-schedule-month__weekdays span {
@@ -851,7 +884,8 @@ button {
 }
 
 .employee-schedule-month__grid {
-  gap: 0.4rem 0;
+  gap: 0.2rem 0;
+  grid-auto-rows: 4.4rem;
 }
 
 .employee-schedule-day {
@@ -861,12 +895,13 @@ button {
   align-items: center;
   justify-content: flex-start;
   min-width: 0;
-  min-height: 7.4rem;
+  min-height: 4.4rem;
+  height: 4.4rem;
   border: 0;
   border-radius: 0.8rem;
   background: transparent;
   color: var(--employee-color-text);
-  padding: 0.6rem 0.2rem 1rem;
+  padding: 0.25rem 0.2rem 0.4rem;
 }
 
 .employee-schedule-day:disabled {
@@ -881,38 +916,94 @@ button {
   background: rgba(9, 85, 171, 0.14);
 }
 
+.employee-schedule-day.is-selected {
+  background: var(--employee-color-primary);
+  color: var(--employee-color-on-primary);
+}
+
 .employee-schedule-day.has-schedules {
   color: var(--employee-color-text);
+}
+
+.employee-schedule-day.has-schedules.is-selected {
+  color: var(--employee-color-on-primary);
 }
 
 .employee-schedule-day__number {
   display: grid;
   place-items: center;
   width: 100%;
-  flex: 1 1 auto;
+  height: 100%;
+  flex: 0 0 auto;
   min-height: 0;
-  font-size: 1.65rem;
+  font-size: 1.55rem;
   font-weight: 500;
   line-height: 1.2;
 }
 
 .employee-schedule-day__indicators {
+  position: absolute;
+  left: 50%;
+  bottom: 0.48rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.38rem;
-  min-height: 1.2rem;
+  min-height: 0.9rem;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .employee-schedule-day__dot {
-  width: 0.72rem;
-  height: 0.72rem;
+  width: 0.6rem;
+  height: 0.6rem;
   border-radius: 9999px;
   background: #54b2e9;
 }
 
 .employee-schedule-day__dot:first-child:nth-last-child(2) {
   background: #2452a4;
+}
+
+.employee-schedule-day.is-selected .employee-schedule-day__dot {
+  background: var(--employee-color-on-primary);
+}
+
+.employee-schedule-month-agenda {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 1.2rem;
+  background: var(--employee-color-surface-raised);
+  padding: 1.4rem;
+}
+
+.employee-schedule-month-agenda__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.employee-schedule-month-agenda__header h3 {
+  margin: 0;
+  color: var(--employee-color-text);
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.employee-schedule-month-agenda__header span {
+  color: var(--employee-color-text-muted);
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.employee-schedule-month-agenda__card {
+  min-height: 5.8rem;
 }
 
 .employee-schedule-list {
@@ -1080,10 +1171,7 @@ button {
 }
 
 .employee-attendance__refresh {
-  min-height: 4.4rem;
-  padding-inline: 1.4rem;
-  font-size: 1.4rem;
-  white-space: nowrap;
+  margin-top: 0.1rem;
 }
 
 .employee-attendance-card,
@@ -1276,10 +1364,7 @@ button {
 }
 
 .employee-payroll__refresh {
-  min-height: 4.4rem;
-  padding-inline: 1.4rem;
-  font-size: 1.4rem;
-  white-space: nowrap;
+  margin-top: 0.1rem;
 }
 
 .employee-payroll-summary,
@@ -1489,10 +1574,7 @@ button {
 }
 
 .employee-contracts__refresh {
-  min-height: 4.4rem;
-  padding-inline: 1.4rem;
-  font-size: 1.4rem;
-  white-space: nowrap;
+  margin-top: 0.1rem;
 }
 
 .employee-contracts-list,
@@ -1724,10 +1806,7 @@ button {
 }
 
 .employee-notifications__refresh {
-  min-height: 4.4rem;
-  padding-inline: 1.4rem;
-  font-size: 1.4rem;
-  white-space: nowrap;
+  margin-top: 0.1rem;
 }
 
 .employee-notifications__toolbar {

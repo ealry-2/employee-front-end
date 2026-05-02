@@ -43,7 +43,18 @@
               {{ store.name }}
             </option>
           </select>
-          <span class="employee-branch-picker__chevron" aria-hidden="true">⌄</span>
+          <span class="employee-branch-picker__chevron" aria-hidden="true">
+            <svg
+              class="employee-branch-picker__chevron-icon"
+              viewBox="0 0 24 24"
+              focusable="false"
+            >
+              <path
+                class="employee-branch-picker__chevron-stroke"
+                d="M7 9.5 12 14.5 17 9.5"
+              />
+            </svg>
+          </span>
         </span>
         <p v-else class="employee-branch-picker__fallback">
           {{ selectedStore ? selectedStore.name : t('home.emptyTitle') }}
@@ -80,7 +91,16 @@
           :title="t('app.logout')"
           @click="logout"
         >
-          <span class="employee-logout-icon" aria-hidden="true"></span>
+          <svg
+            class="employee-topbar__svg-icon employee-menu-icon"
+            viewBox="0 0 32 32"
+            focusable="false"
+            aria-hidden="true"
+          >
+            <path class="employee-topbar__icon-stroke" d="M7 10h18" />
+            <path class="employee-topbar__icon-stroke" d="M7 16h18" />
+            <path class="employee-topbar__icon-stroke" d="M7 22h18" />
+          </svg>
         </button>
       </div>
     </header>

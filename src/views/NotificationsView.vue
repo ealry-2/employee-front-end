@@ -5,14 +5,12 @@
         <p class="employee-notifications__eyebrow">{{ t('notifications.eyebrow') }}</p>
         <h2 id="notifications-heading">{{ t('screen.notifications.title') }}</h2>
       </div>
-      <button
-        class="employee-secondary-button employee-notifications__refresh"
-        type="button"
+      <EmployeeRefreshButton
+        class="employee-notifications__refresh"
+        :label="t('notifications.refresh')"
         :disabled="loading"
         @click="loadNotifications"
-      >
-        {{ t('notifications.refresh') }}
-      </button>
+      />
     </div>
 
     <EmployeeStatePanel
@@ -108,6 +106,7 @@ import { useEmployeeAppContext } from '@/app/employeeAppContext'
 import { isForbidden, isUnauthorized } from '@/api/client'
 import { loadMyNotifications, markNotificationRead } from '@/api/notifications'
 import type { AppNotificationResponse } from '@/api/types'
+import EmployeeRefreshButton from '@/component/EmployeeRefreshButton.vue'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
 import {
   notificationTargetKey,

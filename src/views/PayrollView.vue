@@ -5,14 +5,12 @@
         <p class="employee-payroll__eyebrow">{{ t('payroll.eyebrow') }}</p>
         <h2 id="payroll-heading">{{ t('screen.payroll.title') }}</h2>
       </div>
-      <button
-        class="employee-secondary-button employee-payroll__refresh"
-        type="button"
+      <EmployeeRefreshButton
+        class="employee-payroll__refresh"
+        :label="t('payroll.refresh')"
         :disabled="loading"
         @click="loadPayrolls"
-      >
-        {{ t('payroll.refresh') }}
-      </button>
+      />
     </div>
 
     <EmployeeStatePanel
@@ -223,6 +221,7 @@ import { useEmployeeAppContext } from '@/app/employeeAppContext'
 import { isForbidden, isUnauthorized } from '@/api/client'
 import { loadMyPayrolls } from '@/api/payroll'
 import type { PayrollResponse } from '@/api/types'
+import EmployeeRefreshButton from '@/component/EmployeeRefreshButton.vue'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
 import {
   compensationTypeKey,

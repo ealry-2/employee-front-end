@@ -1,19 +1,5 @@
 <template>
-  <section class="employee-schedule" aria-labelledby="schedule-heading">
-    <div class="employee-schedule__header">
-      <div>
-        <p class="employee-schedule__eyebrow">{{ t('schedule.eyebrow') }}</p>
-        <h2 id="schedule-heading">{{ t('screen.schedule.title') }}</h2>
-      </div>
-      <button
-        class="employee-secondary-button employee-schedule__today"
-        type="button"
-        @click="goToday"
-      >
-        {{ t('schedule.today') }}
-      </button>
-    </div>
-
+  <section class="employee-schedule" :aria-label="t('screen.schedule.title')">
     <EmployeeStatePanel
       v-if="!selectedStore"
       tone="empty"
@@ -83,65 +69,94 @@
       />
 
       <template v-else>
-        <section
-          v-if="mode === 'month'"
-          class="employee-schedule-month"
-          :aria-label="t('schedule.monthView')"
-        >
-          <header class="employee-schedule-month__header">
-            <h3>{{ rangeLabel }}</h3>
-            <div class="employee-schedule-month__nav">
+        <template v-if="mode === 'month'">
+          <section
+            class="employee-schedule-month"
+            :aria-label="t('schedule.monthView')"
+          >
+            <header class="employee-schedule-month__header">
+              <h3>{{ rangeLabel }}</h3>
+              <div class="employee-schedule-month__nav">
+                <button
+                  class="employee-schedule-month__nav-button"
+                  type="button"
+                  :aria-label="t('schedule.previous')"
+                  @click="movePeriod(-1)"
+                >
+                  <span aria-hidden="true">‹</span>
+                </button>
+                <button
+                  class="employee-schedule-month__nav-button"
+                  type="button"
+                  :aria-label="t('schedule.next')"
+                  @click="movePeriod(1)"
+                >
+                  <span aria-hidden="true">›</span>
+                </button>
+              </div>
+            </header>
+            <div class="employee-schedule-month__weekdays" aria-hidden="true">
+              <span v-for="weekday in weekdayLabels" :key="weekday">{{ weekday }}</span>
+            </div>
+            <div class="employee-schedule-month__grid">
               <button
-                class="employee-schedule-month__nav-button"
+                v-for="cell in monthCells"
+                :key="cell.date"
+                class="employee-schedule-day"
+                :class="{
+                  'is-muted': !cell.inCurrentMonth,
+                  'is-today': cell.date === today,
+                  'is-selected': cell.date === selectedMonthDate,
+                  'has-schedules': cell.schedules.length > 0,
+                }"
                 type="button"
-                :aria-label="t('schedule.previous')"
-                @click="movePeriod(-1)"
+                :disabled="cell.schedules.length === 0"
+                :aria-label="monthCellLabel(cell.date, cell.schedules.length)"
+                @click="selectMonthDate(cell)"
               >
-                <span aria-hidden="true">‹</span>
-              </button>
-              <button
-                class="employee-schedule-month__nav-button"
-                type="button"
-                :aria-label="t('schedule.next')"
-                @click="movePeriod(1)"
-              >
-                <span aria-hidden="true">›</span>
+                <span class="employee-schedule-day__number">{{ dayNumber(cell.date) }}</span>
+                <span
+                  v-if="cell.schedules.length > 0"
+                  class="employee-schedule-day__indicators"
+                  aria-hidden="true"
+                >
+                  <span
+                    v-for="dot in scheduleDots(cell.schedules.length)"
+                    :key="dot"
+                    class="employee-schedule-day__dot"
+                  ></span>
+                </span>
               </button>
             </div>
-          </header>
-          <div class="employee-schedule-month__weekdays" aria-hidden="true">
-            <span v-for="weekday in weekdayLabels" :key="weekday">{{ weekday }}</span>
-          </div>
-          <div class="employee-schedule-month__grid">
+          </section>
+
+          <section class="employee-schedule-month-agenda" :aria-label="t('schedule.monthAgendaTitle')">
+            <header class="employee-schedule-month-agenda__header">
+              <h3>{{ t('schedule.monthAgendaTitle') }}</h3>
+              <span>{{ selectedMonthDateLabel }}</span>
+            </header>
             <button
-              v-for="cell in monthCells"
-              :key="cell.date"
-              class="employee-schedule-day"
-              :class="{
-                'is-muted': !cell.inCurrentMonth,
-                'is-today': cell.date === today,
-                'has-schedules': cell.schedules.length > 0,
-              }"
+              v-for="schedule in selectedMonthSchedules"
+              :key="schedule.scheduleId"
+              class="employee-schedule-card employee-schedule-month-agenda__card"
               type="button"
-              :disabled="cell.schedules.length === 0"
-              :aria-label="monthCellLabel(cell.date, cell.schedules.length)"
-              @click="openSchedule(cell.schedules[0])"
+              @click="openSchedule(schedule)"
             >
-              <span class="employee-schedule-day__number">{{ dayNumber(cell.date) }}</span>
+              <span class="employee-schedule-card__time">
+                {{ formatTimeRange(schedule) }}
+              </span>
               <span
-                v-if="cell.schedules.length > 0"
-                class="employee-schedule-day__indicators"
-                aria-hidden="true"
+                class="employee-schedule-status"
+                :class="`employee-schedule-status--${scheduleStatusTone(schedule.status)}`"
               >
-                <span
-                  v-for="dot in scheduleDots(cell.schedules.length)"
-                  :key="dot"
-                  class="employee-schedule-day__dot"
-                ></span>
+                {{ t(scheduleStatusKey(schedule.status)) }}
+              </span>
+              <span v-if="schedule.memo" class="employee-schedule-card__memo">
+                {{ schedule.memo }}
               </span>
             </button>
-          </div>
-        </section>
+          </section>
+        </template>
 
         <section
           v-else
@@ -290,6 +305,7 @@ const today = todayDateText()
 const loading = ref(false)
 const errorMessage = ref('')
 const scheduleItems = ref<ScheduleResponse[]>([])
+const selectedMonthDate = ref(today)
 const selectedSchedule = ref<ScheduleResponse | null>(null)
 const detailLoading = ref(false)
 const detailError = ref('')
@@ -300,6 +316,10 @@ let detailRequestId = 0
 const currentRange = computed(() => resolveScheduleDateRange(mode.value, cursorDate.value))
 const schedules = computed(() => sortSchedules(scheduleItems.value))
 const groupedSchedules = computed(() => groupSchedulesByDate(schedules.value))
+const selectedMonthSchedules = computed(() =>
+  schedules.value.filter((schedule) => schedule.workDate === selectedMonthDate.value),
+)
+const selectedMonthDateLabel = computed(() => formatDate(selectedMonthDate.value))
 const monthCells = computed<ScheduleMonthCell[]>(() =>
   buildScheduleMonthCells(cursorDate.value, schedules.value),
 )
@@ -355,6 +375,7 @@ async function loadSchedules(): Promise<void> {
     })
     if (requestId === scheduleRequestId) {
       scheduleItems.value = response.items
+      syncSelectedMonthDate(response.items)
     }
   } catch (error) {
     if (requestId !== scheduleRequestId) {
@@ -383,6 +404,31 @@ function movePeriod(direction: -1 | 1): void {
 
 function goToday(): void {
   cursorDate.value = todayDateText()
+  selectedMonthDate.value = todayDateText()
+}
+
+function selectMonthDate(cell: ScheduleMonthCell): void {
+  if (cell.schedules.length === 0) {
+    return
+  }
+  selectedMonthDate.value = cell.date
+}
+
+function syncSelectedMonthDate(items: ScheduleResponse[]): void {
+  if (mode.value !== 'month') {
+    return
+  }
+  const sortedItems = sortSchedules(items)
+  const selectedDateStillAvailable = sortedItems.some(
+    (schedule) => schedule.workDate === selectedMonthDate.value,
+  )
+  if (selectedDateStillAvailable) {
+    return
+  }
+  selectedMonthDate.value =
+    sortedItems.find((schedule) => schedule.workDate === today)?.workDate ??
+    sortedItems[0]?.workDate ??
+    cursorDate.value
 }
 
 async function openSchedule(schedule: ScheduleResponse): Promise<void> {

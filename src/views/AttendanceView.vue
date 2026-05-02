@@ -5,14 +5,12 @@
         <p class="employee-attendance__eyebrow">{{ t('attendance.eyebrow') }}</p>
         <h2 id="attendance-heading">{{ t('screen.attendance.title') }}</h2>
       </div>
-      <button
-        class="employee-secondary-button employee-attendance__refresh"
-        type="button"
+      <EmployeeRefreshButton
+        class="employee-attendance__refresh"
+        :label="t('attendance.refresh')"
         :disabled="loading || actionSubmitting"
         @click="loadCurrent"
-      >
-        {{ t('attendance.refresh') }}
-      </button>
+      />
     </div>
 
     <EmployeeStatePanel
@@ -168,6 +166,7 @@ import { useEmployeeAppContext } from '@/app/employeeAppContext'
 import { isForbidden, isStateConflict, isUnauthorized } from '@/api/client'
 import { clockInEmployee, clockOutEmployee, loadAttendanceCurrent } from '@/api/attendance'
 import type { AppAttendanceCurrentResponse, AttendanceResponse, ScheduleResponse } from '@/api/types'
+import EmployeeRefreshButton from '@/component/EmployeeRefreshButton.vue'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
 import { registerBrowserResumeHandler, type ResumeHandlerCleanup } from '@/runtime/appResume'
 import {
