@@ -79,6 +79,18 @@ export function isUnauthorized(error: unknown): boolean {
   return axios.isAxiosError(error) && error.response?.status === 401
 }
 
+export function isForbidden(error: unknown): boolean {
+  return axios.isAxiosError(error) && error.response?.status === 403
+}
+
+export function isStateConflict(error: unknown): boolean {
+  if (!axios.isAxiosError(error)) {
+    return false
+  }
+  const status = error.response?.status
+  return status === 400 || status === 409 || status === 422
+}
+
 async function refreshEmployeeTokens(refreshToken: string): Promise<LoginResponse> {
   if (!refreshRequest) {
     const persistence = getActiveTokenPersistence()

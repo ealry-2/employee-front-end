@@ -147,7 +147,18 @@ button {
 .employee-icon-button:focus-visible,
 .employee-store-card:focus-visible,
 .employee-store-select:focus-visible,
-.employee-tabbar__item:focus-visible {
+.employee-tabbar__item:focus-visible,
+.employee-segmented__button:focus-visible,
+.employee-schedule-day:focus-visible,
+.employee-schedule-card:focus-visible {
+  outline: 2px solid var(--employee-color-focus);
+  outline-offset: 2px;
+}
+
+.employee-attendance-action:focus-visible,
+.employee-attendance-record:focus-within,
+.employee-payroll-card:focus-visible,
+.employee-contract-card:focus-visible {
   outline: 2px solid var(--employee-color-focus);
   outline-offset: 2px;
 }
@@ -484,6 +495,942 @@ button {
   font-weight: 600;
 }
 
+.employee-schedule {
+  margin-top: 2rem;
+}
+
+.employee-schedule__header,
+.employee-schedule-detail__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.employee-schedule__header h2,
+.employee-schedule-detail__header h2 {
+  margin: 0;
+  color: var(--employee-color-text);
+  font-size: 2.4rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.18;
+}
+
+.employee-schedule__eyebrow {
+  margin: 0 0 0.6rem;
+  color: var(--employee-color-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.employee-schedule__today {
+  min-height: 4.4rem;
+  padding-inline: 1.4rem;
+  font-size: 1.4rem;
+  white-space: nowrap;
+}
+
+.employee-schedule__controls {
+  display: grid;
+  gap: 1.2rem;
+  margin-top: 1.6rem;
+}
+
+.employee-segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--employee-color-border);
+  border-radius: 9999px;
+  background: var(--employee-color-surface-subtle);
+  padding: 0.4rem;
+}
+
+.employee-segmented__button {
+  min-width: 0;
+  min-height: 4.4rem;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--employee-color-text-muted);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.employee-segmented__button.is-selected {
+  background: var(--employee-color-surface);
+  color: var(--employee-color-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.employee-schedule-range {
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr) 4.4rem;
+  align-items: center;
+  gap: 1rem;
+}
+
+.employee-schedule-range p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--employee-color-text);
+  font-size: 1.7rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.employee-schedule-range__button {
+  width: 4.4rem;
+  height: 4.4rem;
+}
+
+.employee-schedule-month,
+.employee-schedule-list {
+  margin-top: 1.6rem;
+}
+
+.employee-schedule-month__weekdays,
+.employee-schedule-month__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.employee-schedule-month__weekdays {
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.employee-schedule-month__weekdays span {
+  color: var(--employee-color-text-muted);
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.employee-schedule-month__grid {
+  gap: 0.4rem;
+}
+
+.employee-schedule-day {
+  position: relative;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  min-width: 0;
+  min-height: 5.2rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 0.8rem;
+  background: var(--employee-color-surface);
+  color: var(--employee-color-text);
+  padding: 0.6rem 0.3rem;
+}
+
+.employee-schedule-day:disabled {
+  cursor: default;
+}
+
+.employee-schedule-day.is-muted {
+  background: var(--employee-color-surface-pearl);
+  color: var(--employee-color-text-placeholder);
+}
+
+.employee-schedule-day.is-today {
+  border-color: var(--employee-color-primary);
+}
+
+.employee-schedule-day.has-schedules {
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+}
+
+.employee-schedule-day__number {
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.employee-schedule-day__count {
+  display: grid;
+  place-items: center;
+  min-width: 2rem;
+  height: 2rem;
+  margin-top: 0.5rem;
+  border-radius: 9999px;
+  background: var(--employee-color-primary);
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.employee-schedule-list {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.employee-schedule-group {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.employee-schedule-group__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--employee-color-text-muted);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.02rem;
+  line-height: 1.3;
+}
+
+.employee-schedule-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem 1rem;
+  width: 100%;
+  min-height: 6.4rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 0.8rem;
+  background: var(--employee-color-surface);
+  padding: 1.2rem;
+  text-align: left;
+}
+
+.employee-schedule-card__time {
+  color: var(--employee-color-text);
+  font-size: 1.7rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.employee-schedule-card__memo {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  color: var(--employee-color-text-muted);
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.employee-schedule-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8rem;
+  border-radius: 9999px;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.employee-schedule-status--planned {
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+}
+
+.employee-schedule-status--success {
+  background: rgba(0, 215, 34, 0.12);
+  color: #08751b;
+}
+
+.employee-schedule-status--muted {
+  background: var(--employee-color-surface-subtle);
+  color: var(--employee-color-text-muted);
+}
+
+.employee-schedule-detail {
+  margin-top: 1.6rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 1.8rem;
+  background: var(--employee-color-surface-raised);
+  padding: 1.8rem;
+}
+
+.employee-schedule-detail__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.4rem 0 0;
+}
+
+.employee-schedule-detail__grid div {
+  min-width: 0;
+  border-top: 1px solid var(--employee-color-border);
+  padding-top: 1rem;
+}
+
+.employee-schedule-detail__grid dt {
+  color: var(--employee-color-text-muted);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.employee-schedule-detail__grid dd {
+  margin: 0.3rem 0 0;
+  overflow-wrap: anywhere;
+  color: var(--employee-color-text);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.employee-schedule-detail__memo {
+  grid-column: 1 / -1;
+}
+
+.employee-attendance {
+  margin-top: 2rem;
+}
+
+.employee-attendance__header,
+.employee-attendance-card__top,
+.employee-attendance-history__header,
+.employee-attendance-record__main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.employee-attendance__header h2,
+.employee-attendance-card h3,
+.employee-attendance-history h3 {
+  margin: 0;
+  color: var(--employee-color-text);
+  font-size: 2.4rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.18;
+}
+
+.employee-attendance__eyebrow,
+.employee-attendance-card__label {
+  margin: 0 0 0.6rem;
+  color: var(--employee-color-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.employee-attendance__refresh {
+  min-height: 4.4rem;
+  padding-inline: 1.4rem;
+  font-size: 1.4rem;
+  white-space: nowrap;
+}
+
+.employee-attendance-card,
+.employee-attendance-history {
+  margin-top: 1.6rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 1.8rem;
+  background: var(--employee-color-surface-raised);
+  padding: 1.8rem;
+}
+
+.employee-attendance-card {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.employee-attendance-card__description,
+.employee-attendance-card__sync,
+.employee-attendance-break__error,
+.employee-attendance-action-error {
+  margin: 0;
+  color: var(--employee-color-text-muted);
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.employee-attendance-action-error,
+.employee-attendance-break__error {
+  color: #9f1023;
+}
+
+.employee-attendance-meta,
+.employee-attendance-record__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.employee-attendance-meta div,
+.employee-attendance-record__meta div {
+  min-width: 0;
+  border-top: 1px solid var(--employee-color-border);
+  padding-top: 1rem;
+}
+
+.employee-attendance-meta dt,
+.employee-attendance-record__meta dt {
+  color: var(--employee-color-text-muted);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.employee-attendance-meta dd,
+.employee-attendance-record__meta dd {
+  margin: 0.3rem 0 0;
+  overflow-wrap: anywhere;
+  color: var(--employee-color-text);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.employee-attendance-break {
+  margin-top: 0.2rem;
+}
+
+.employee-attendance-action {
+  width: 100%;
+}
+
+.employee-attendance-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8rem;
+  border-radius: 9999px;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.employee-attendance-status--planned {
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+}
+
+.employee-attendance-status--success {
+  background: rgba(0, 215, 34, 0.12);
+  color: #08751b;
+}
+
+.employee-attendance-status--warning {
+  background: rgba(255, 107, 0, 0.12);
+  color: #a24300;
+}
+
+.employee-attendance-status--muted {
+  background: var(--employee-color-surface-subtle);
+  color: var(--employee-color-text-muted);
+}
+
+.employee-attendance-history {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.employee-attendance-history__header span {
+  border-radius: 9999px;
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.employee-attendance-records {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.employee-attendance-record {
+  display: grid;
+  gap: 1rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 0.8rem;
+  background: var(--employee-color-surface);
+  padding: 1.2rem;
+}
+
+.employee-attendance-record__main span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--employee-color-text);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.employee-payroll {
+  margin-top: 2rem;
+}
+
+.employee-payroll__header,
+.employee-payroll-list__header,
+.employee-payroll-detail__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.employee-payroll__header h2,
+.employee-payroll-summary h3,
+.employee-payroll-list h3,
+.employee-payroll-detail__header h2,
+.employee-payroll-breakdown h3 {
+  margin: 0;
+  color: var(--employee-color-text);
+  font-size: 2.4rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.18;
+}
+
+.employee-payroll-breakdown h3 {
+  font-size: 1.7rem;
+  line-height: 1.3;
+}
+
+.employee-payroll__eyebrow {
+  margin: 0 0 0.6rem;
+  color: var(--employee-color-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.employee-payroll__refresh {
+  min-height: 4.4rem;
+  padding-inline: 1.4rem;
+  font-size: 1.4rem;
+  white-space: nowrap;
+}
+
+.employee-payroll-summary,
+.employee-payroll-list,
+.employee-payroll-detail {
+  margin-top: 1.6rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 1.8rem;
+  background: var(--employee-color-surface-raised);
+  padding: 1.8rem;
+}
+
+.employee-payroll-summary {
+  display: grid;
+  gap: 1.4rem;
+  border-color: rgba(20, 110, 245, 0.32);
+  border-left-width: 0.4rem;
+}
+
+.employee-payroll-summary > strong {
+  color: var(--employee-color-text);
+  font-size: 3.2rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.employee-payroll-summary__grid,
+.employee-payroll-detail__grid,
+.employee-payroll-breakdown dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.employee-payroll-summary__grid div,
+.employee-payroll-detail__grid div,
+.employee-payroll-breakdown dl div {
+  min-width: 0;
+  border-top: 1px solid var(--employee-color-border);
+  padding-top: 1rem;
+}
+
+.employee-payroll-summary__grid dt,
+.employee-payroll-detail__grid dt,
+.employee-payroll-breakdown dt {
+  color: var(--employee-color-text-muted);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.employee-payroll-summary__grid dd,
+.employee-payroll-detail__grid dd,
+.employee-payroll-breakdown dd {
+  margin: 0.3rem 0 0;
+  overflow-wrap: anywhere;
+  color: var(--employee-color-text);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.employee-payroll-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.employee-payroll-list__header span {
+  border-radius: 9999px;
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.employee-payroll-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem 1rem;
+  width: 100%;
+  min-height: 7.2rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 0.8rem;
+  background: var(--employee-color-surface);
+  padding: 1.2rem;
+  text-align: left;
+}
+
+.employee-payroll-card:hover,
+.employee-payroll-card.is-selected {
+  border-color: var(--employee-color-primary);
+}
+
+.employee-payroll-card.is-selected {
+  background: var(--employee-color-primary-soft);
+}
+
+.employee-payroll-card__period,
+.employee-payroll-card__amount {
+  color: var(--employee-color-text);
+  font-size: 1.6rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.employee-payroll-card__meta {
+  grid-column: 1 / -1;
+  color: var(--employee-color-text-muted);
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.employee-payroll-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8rem;
+  border-radius: 9999px;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.employee-payroll-status--planned {
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+}
+
+.employee-payroll-status--success {
+  background: rgba(0, 215, 34, 0.12);
+  color: #08751b;
+}
+
+.employee-payroll-status--muted {
+  background: var(--employee-color-surface-subtle);
+  color: var(--employee-color-text-muted);
+}
+
+.employee-payroll-detail {
+  display: grid;
+  gap: 1.6rem;
+}
+
+.employee-payroll-breakdown {
+  display: grid;
+  gap: 1rem;
+}
+
+.employee-payroll-detail__warning {
+  margin: 0;
+  border: 1px solid rgba(238, 29, 54, 0.24);
+  border-radius: 0.8rem;
+  background: rgba(238, 29, 54, 0.06);
+  color: #9f1023;
+  padding: 1.2rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.employee-contracts {
+  margin-top: 2rem;
+}
+
+.employee-contracts__header,
+.employee-contracts-list__header,
+.employee-contract-detail__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.employee-contracts__header h2,
+.employee-contracts-list h3,
+.employee-contract-detail__header h2,
+.employee-contract-document h3 {
+  margin: 0;
+  color: var(--employee-color-text);
+  font-size: 2.4rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.18;
+}
+
+.employee-contract-document h3 {
+  font-size: 1.7rem;
+}
+
+.employee-contracts__eyebrow {
+  margin: 0 0 0.6rem;
+  color: var(--employee-color-primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.employee-contracts__refresh {
+  min-height: 4.4rem;
+  padding-inline: 1.4rem;
+  font-size: 1.4rem;
+  white-space: nowrap;
+}
+
+.employee-contracts-list,
+.employee-contract-detail {
+  margin-top: 1.6rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 1.8rem;
+  background: var(--employee-color-surface-raised);
+  padding: 1.8rem;
+}
+
+.employee-contracts-list,
+.employee-contract-detail,
+.employee-contract-document {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.employee-contracts-list__header span {
+  border-radius: 9999px;
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.employee-contract-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem 1rem;
+  width: 100%;
+  min-height: 7.6rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 0.8rem;
+  background: var(--employee-color-surface);
+  padding: 1.2rem;
+  text-align: left;
+}
+
+.employee-contract-card:hover,
+.employee-contract-card.is-selected {
+  border-color: var(--employee-color-primary);
+}
+
+.employee-contract-card.is-selected {
+  background: var(--employee-color-primary-soft);
+}
+
+.employee-contract-card__main {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.employee-contract-card__main span:first-child {
+  color: var(--employee-color-text);
+  font-size: 1.6rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.employee-contract-card__main span:last-child,
+.employee-contract-card__meta {
+  color: var(--employee-color-text-muted);
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.employee-contract-card__meta {
+  grid-column: 1 / -1;
+}
+
+.employee-contract-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.8rem;
+  border-radius: 9999px;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.employee-contract-status--planned {
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+}
+
+.employee-contract-status--success {
+  background: rgba(0, 215, 34, 0.12);
+  color: #08751b;
+}
+
+.employee-contract-status--warning {
+  background: rgba(238, 29, 54, 0.1);
+  color: #9f1023;
+}
+
+.employee-contract-status--muted {
+  background: var(--employee-color-surface-subtle);
+  color: var(--employee-color-text-muted);
+}
+
+.employee-contract-detail__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.employee-contract-detail__grid div {
+  min-width: 0;
+  border-top: 1px solid var(--employee-color-border);
+  padding-top: 1rem;
+}
+
+.employee-contract-detail__grid dt {
+  color: var(--employee-color-text-muted);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06rem;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.employee-contract-detail__grid dd {
+  margin: 0.3rem 0 0;
+  overflow-wrap: anywhere;
+  color: var(--employee-color-text);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.employee-contract-callout,
+.employee-contract-document {
+  border: 1px solid var(--employee-color-border);
+  border-radius: 1.2rem;
+  background: var(--employee-color-surface-pearl);
+  padding: 1.4rem;
+}
+
+.employee-contract-callout {
+  display: grid;
+  gap: 1rem;
+}
+
+.employee-contract-callout strong {
+  color: var(--employee-color-text);
+  font-size: 1.7rem;
+  font-weight: 650;
+}
+
+.employee-contract-callout p,
+.employee-contract-document p {
+  margin: 0;
+  color: var(--employee-color-text-muted);
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+.employee-contract-callout--planned {
+  border-color: rgba(20, 110, 245, 0.32);
+}
+
+.employee-contract-callout--success {
+  border-color: rgba(0, 215, 34, 0.24);
+}
+
+.employee-contract-document p {
+  max-height: 22rem;
+  overflow: auto;
+  color: var(--employee-color-text-secondary);
+  white-space: pre-wrap;
+}
+
+.employee-contract-detail__warning {
+  margin: 0;
+  border: 1px solid rgba(238, 29, 54, 0.24);
+  border-radius: 0.8rem;
+  background: rgba(238, 29, 54, 0.06);
+  color: #9f1023;
+  padding: 1.2rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
 .employee-tabbar {
   position: fixed;
   right: max(1.2rem, env(safe-area-inset-right));
@@ -547,6 +1494,42 @@ button {
     width: 100%;
     max-width: none;
   }
+
+  .employee-schedule-detail__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .employee-schedule-card {
+    grid-template-columns: 1fr;
+  }
+
+  .employee-attendance-meta,
+  .employee-attendance-record__meta,
+  .employee-payroll-summary__grid,
+  .employee-payroll-detail__grid,
+  .employee-contract-detail__grid,
+  .employee-payroll-breakdown dl {
+    grid-template-columns: 1fr;
+  }
+
+  .employee-attendance__header,
+  .employee-attendance-card__top,
+  .employee-attendance-history__header,
+  .employee-attendance-record__main,
+  .employee-payroll__header,
+  .employee-payroll-list__header,
+  .employee-payroll-detail__header,
+  .employee-contracts__header,
+  .employee-contracts-list__header,
+  .employee-contract-detail__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .employee-payroll-card,
+  .employee-contract-card {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -554,7 +1537,14 @@ button {
   .employee-secondary-button,
   .employee-icon-button,
   .employee-store-card,
-  .employee-tabbar__item {
+  .employee-tabbar__item,
+  .employee-segmented__button,
+  .employee-schedule-day,
+  .employee-schedule-card,
+  .employee-attendance-record,
+  .employee-attendance-action,
+  .employee-payroll-card,
+  .employee-contract-card {
     transition:
       background-color 0.2s ease,
       border-color 0.2s ease,
@@ -565,7 +1555,10 @@ button {
   .employee-primary-button:hover:not(:disabled),
   .employee-secondary-button:hover,
   .employee-icon-button:hover,
-  .employee-tabbar__item:hover {
+  .employee-tabbar__item:hover,
+  .employee-schedule-card:hover,
+  .employee-payroll-card:hover,
+  .employee-contract-card:hover {
     transform: translateX(0.6rem);
   }
 
@@ -573,7 +1566,10 @@ button {
   .employee-primary-button:active,
   .employee-secondary-button:active,
   .employee-icon-button:active,
-  .employee-tabbar__item:active {
+  .employee-tabbar__item:active,
+  .employee-schedule-card:active,
+  .employee-payroll-card:active,
+  .employee-contract-card:active {
     transform: translateX(0.6rem) translateY(1px);
   }
 }

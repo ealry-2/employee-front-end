@@ -1,9 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { hasAccessToken } from '@/session/tokenStorage'
 import EmployeeAppShell from '@/component/EmployeeAppShell.vue'
-import FeaturePlaceholderView from '@/views/FeaturePlaceholderView.vue'
+import AttendanceView from '@/views/AttendanceView.vue'
+import ContractsView from '@/views/ContractsView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
+import PayrollView from '@/views/PayrollView.vue'
+import ScheduleView from '@/views/ScheduleView.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -20,26 +23,22 @@ export const router = createRouter({
         {
           path: 'schedule',
           name: 'schedule',
-          component: FeaturePlaceholderView,
-          props: { featureKey: 'schedule' },
+          component: ScheduleView,
         },
         {
           path: 'attendance',
           name: 'attendance',
-          component: FeaturePlaceholderView,
-          props: { featureKey: 'attendance' },
+          component: AttendanceView,
         },
         {
           path: 'payroll',
           name: 'payroll',
-          component: FeaturePlaceholderView,
-          props: { featureKey: 'payroll' },
+          component: PayrollView,
         },
         {
           path: 'contracts',
           name: 'contracts',
-          component: FeaturePlaceholderView,
-          props: { featureKey: 'contracts' },
+          component: ContractsView,
         },
       ],
     },
