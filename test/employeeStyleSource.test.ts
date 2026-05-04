@@ -192,7 +192,7 @@ test('employee schedule month calendar follows the open admin calendar layout', 
   )
   assert.match(
     appStyle,
-    /\.employee-schedule-day\s*\{[\s\S]*?min-height:\s*4\.4rem;[\s\S]*?padding:\s*0\.25rem 0\.2rem 0\.4rem;[\s\S]*?\}/,
+    /\.employee-schedule-day\s*\{[\s\S]*?display:\s*grid;[\s\S]*?grid-template-rows:\s*1fr 1\.9rem 0\.9rem 1fr;[\s\S]*?place-items:\s*center;[\s\S]*?min-height:\s*4\.4rem;[\s\S]*?padding:\s*0\.25rem 0\.2rem 0\.4rem;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
@@ -200,7 +200,11 @@ test('employee schedule month calendar follows the open admin calendar layout', 
   )
   assert.match(
     appStyle,
-    /\.employee-schedule-day__indicators\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?bottom:\s*0\.48rem;[\s\S]*?transform:\s*translateX\(-50%\);[\s\S]*?\}/,
+    /\.employee-schedule-day__number\s*\{[\s\S]*?grid-row:\s*2;[\s\S]*?height:\s*1\.9rem;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-day__indicators\s*\{[\s\S]*?grid-row:\s*3;[\s\S]*?height:\s*0\.9rem;[\s\S]*?pointer-events:\s*none;[\s\S]*?\}/,
   )
   assert.ok(
     appStyle.includes(`.employee-schedule-month-agenda {
