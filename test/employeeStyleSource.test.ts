@@ -24,8 +24,12 @@ test('employee app global styles follow the Editorial Workspace theme baseline',
   assert.ok(appStyle.includes('background: var(--employee-color-tint-sky);'))
   assert.ok(appStyle.includes('.employee-attendance-card'))
   assert.ok(appStyle.includes('background: var(--employee-color-tint-mint);'))
-  assert.ok(appStyle.includes('.employee-payroll-summary'))
-  assert.ok(appStyle.includes('background: var(--employee-color-tint-yellow);'))
+  assert.ok(appStyle.includes('.employee-payroll-latest'))
+  assert.ok(appStyle.includes('.employee-payroll-history'))
+  assert.ok(appStyle.includes('.employee-payroll-latest__breakdown'))
+  assert.ok(appStyle.includes('.employee-payroll-latest__section'))
+  assert.ok(appStyle.includes('.employee-payroll-latest__section-toggle'))
+  assert.ok(appStyle.includes('box-shadow: 0 1.8rem 4rem rgba(13, 19, 38, 0.08);'))
   assert.ok(appStyle.includes('.employee-contract-card.is-selected'))
   assert.ok(appStyle.includes('background: var(--employee-color-tint-lavender);'))
   assert.ok(appStyle.includes('.employee-contract-document'))
@@ -40,6 +44,30 @@ test('employee app global styles follow the Editorial Workspace theme baseline',
   assert.equal(appStyle.includes('#0071e3'), false)
   assert.equal(appStyle.includes('#2997ff'), false)
   assert.equal(appStyle.includes('translateX(0.6rem)'), false)
+})
+
+test('employee payroll latest card keeps the full earnings and deductions breakdown', () => {
+  const payrollSource = readSource('../src/views/PayrollView.vue')
+
+  assert.ok(payrollSource.includes(':aria-expanded="latestEarningsOpen"'))
+  assert.ok(payrollSource.includes(':aria-expanded="latestDeductionsOpen"'))
+  assert.ok(payrollSource.includes('v-show="latestEarningsOpen"'))
+  assert.ok(payrollSource.includes('v-show="latestDeductionsOpen"'))
+  assert.ok(payrollSource.includes("t('payroll.toggleEarnings')"))
+  assert.ok(payrollSource.includes("t('payroll.toggleDeductions')"))
+  assert.ok(payrollSource.includes("t('payroll.basePay')"))
+  assert.ok(payrollSource.includes("t('payroll.overtimePay')"))
+  assert.ok(payrollSource.includes("t('payroll.nightPay')"))
+  assert.ok(payrollSource.includes("t('payroll.holidayPay')"))
+  assert.ok(payrollSource.includes("t('payroll.weeklyHolidayPay')"))
+  assert.ok(payrollSource.includes("t('payroll.nationalPension')"))
+  assert.ok(payrollSource.includes("t('payroll.healthInsurance')"))
+  assert.ok(payrollSource.includes("t('payroll.longTermCare')"))
+  assert.ok(payrollSource.includes("t('payroll.employmentInsurance')"))
+  assert.ok(payrollSource.includes("t('payroll.incomeTax')"))
+  assert.ok(payrollSource.includes("t('payroll.localIncomeTax')"))
+  assert.ok(payrollSource.includes('latest.totalDeductions'))
+  assert.equal(payrollSource.includes('employee-payroll-latest__summary'), false)
 })
 
 test('employee schedule month calendar follows the open admin calendar layout', () => {
@@ -108,18 +136,30 @@ test('employee schedule month calendar follows the open admin calendar layout', 
   )
 })
 
-test('employee shell uses top store picker, notification bell, and plain bottom tab bar', () => {
+test('employee shell keeps store switching in settings and uses notification bell, settings gear, and plain bottom tab bar', () => {
   const appStyle = readSource('../src/styles/app.scss')
   const shellSource = readSource('../src/component/EmployeeAppShell.vue')
   const navSource = readSource('../src/app/navigation.ts')
 
-  assert.ok(shellSource.includes('class="employee-branch-picker__select"'))
+  assert.equal(shellSource.includes('class="employee-topbar__store-name"'), false)
+  assert.equal(shellSource.includes('class="employee-branch-picker__fallback"'), false)
+  assert.equal(shellSource.includes('class="employee-branch-picker__select"'), false)
+  assert.equal(shellSource.includes('id="employee-store-select"'), false)
+  assert.equal(shellSource.includes('@change="handleStoreSelect"'), false)
   assert.ok(shellSource.includes('class="employee-topbar__brand-link"'))
   assert.ok(shellSource.includes('class="employee-topbar__brand-logo"'))
-  assert.ok(shellSource.includes('class="employee-branch-picker__chevron-icon"'))
+  assert.ok(shellSource.includes('src="/favicon.png"'))
+  assert.equal(shellSource.includes('employee-topbar__brand-mark'), false)
+  assert.equal(shellSource.includes('employee-topbar__brand-text'), false)
+  assert.equal(shellSource.includes('employee-topbar__brand-arrow'), false)
+  assert.equal(shellSource.includes('class="employee-branch-picker__chevron-icon"'), false)
   assert.equal(shellSource.includes('class="employee-topbar__brand"'), false)
   assert.ok(shellSource.includes(':to="{ name: \'home\' }"'))
   assert.ok(shellSource.includes(':to="{ name: \'notifications\' }"'))
+  assert.ok(shellSource.includes('v-if="unreadNotificationCount > 0"'))
+  assert.ok(shellSource.includes('class="employee-topbar__notification-badge"'))
+  assert.ok(shellSource.includes('loadMyNotifications'))
+  assert.ok(shellSource.includes('refreshUnreadNotifications'))
   assert.ok(shellSource.includes(':to="{ name: \'settings\' }"'))
   assert.ok(shellSource.includes(':aria-label="t(\'nav.settings\')"'))
   assert.ok(shellSource.includes('class="employee-tabbar__qr-action"'))
@@ -129,6 +169,8 @@ test('employee shell uses top store picker, notification bell, and plain bottom 
   assert.ok(shellSource.includes('class="employee-tabbar__qr-icon-scanline"'))
   assert.ok(shellSource.includes('class="employee-topbar__svg-icon employee-bell-icon"'))
   assert.ok(shellSource.includes('class="employee-topbar__svg-icon employee-settings-icon"'))
+  assert.ok(shellSource.includes('M18.8 5.7 19.6 8'))
+  assert.equal(shellSource.includes('M16 5.8v3M16 23.2v3'), false)
   assert.equal(shellSource.includes('employee-menu-icon'), false)
   assert.equal(shellSource.includes('@click="logout"'), false)
   assert.ok(shellSource.includes('viewBox="0 0 32 32"'))
@@ -151,13 +193,20 @@ test('employee shell uses top store picker, notification bell, and plain bottom 
   )
   assert.match(
     appStyle,
-    /\.employee-topbar__brand-logo\s*\{[\s\S]*?width:\s*5\.2rem;[\s\S]*?height:\s*2rem;[\s\S]*?\}/,
+    /\.employee-topbar__brand-link\s*\{[\s\S]*?width:\s*6\.8rem;[\s\S]*?height:\s*2\.4rem;[\s\S]*?overflow:\s*hidden;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
-    /\.employee-branch-picker__chevron\s*\{[\s\S]*?top:\s*50%;[\s\S]*?place-items:\s*center;[\s\S]*?transform:\s*translateY\(-50%\);[\s\S]*?\}/,
+    /\.employee-topbar__brand-logo\s*\{[\s\S]*?width:\s*100%;[\s\S]*?height:\s*100%;[\s\S]*?object-fit:\s*cover;[\s\S]*?\}/,
   )
-  assert.ok(appStyle.includes('.employee-branch-picker__chevron-stroke'))
+  assert.equal(appStyle.includes('.employee-topbar__brand-mark'), false)
+  assert.equal(appStyle.includes('.employee-topbar__brand-text'), false)
+  assert.equal(appStyle.includes('.employee-topbar__brand-arrow'), false)
+  assert.equal(appStyle.includes('.employee-topbar__store-name'), false)
+  assert.equal(appStyle.includes('.employee-branch-picker__fallback'), false)
+  assert.equal(appStyle.includes('.employee-branch-picker__chevron-stroke'), false)
+  assert.ok(appStyle.includes('.employee-topbar__notification-badge'))
+  assert.equal(appStyle.includes('.employee-topbar__icon-link.router-link-active::after'), false)
   assert.match(
     appStyle,
     /\.employee-tabbar\s*\{[\s\S]*?grid-template-columns:\s*repeat\(5, minmax\(0, 1fr\)\);[\s\S]*?border-top:\s*1px solid[\s\S]*?\}/,
@@ -193,6 +242,14 @@ test('employee shell uses top store picker, notification bell, and plain bottom 
   assert.match(
     appStyle,
     /\.employee-tabbar__item\.is-active\s*\{[\s\S]*?color:\s*var\(--employee-color-primary\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-tabbar__item\s*\{[\s\S]*?grid-template-rows:\s*3\.2rem 1\.5rem;[\s\S]*?gap:\s*0\.1rem;[\s\S]*?min-height:\s*5\.9rem;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-tabbar__item span\s*\{[\s\S]*?max-height:\s*1\.5rem;[\s\S]*?opacity:\s*1;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,

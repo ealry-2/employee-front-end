@@ -5,7 +5,9 @@ import type { AppAuthBootstrapResponse, AppStoreMembershipSummary } from '@/api/
 export interface EmployeeAppContext {
   bootstrap: Ref<AppAuthBootstrapResponse | null>
   selectedStore: Ref<AppStoreMembershipSummary | null>
+  unreadNotificationCount: Ref<number>
   selectStore: (store: AppStoreMembershipSummary) => void
+  refreshUnreadNotifications: () => Promise<void>
   reload: () => Promise<void>
   logout: () => Promise<void>
 }

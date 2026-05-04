@@ -118,7 +118,11 @@ import {
 
 const { t, locale } = useI18n()
 const router = useRouter()
-const { selectedStore, logout } = useEmployeeAppContext()
+const {
+  selectedStore,
+  unreadNotificationCount,
+  logout,
+} = useEmployeeAppContext()
 
 const loading = ref(false)
 const errorMessage = ref('')
@@ -160,6 +164,7 @@ async function loadNotifications(): Promise<void> {
   if (!storeId) {
     notificationItems.value = []
     unreadCount.value = 0
+    unreadNotificationCount.value = 0
     errorMessage.value = ''
     loading.value = false
     return
@@ -178,6 +183,7 @@ async function loadNotifications(): Promise<void> {
     if (requestId === notificationRequestId) {
       notificationItems.value = response.items
       unreadCount.value = response.unreadCount
+      unreadNotificationCount.value = response.unreadCount
     }
   } catch (error) {
     if (requestId !== notificationRequestId) {
@@ -185,6 +191,7 @@ async function loadNotifications(): Promise<void> {
     }
     notificationItems.value = []
     unreadCount.value = 0
+    unreadNotificationCount.value = 0
     if (isUnauthorized(error)) {
       await logout()
       return
@@ -217,6 +224,7 @@ async function openNotification(notification: AppNotificationResponse): Promise<
       })
       replaceNotification(updated)
       unreadCount.value = Math.max(0, unreadCount.value - 1)
+      unreadNotificationCount.value = Math.max(0, unreadNotificationCount.value - 1)
     }
 
     const routeName = resolveNotificationRoute(updated)

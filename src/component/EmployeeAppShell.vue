@@ -8,65 +8,21 @@
           :aria-label="t('app.brand')"
           :title="t('app.brand')"
         >
-          <svg
+          <img
             class="employee-topbar__brand-logo"
-            viewBox="0 0 64 24"
-            focusable="false"
+            src="/favicon.png"
+            alt=""
             aria-hidden="true"
-          >
-            <path class="employee-topbar__brand-mark" d="M5 10.5h3.8v9.2H5v-9.2Z" />
-            <path class="employee-topbar__brand-mark" d="M10.8 7.3h3.8v12.4h-3.8V7.3Z" />
-            <path class="employee-topbar__brand-mark" d="M16.7 5h3.8v14.7h-3.8V5Z" />
-            <path class="employee-topbar__brand-arrow" d="M6.9 4.2 2.9 9h2.4v5.8c3.7-1.5 5.8-4.5 5.8-8.8V9h2L6.9 4.2Z" />
-            <path class="employee-topbar__brand-text" d="M25 8.1h3.5v11.6H25V8.1Z" />
-            <path class="employee-topbar__brand-text" d="M31.3 5h3.5v14.7h-3.5V5Z" />
-            <path class="employee-topbar__brand-text" d="M43.2 7.9c3.7 0 6.2 2.4 6.2 5.9 0 3.6-2.5 6.1-6.2 6.1s-6.2-2.5-6.2-6.1c0-3.5 2.5-5.9 6.2-5.9Zm0 3.1c-1.6 0-2.7 1.1-2.7 2.8 0 1.8 1.1 2.9 2.7 2.9s2.7-1.1 2.7-2.9c0-1.7-1.1-2.8-2.7-2.8Z" />
-            <path class="employee-topbar__brand-text" d="M57.1 7.9c1.4 0 2.5.5 3.2 1.4V8.1H64v10.6c0 3.7-2.5 5.8-6.5 5.8-2.2 0-4.1-.6-5.5-1.7l1.4-2.8c1.1.8 2.4 1.2 3.8 1.2 2 0 3-1 3-2.7v-.4c-.8.8-1.8 1.2-3.1 1.2-3.3 0-5.7-2.3-5.7-5.7 0-3.4 2.4-5.7 5.7-5.7Zm.8 3.1c-1.7 0-2.8 1.1-2.8 2.7 0 1.7 1.1 2.7 2.8 2.7 1.6 0 2.7-1 2.7-2.7 0-1.6-1.1-2.7-2.7-2.7Z" />
-          </svg>
+          />
         </RouterLink>
-        <label class="employee-sr-only" for="employee-store-select">
-          {{ t('home.stores') }}
-        </label>
-        <span v-if="bootstrap?.hasStores" class="employee-branch-picker">
-          <select
-            id="employee-store-select"
-            class="employee-branch-picker__select"
-            :value="selectedStore?.storeId ?? ''"
-            :aria-label="t('home.stores')"
-            @change="handleStoreSelect"
-          >
-            <option
-              v-for="store in bootstrap.stores"
-              :key="store.storeId"
-              :value="store.storeId"
-            >
-              {{ store.name }}
-            </option>
-          </select>
-          <span class="employee-branch-picker__chevron" aria-hidden="true">
-            <svg
-              class="employee-branch-picker__chevron-icon"
-              viewBox="0 0 24 24"
-              focusable="false"
-            >
-              <path
-                class="employee-branch-picker__chevron-stroke"
-                d="M7 9.5 12 14.5 17 9.5"
-              />
-            </svg>
-          </span>
-        </span>
-        <p v-else class="employee-branch-picker__fallback">
-          {{ selectedStore ? selectedStore.name : t('home.emptyTitle') }}
-        </p>
         <h1 class="employee-sr-only">{{ pageTitle }}</h1>
       </div>
       <div class="employee-topbar__actions">
         <RouterLink
           class="employee-topbar__icon-link"
           :to="{ name: 'notifications' }"
-          :aria-label="t('nav.notifications')"
-          :title="t('nav.notifications')"
+          :aria-label="notificationLinkLabel"
+          :title="notificationLinkLabel"
         >
           <svg
             class="employee-topbar__svg-icon employee-bell-icon"
@@ -83,6 +39,11 @@
               d="M12.8 24.3c.5 1.9 1.6 2.9 3.2 2.9s2.7-1 3.2-2.9"
             />
           </svg>
+          <span
+            v-if="unreadNotificationCount > 0"
+            class="employee-topbar__notification-badge"
+            aria-hidden="true"
+          />
         </RouterLink>
         <RouterLink
           class="employee-topbar__icon-link"
@@ -99,7 +60,7 @@
             <circle class="employee-topbar__icon-stroke" cx="16" cy="16" r="3.5" />
             <path
               class="employee-topbar__icon-stroke"
-              d="M16 5.8v3M16 23.2v3M7.3 16h-3M27.7 16h-3M9.8 9.8 7.7 7.7M24.3 24.3l-2.1-2.1M22.2 9.8l2.1-2.1M7.7 24.3l2.1-2.1"
+              d="M18.8 5.7 19.6 8c.2.5.6.9 1.1 1.1l2.3 1 1.9-1.1 2.1 3.6-1.9 1.3c-.4.3-.6.8-.6 1.3v1.6c0 .5.2 1 .6 1.3l1.9 1.3-2.1 3.6-1.9-1.1-2.3 1c-.5.2-.9.6-1.1 1.1l-.8 2.3h-5.6l-.8-2.3c-.2-.5-.6-.9-1.1-1.1l-2.3-1-1.9 1.1-2.1-3.6 1.9-1.3c.4-.3.6-.8.6-1.3v-1.6c0-.5-.2-1-.6-1.3l-1.9-1.3 2.1-3.6 1.9 1.1 2.3-1c.5-.2.9-.6 1.1-1.1l.8-2.3h5.6Z"
             />
           </svg>
         </RouterLink>
@@ -188,13 +149,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, provide, ref } from 'vue'
+import { computed, onMounted, provide, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { employeeAppContextKey } from '@/app/employeeAppContext'
 import { employeeTabItems, isEmployeeNavRouteName } from '@/app/navigation'
 import { isUnauthorized } from '@/api/client'
 import { loadAppBootstrap, logoutSession } from '@/api/auth'
+import { loadMyNotifications } from '@/api/notifications'
 import type { AppAuthBootstrapResponse, AppStoreMembershipSummary } from '@/api/types'
 import { clearTokens } from '@/session/tokenStorage'
 import {
@@ -213,6 +175,8 @@ const bootstrap = ref<AppAuthBootstrapResponse | null>(null)
 const selectedStore = ref<AppStoreMembershipSummary | null>(null)
 const loading = ref(true)
 const errorMessage = ref('')
+const unreadNotificationCount = ref(0)
+let unreadNotificationRequestId = 0
 
 const pageTitle = computed(() => {
   const routeName = route.name
@@ -221,16 +185,30 @@ const pageTitle = computed(() => {
   }
   return t('home.title')
 })
+const notificationLinkLabel = computed(() =>
+  unreadNotificationCount.value > 0
+    ? `${t('nav.notifications')} · ${t('notifications.unreadCount', { count: unreadNotificationCount.value })}`
+    : t('nav.notifications'),
+)
 
 provide(employeeAppContextKey, {
   bootstrap,
   selectedStore,
+  unreadNotificationCount,
   selectStore,
+  refreshUnreadNotifications,
   reload: load,
   logout,
 })
 
 onMounted(load)
+
+watch(
+  () => selectedStore.value?.storeId,
+  () => {
+    void refreshUnreadNotifications()
+  },
+)
 
 async function load(): Promise<void> {
   loading.value = true
@@ -257,18 +235,41 @@ async function load(): Promise<void> {
   }
 }
 
-function handleStoreSelect(event: Event): void {
-  const storeId = (event.target as HTMLSelectElement).value
-  const store = bootstrap.value?.stores.find((candidate) => candidate.storeId === storeId)
-  if (store) {
-    selectStore(store)
-  }
-}
-
 function selectStore(store: AppStoreMembershipSummary): void {
   selectedStore.value = store
   if (bootstrap.value) {
     saveSelectedStoreId(bootstrap.value.user.userId, store.storeId)
+  }
+}
+
+async function refreshUnreadNotifications(): Promise<void> {
+  const storeId = selectedStore.value?.storeId
+  const requestId = ++unreadNotificationRequestId
+
+  if (!storeId) {
+    unreadNotificationCount.value = 0
+    return
+  }
+
+  try {
+    const response = await loadMyNotifications({
+      storeId,
+      unreadOnly: true,
+      page: 0,
+      size: 1,
+    })
+    if (requestId === unreadNotificationRequestId) {
+      unreadNotificationCount.value = response.unreadCount
+    }
+  } catch (error) {
+    if (requestId !== unreadNotificationRequestId) {
+      return
+    }
+    if (isUnauthorized(error)) {
+      await logout()
+      return
+    }
+    unreadNotificationCount.value = 0
   }
 }
 
