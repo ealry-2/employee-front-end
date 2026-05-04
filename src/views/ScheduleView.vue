@@ -60,7 +60,7 @@
       />
 
       <EmployeeStatePanel
-        v-else-if="schedules.length === 0"
+        v-else-if="mode !== 'month' && schedules.length === 0"
         tone="empty"
         :title="t('schedule.emptyTitle')"
         :message="t('schedule.emptyDescription')"

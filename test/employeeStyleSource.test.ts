@@ -151,6 +151,7 @@ test('employee schedule month calendar follows the open admin calendar layout', 
   assert.ok(scheduleSource.includes('@click="selectMonthDate(cell)"'))
   assert.ok(scheduleSource.includes("t('schedule.selectedDateEmpty')"))
   assert.ok(scheduleSource.includes('syncSelectedMonthDate()'))
+  assert.ok(scheduleSource.includes('v-else-if="mode !== \'month\' && schedules.length === 0"'))
   assert.doesNotMatch(scheduleSource, /:disabled="cell\.schedules\.length === 0"/)
   assert.ok(scheduleSource.includes('<section class="employee-schedule" :aria-label="t(\'screen.schedule.title\')"'))
   assert.equal(scheduleSource.includes('class="employee-schedule__header"'), false)
