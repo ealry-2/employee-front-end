@@ -301,6 +301,15 @@ function createDemoSchedules(storeId: string): ScheduleResponse[] {
       endTime: '16:00',
       status: 'COMPLETED',
       memo: '마감 보조',
+      coworkers: [
+        {
+          employeeId: 'demo-coworker-minji',
+          name: '박민지',
+          role: '마감',
+          startTime: '12:00',
+          endTime: '18:00',
+        },
+      ],
     }),
     createSchedule({
       scheduleId: `demo-schedule-${formatDate(today)}`,
@@ -309,6 +318,29 @@ function createDemoSchedules(storeId: string): ScheduleResponse[] {
       startTime: '09:00',
       endTime: '15:00',
       memo: '오픈 준비와 오전 피크 담당',
+      coworkers: [
+        {
+          employeeId: 'demo-coworker-seoyeon',
+          name: '김서연',
+          role: '오픈',
+          startTime: '08:30',
+          endTime: '14:00',
+        },
+        {
+          employeeId: 'demo-coworker-jiho',
+          name: '이지호',
+          role: '바리스타',
+          startTime: '10:00',
+          endTime: '16:00',
+        },
+        {
+          employeeId: 'demo-coworker-hana',
+          name: '정하나',
+          role: '캐셔',
+          startTime: '11:00',
+          endTime: '17:00',
+        },
+      ],
     }),
     createSchedule({
       scheduleId: 'demo-schedule-next',
@@ -317,6 +349,22 @@ function createDemoSchedules(storeId: string): ScheduleResponse[] {
       startTime: '14:00',
       endTime: '20:00',
       memo: '재고 정리 포함',
+      coworkers: [
+        {
+          employeeId: 'demo-coworker-minsu',
+          name: '최민수',
+          role: '마감',
+          startTime: '15:00',
+          endTime: '21:00',
+        },
+        {
+          employeeId: 'demo-coworker-yuna',
+          name: '한유나',
+          role: '홀',
+          startTime: '14:00',
+          endTime: '20:00',
+        },
+      ],
     }),
   ]
 }
@@ -335,6 +383,7 @@ function createSchedule(
     scheduledWorkMinutes: overrides.scheduledWorkMinutes ?? 330,
     status: overrides.status ?? 'SCHEDULED',
     memo: overrides.memo ?? null,
+    coworkers: overrides.coworkers ?? [],
     createdAt: overrides.createdAt ?? setTime(new Date(), 8, 0),
     updatedAt: overrides.updatedAt ?? setTime(new Date(), 8, 0),
   }

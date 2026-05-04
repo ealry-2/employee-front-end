@@ -84,6 +84,7 @@
 
     <template v-else-if="bootstrap">
       <RouterView />
+      <EmployeeToastOutlet />
 
       <nav class="employee-tabbar" :aria-label="t('nav.primary')">
         <RouterLink
@@ -166,6 +167,7 @@ import {
   selectInitialStore,
 } from '@/session/bootstrapState'
 import EmployeeStatePanel from './EmployeeStatePanel.vue'
+import EmployeeToastOutlet from './EmployeeToastOutlet.vue'
 
 const { t } = useI18n()
 const route = useRoute()

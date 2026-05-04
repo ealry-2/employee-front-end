@@ -6,6 +6,7 @@ import type {
 import type { EmployeeNavRouteName } from '../app/navigation'
 
 export type NotificationTone = 'planned' | 'success' | 'warning' | 'muted'
+export type NotificationIcon = 'contract' | 'schedule' | 'payroll' | 'attendance' | 'system'
 
 export function sortNotifications(
   notifications: AppNotificationResponse[],
@@ -42,6 +43,22 @@ export function notificationTone(type: AppNotificationType): NotificationTone {
     return 'warning'
   }
   return 'muted'
+}
+
+export function notificationIcon(type: AppNotificationType): NotificationIcon {
+  switch (type) {
+    case 'CONTRACT_SIGNING_REQUEST':
+    case 'CONTRACT_COMPLETED':
+      return 'contract'
+    case 'SCHEDULE_UPDATED':
+      return 'schedule'
+    case 'PAYROLL_AVAILABLE':
+      return 'payroll'
+    case 'ATTENDANCE_STATUS_CHANGED':
+      return 'attendance'
+    case 'SYSTEM':
+      return 'system'
+  }
 }
 
 export function resolveNotificationRoute(

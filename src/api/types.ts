@@ -71,6 +71,14 @@ export interface AppAuthBootstrapResponse {
   hasStores: boolean
 }
 
+export interface ScheduleCoworkerSummary {
+  employeeId: string
+  name: string
+  role: string | null
+  startTime: string | null
+  endTime: string | null
+}
+
 export interface ScheduleResponse {
   scheduleId: string
   storeId: string
@@ -82,6 +90,7 @@ export interface ScheduleResponse {
   scheduledWorkMinutes: number | null
   status: ScheduleStatus
   memo: string | null
+  coworkers?: ScheduleCoworkerSummary[]
   createdAt: string | null
   updatedAt: string | null
 }

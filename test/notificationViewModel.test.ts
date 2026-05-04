@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
   notificationTargetKey,
+  notificationIcon,
   notificationTone,
   notificationTypeKey,
   resolveNotificationRoute,
@@ -34,6 +35,12 @@ test('notification helpers map backend enum values to i18n keys and tones', () =
   assert.equal(notificationTone('PAYROLL_AVAILABLE'), 'success')
   assert.equal(notificationTone('ATTENDANCE_STATUS_CHANGED'), 'warning')
   assert.equal(notificationTone('SYSTEM'), 'muted')
+  assert.equal(notificationIcon('CONTRACT_SIGNING_REQUEST'), 'contract')
+  assert.equal(notificationIcon('CONTRACT_COMPLETED'), 'contract')
+  assert.equal(notificationIcon('SCHEDULE_UPDATED'), 'schedule')
+  assert.equal(notificationIcon('PAYROLL_AVAILABLE'), 'payroll')
+  assert.equal(notificationIcon('ATTENDANCE_STATUS_CHANGED'), 'attendance')
+  assert.equal(notificationIcon('SYSTEM'), 'system')
 })
 
 test('resolveNotificationRoute maps valid notification targets to shell routes', () => {

@@ -70,9 +70,77 @@ test('employee payroll latest card keeps the full earnings and deductions breakd
   assert.equal(payrollSource.includes('employee-payroll-latest__summary'), false)
 })
 
+test('employee notifications use searchable grouped list with category icons', () => {
+  const appStyle = readSource('../src/styles/app.scss')
+  const notificationsSource = readSource('../src/views/NotificationsView.vue')
+  const shellSource = readSource('../src/component/EmployeeAppShell.vue')
+  const toastSource = readSource('../src/component/EmployeeToastOutlet.vue')
+
+  assert.ok(notificationsSource.includes('class="employee-notifications__search"'))
+  assert.ok(notificationsSource.includes("t('notifications.searchPlaceholder')"))
+  assert.ok(notificationsSource.includes('class="employee-notifications__filter"'))
+  assert.ok(notificationsSource.includes('class="employee-notifications__mark-all"'))
+  assert.ok(notificationsSource.includes('showEmployeeToast'))
+  assert.equal(notificationsSource.includes('feedbackMessage'), false)
+  assert.equal(notificationsSource.includes('employee-notifications__feedback'), false)
+  assert.ok(shellSource.includes('<EmployeeToastOutlet />'))
+  assert.ok(toastSource.includes('class="employee-toast-region"'))
+  assert.ok(toastSource.includes('<TransitionGroup name="employee-toast">'))
+  assert.ok(toastSource.includes('role="status"'))
+  assert.ok(toastSource.includes("t('app.close')"))
+  assert.ok(notificationsSource.includes('groupedNotifications'))
+  assert.ok(notificationsSource.includes('employee-notifications-group'))
+  assert.ok(notificationsSource.includes('employee-notification-card__icon--'))
+  assert.ok(notificationsSource.includes('notificationIcon(notification.type)'))
+  assert.ok(notificationsSource.includes('formatRelativeTime(notification.createdAt)'))
+  assert.ok(notificationsSource.includes('markAllVisibleAsRead'))
+  assert.equal(notificationsSource.includes('employee-notification-status'), false)
+  assert.equal(notificationsSource.includes('employee-notification-card__meta'), false)
+  assert.match(
+    appStyle,
+    /\.employee-notifications__search\s*\{[\s\S]*?border-radius:\s*9999px;[\s\S]*?background:\s*var\(--employee-color-surface-subtle\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-notifications__filter\.is-active strong\s*\{[\s\S]*?background:\s*var\(--employee-color-primary\);[\s\S]*?color:\s*var\(--employee-color-on-primary\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-notification-card__icon\s*\{[\s\S]*?width:\s*6\.2rem;[\s\S]*?height:\s*6\.2rem;[\s\S]*?border-radius:\s*9999px;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-notification-card__dot\s*\{[\s\S]*?background:\s*var\(--employee-color-primary\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-toast-region\s*\{[\s\S]*?position:\s*fixed;[\s\S]*?bottom:\s*calc\(12\.4rem \+ env\(safe-area-inset-bottom\)\);[\s\S]*?z-index:\s*90;[\s\S]*?pointer-events:\s*none;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-toast\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\) auto;[\s\S]*?border:\s*0;[\s\S]*?background:\s*rgba\(232, 242, 255, 0\.96\);[\s\S]*?pointer-events:\s*auto;[\s\S]*?\}/,
+  )
+  assert.doesNotMatch(
+    appStyle.match(/\.employee-toast\s*\{[^}]*\}/)?.[0] ?? '',
+    /box-shadow:/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-toast--success\s*\{[\s\S]*?color:\s*var\(--employee-color-primary\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /@media \(prefers-reduced-motion: no-preference\)\s*\{[\s\S]*?\.employee-toast-enter-active,\s*\.employee-toast-leave-active\s*\{[\s\S]*?opacity 0\.22s ease,[\s\S]*?transform 0\.22s ease;[\s\S]*?\}[\s\S]*?\.employee-toast-enter-from,\s*\.employee-toast-leave-to\s*\{[\s\S]*?opacity:\s*0;[\s\S]*?transform:\s*translateY\(1rem\);[\s\S]*?\}/,
+  )
+})
+
 test('employee schedule month calendar follows the open admin calendar layout', () => {
   const appStyle = readSource('../src/styles/app.scss')
   const scheduleSource = readSource('../src/views/ScheduleView.vue')
+  const scheduleCardHoverBlock =
+    appStyle.match(
+      /\.employee-schedule-card:hover,\s*\.employee-schedule-card:focus-within\s*\{[^}]*\}/,
+    )?.[0] ?? ''
 
   assert.ok(scheduleSource.includes('v-if="mode !== \'month\'" class="employee-schedule-range"'))
   assert.ok(scheduleSource.includes('class="employee-schedule-month__header"'))
@@ -81,6 +149,9 @@ test('employee schedule month calendar follows the open admin calendar layout', 
   assert.ok(scheduleSource.includes('class="employee-schedule-month-agenda"'))
   assert.ok(scheduleSource.includes('selectedMonthSchedules'))
   assert.ok(scheduleSource.includes('@click="selectMonthDate(cell)"'))
+  assert.ok(scheduleSource.includes("t('schedule.selectedDateEmpty')"))
+  assert.ok(scheduleSource.includes('syncSelectedMonthDate()'))
+  assert.doesNotMatch(scheduleSource, /:disabled="cell\.schedules\.length === 0"/)
   assert.ok(scheduleSource.includes('<section class="employee-schedule" :aria-label="t(\'screen.schedule.title\')"'))
   assert.equal(scheduleSource.includes('class="employee-schedule__header"'), false)
   assert.equal(scheduleSource.includes('class="employee-secondary-button employee-schedule__today"'), false)
@@ -130,9 +201,83 @@ test('employee schedule month calendar follows the open admin calendar layout', 
     appStyle,
     /\.employee-schedule-day__indicators\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?bottom:\s*0\.48rem;[\s\S]*?transform:\s*translateX\(-50%\);[\s\S]*?\}/,
   )
+  assert.ok(
+    appStyle.includes(`.employee-schedule-month-agenda {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 0 0.2rem;
+}`),
+  )
   assert.match(
     appStyle,
-    /\.employee-schedule-month-agenda\s*\{[\s\S]*?margin-top:\s*1\.2rem;[\s\S]*?border-radius:\s*1\.2rem;[\s\S]*?\}/,
+    /\.employee-schedule-month-agenda__empty\s*\{[\s\S]*?border:\s*1px solid var\(--employee-color-border\);[\s\S]*?color:\s*var\(--employee-color-text-muted\);[\s\S]*?\}/,
+  )
+  assert.ok(scheduleSource.includes('class="employee-schedule-card__summary"'))
+  assert.ok(scheduleSource.includes('class="employee-schedule-card__times"'))
+  assert.ok(scheduleSource.includes('class="employee-schedule-card__footer"'))
+  assert.ok(scheduleSource.includes('class="employee-schedule-status"'))
+  assert.ok(scheduleSource.includes('class="employee-close-button"'))
+  assert.ok(scheduleSource.includes('class="employee-schedule-detail-modal"'))
+  assert.ok(scheduleSource.includes('@click.self="closeDetail"'))
+  assert.doesNotMatch(scheduleSource, /class="employee-icon-button"[\s\S]*?closeDetail/)
+  assert.ok(scheduleSource.includes('class="employee-schedule-coworkers"'))
+  assert.ok(scheduleSource.includes('class="employee-schedule-coworker-toggle"'))
+  assert.ok(scheduleSource.includes("t('schedule.coworkerGroupLabel'"))
+  assert.doesNotMatch(scheduleSource, /scheduleShiftLabel/)
+  assert.doesNotMatch(scheduleSource, /employee-schedule-card__badge/)
+  assert.ok(scheduleSource.includes('openCoworkerDetail(schedule, coworker)'))
+  assert.ok(scheduleSource.includes('role="dialog"'))
+  assert.ok(scheduleSource.includes('aria-labelledby="schedule-coworker-heading"'))
+  assert.ok(scheduleSource.includes('coworkerSummary(coworker)'))
+  assert.match(
+    appStyle,
+    /\.employee-schedule-card__summary\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\) auto;[\s\S]*?min-height:\s*12rem;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-card:hover,\s*\.employee-schedule-card:focus-within\s*\{[\s\S]*?border-color:\s*var\(--employee-color-primary\);[\s\S]*?background:\s*var\(--employee-color-surface\);[\s\S]*?\}/,
+  )
+  assert.doesNotMatch(scheduleCardHoverBlock, /background:\s*var\(--employee-color-tint-sky\);/)
+  assert.match(
+    appStyle,
+    /\.employee-schedule-card__times strong\s*\{[\s\S]*?font-size:\s*1\.95rem;[\s\S]*?font-weight:\s*800;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-card__footer\s*\{[\s\S]*?justify-content:\s*space-between;[\s\S]*?border-top:\s*1px solid var\(--employee-color-border\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-status\s*\{[\s\S]*?border:\s*1px solid currentColor;[\s\S]*?background:\s*transparent;[\s\S]*?margin-left:\s*auto;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-close-button\s*\{[\s\S]*?border:\s*0;[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*transparent;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-detail-modal\s*\{[\s\S]*?position:\s*fixed;[\s\S]*?place-items:\s*center;[\s\S]*?background:\s*rgba\(9, 13, 22, 0\.48\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-detail\s*\{[\s\S]*?width:\s*min\(100%, 42rem\);[\s\S]*?max-height:\s*min\(78vh, 62rem\);[\s\S]*?overflow:\s*auto;[\s\S]*?border-radius:\s*1\.8rem;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-coworker-toggle\s*\{[\s\S]*?display:\s*inline-flex;[\s\S]*?border-radius:\s*9999px;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-coworker-toggle:hover,\s*\.employee-schedule-coworker-toggle\[aria-expanded="true"\]\s*\{[\s\S]*?background:\s*var\(--employee-color-surface-subtle\);[\s\S]*?color:\s*var\(--employee-color-primary\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-coworker-badge\s*\{[\s\S]*?width:\s*3rem;[\s\S]*?height:\s*3rem;[\s\S]*?border-radius:\s*9999px;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-coworker-modal\s*\{[\s\S]*?position:\s*fixed;[\s\S]*?place-items:\s*center;[\s\S]*?\}/,
   )
 })
 

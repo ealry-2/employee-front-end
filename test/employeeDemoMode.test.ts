@@ -25,6 +25,27 @@ test('employee demo schedules are filtered by requested date range', () => {
   assert.equal(schedules.empty, true)
 })
 
+test('employee demo schedules keep coworker summaries for schedule cards', () => {
+  const bootstrap = createDemoBootstrap()
+  const storeId = bootstrap.selectedStore?.storeId ?? ''
+  const today = new Date()
+  const yyyy = today.getFullYear()
+  const mm = String(today.getMonth() + 1).padStart(2, '0')
+  const dd = String(today.getDate()).padStart(2, '0')
+  const todayDate = `${yyyy}-${mm}-${dd}`
+  const schedules = loadDemoSchedules({
+    storeId,
+    startDate: todayDate,
+    endDate: todayDate,
+  })
+
+  const todaysSchedule = schedules.items.find((schedule) => schedule.workDate === todayDate)
+
+  assert.ok(todaysSchedule)
+  assert.equal(todaysSchedule.coworkers?.length, 3)
+  assert.equal(todaysSchedule.coworkers?.[0]?.name, '김서연')
+})
+
 test('router uses dev-only demo mode as an auth guard input', () => {
   const source = readFileSync(new URL('../src/router/index.ts', import.meta.url), 'utf8')
 

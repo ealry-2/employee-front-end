@@ -110,7 +110,6 @@
                   'has-schedules': cell.schedules.length > 0,
                 }"
                 type="button"
-                :disabled="cell.schedules.length === 0"
                 :aria-label="monthCellLabel(cell.date, cell.schedules.length)"
                 @click="selectMonthDate(cell)"
               >
@@ -135,26 +134,102 @@
               <h3>{{ t('schedule.monthAgendaTitle') }}</h3>
               <span>{{ selectedMonthDateLabel }}</span>
             </header>
-            <button
+            <p
+              v-if="selectedMonthSchedules.length === 0"
+              class="employee-schedule-month-agenda__empty"
+            >
+              {{ t('schedule.selectedDateEmpty') }}
+            </p>
+            <article
               v-for="schedule in selectedMonthSchedules"
               :key="schedule.scheduleId"
               class="employee-schedule-card employee-schedule-month-agenda__card"
-              type="button"
-              @click="openSchedule(schedule)"
             >
-              <span class="employee-schedule-card__time">
-                {{ formatTimeRange(schedule) }}
-              </span>
-              <span
-                class="employee-schedule-status"
-                :class="`employee-schedule-status--${scheduleStatusTone(schedule.status)}`"
+              <button
+                class="employee-schedule-card__summary"
+                type="button"
+                @click="openSchedule(schedule)"
               >
-                {{ t(scheduleStatusKey(schedule.status)) }}
-              </span>
-              <span v-if="schedule.memo" class="employee-schedule-card__memo">
-                {{ schedule.memo }}
-              </span>
-            </button>
+                <span class="employee-schedule-card__main">
+                  <strong>{{ selectedStore.name }}</strong>
+                  <span class="employee-schedule-card__location">
+                    <svg aria-hidden="true" viewBox="0 0 24 24">
+                      <path
+                        d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12Z"
+                      />
+                      <circle cx="12" cy="9" r="2.5" />
+                    </svg>
+                    {{ selectedStore.address || t('schedule.notProvided') }}
+                  </span>
+                  <span v-if="schedule.memo" class="employee-schedule-card__memo">
+                    {{ schedule.memo }}
+                  </span>
+                </span>
+                <span class="employee-schedule-card__times" aria-hidden="true">
+                  <strong>{{ formatTime(schedule.startTime) }}</strong>
+                  <small>{{ t('schedule.startLabel') }}</small>
+                  <strong>{{ formatTime(schedule.endTime) }}</strong>
+                  <small>{{ t('schedule.endLabel') }}</small>
+                </span>
+                <span class="employee-sr-only">
+                  {{ formatTimeRange(schedule) }}
+                  {{ t(scheduleStatusKey(schedule.status)) }}
+                </span>
+              </button>
+
+              <div class="employee-schedule-card__footer">
+                <div
+                  v-if="scheduleCoworkers(schedule).length > 0"
+                  class="employee-schedule-coworkers"
+                  :aria-label="t('schedule.coworkers')"
+                >
+                  <button
+                    class="employee-schedule-coworker-toggle"
+                    type="button"
+                    :aria-expanded="openCoworkerListScheduleId === schedule.scheduleId"
+                    @click="toggleCoworkerList(schedule)"
+                  >
+                    <span class="employee-schedule-coworker-stack" aria-hidden="true">
+                      <span
+                        v-for="coworker in visibleCoworkers(schedule)"
+                        :key="coworker.employeeId"
+                        class="employee-schedule-coworker-badge"
+                      >
+                        {{ coworkerInitial(coworker.name) }}
+                      </span>
+                    </span>
+                    {{ coworkerListLabel(schedule) }}
+                  </button>
+                </div>
+                <span
+                  class="employee-schedule-status"
+                  :class="`employee-schedule-status--${scheduleStatusTone(schedule.status)}`"
+                >
+                  {{ t(scheduleStatusKey(schedule.status)) }}
+                </span>
+              </div>
+
+              <div
+                v-if="openCoworkerListScheduleId === schedule.scheduleId"
+                class="employee-schedule-coworker-list"
+              >
+                <button
+                  v-for="coworker in scheduleCoworkers(schedule)"
+                  :key="coworker.employeeId"
+                  class="employee-schedule-coworker-row"
+                  type="button"
+                  @click="openCoworkerDetail(schedule, coworker)"
+                >
+                  <span class="employee-schedule-coworker-badge" aria-hidden="true">
+                    {{ coworkerInitial(coworker.name) }}
+                  </span>
+                  <span>
+                    <strong>{{ coworker.name }}</strong>
+                    <small>{{ coworkerSummary(coworker) }}</small>
+                  </span>
+                </button>
+              </div>
+            </article>
           </section>
         </template>
 
@@ -173,101 +248,220 @@
               <span>{{ t('schedule.shiftCount', { count: group.schedules.length }) }}</span>
             </header>
 
-            <button
+            <article
               v-for="schedule in group.schedules"
               :key="schedule.scheduleId"
               class="employee-schedule-card"
-              type="button"
-              @click="openSchedule(schedule)"
             >
-              <span class="employee-schedule-card__time">
-                {{ formatTimeRange(schedule) }}
-              </span>
-              <span
-                class="employee-schedule-status"
-                :class="`employee-schedule-status--${scheduleStatusTone(schedule.status)}`"
+              <button
+                class="employee-schedule-card__summary"
+                type="button"
+                @click="openSchedule(schedule)"
               >
-                {{ t(scheduleStatusKey(schedule.status)) }}
-              </span>
-              <span v-if="schedule.memo" class="employee-schedule-card__memo">
-                {{ schedule.memo }}
-              </span>
-            </button>
+                <span class="employee-schedule-card__main">
+                  <strong>{{ selectedStore.name }}</strong>
+                  <span class="employee-schedule-card__location">
+                    <svg aria-hidden="true" viewBox="0 0 24 24">
+                      <path
+                        d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12Z"
+                      />
+                      <circle cx="12" cy="9" r="2.5" />
+                    </svg>
+                    {{ selectedStore.address || t('schedule.notProvided') }}
+                  </span>
+                  <span v-if="schedule.memo" class="employee-schedule-card__memo">
+                    {{ schedule.memo }}
+                  </span>
+                </span>
+                <span class="employee-schedule-card__times" aria-hidden="true">
+                  <strong>{{ formatTime(schedule.startTime) }}</strong>
+                  <small>{{ t('schedule.startLabel') }}</small>
+                  <strong>{{ formatTime(schedule.endTime) }}</strong>
+                  <small>{{ t('schedule.endLabel') }}</small>
+                </span>
+                <span class="employee-sr-only">
+                  {{ formatTimeRange(schedule) }}
+                  {{ t(scheduleStatusKey(schedule.status)) }}
+                </span>
+              </button>
+
+              <div class="employee-schedule-card__footer">
+                <div
+                  v-if="scheduleCoworkers(schedule).length > 0"
+                  class="employee-schedule-coworkers"
+                  :aria-label="t('schedule.coworkers')"
+                >
+                  <button
+                    class="employee-schedule-coworker-toggle"
+                    type="button"
+                    :aria-expanded="openCoworkerListScheduleId === schedule.scheduleId"
+                    @click="toggleCoworkerList(schedule)"
+                  >
+                    <span class="employee-schedule-coworker-stack" aria-hidden="true">
+                      <span
+                        v-for="coworker in visibleCoworkers(schedule)"
+                        :key="coworker.employeeId"
+                        class="employee-schedule-coworker-badge"
+                      >
+                        {{ coworkerInitial(coworker.name) }}
+                      </span>
+                    </span>
+                    {{ coworkerListLabel(schedule) }}
+                  </button>
+                </div>
+                <span
+                  class="employee-schedule-status"
+                  :class="`employee-schedule-status--${scheduleStatusTone(schedule.status)}`"
+                >
+                  {{ t(scheduleStatusKey(schedule.status)) }}
+                </span>
+              </div>
+
+              <div
+                v-if="openCoworkerListScheduleId === schedule.scheduleId"
+                class="employee-schedule-coworker-list"
+              >
+                <button
+                  v-for="coworker in scheduleCoworkers(schedule)"
+                  :key="coworker.employeeId"
+                  class="employee-schedule-coworker-row"
+                  type="button"
+                  @click="openCoworkerDetail(schedule, coworker)"
+                >
+                  <span class="employee-schedule-coworker-badge" aria-hidden="true">
+                    {{ coworkerInitial(coworker.name) }}
+                  </span>
+                  <span>
+                    <strong>{{ coworker.name }}</strong>
+                    <small>{{ coworkerSummary(coworker) }}</small>
+                  </span>
+                </button>
+              </div>
+            </article>
           </article>
         </section>
       </template>
     </template>
   </section>
 
-  <section
+  <div
     v-if="selectedSchedule || detailLoading || detailError"
-    class="employee-schedule-detail"
+    class="employee-schedule-detail-modal"
+    role="dialog"
+    aria-modal="true"
     aria-labelledby="schedule-detail-heading"
+    @click.self="closeDetail"
   >
-    <div class="employee-schedule-detail__header">
-      <div>
-        <p class="employee-schedule__eyebrow">{{ t('schedule.detailEyebrow') }}</p>
-        <h2 id="schedule-detail-heading">{{ t('schedule.detailTitle') }}</h2>
+    <section class="employee-schedule-detail">
+      <div class="employee-schedule-detail__header">
+        <div>
+          <p class="employee-schedule__eyebrow">{{ t('schedule.detailEyebrow') }}</p>
+          <h2 id="schedule-detail-heading">{{ t('schedule.detailTitle') }}</h2>
+        </div>
+        <button
+          class="employee-close-button"
+          type="button"
+          :aria-label="t('schedule.closeDetail')"
+          @click="closeDetail"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
       </div>
-      <button
-        class="employee-icon-button"
-        type="button"
-        :aria-label="t('schedule.closeDetail')"
-        @click="closeDetail"
-      >
-        <span aria-hidden="true">×</span>
-      </button>
-    </div>
 
-    <EmployeeStatePanel
-      v-if="detailLoading"
-      tone="loading"
-      :message="t('schedule.detailLoading')"
-    />
+      <EmployeeStatePanel
+        v-if="detailLoading"
+        tone="loading"
+        :message="t('schedule.detailLoading')"
+      />
 
-    <EmployeeStatePanel
-      v-else-if="detailError"
-      tone="error"
-      :title="t('schedule.detailErrorTitle')"
-      :message="detailError"
-      :action-label="t('app.retry')"
-      @action="retryDetail"
-    />
+      <EmployeeStatePanel
+        v-else-if="detailError"
+        tone="error"
+        :title="t('schedule.detailErrorTitle')"
+        :message="detailError"
+        :action-label="t('app.retry')"
+        @action="retryDetail"
+      />
 
-    <dl v-else-if="selectedSchedule" class="employee-schedule-detail__grid">
-      <div>
-        <dt>{{ t('schedule.detailDate') }}</dt>
-        <dd>{{ formatDate(selectedSchedule.workDate) }}</dd>
-      </div>
-      <div>
-        <dt>{{ t('schedule.detailTime') }}</dt>
-        <dd>{{ formatTimeRange(selectedSchedule) }}</dd>
-      </div>
-      <div>
-        <dt>{{ t('schedule.detailDuration') }}</dt>
-        <dd>{{ formatDuration(selectedSchedule.scheduledWorkMinutes) }}</dd>
-      </div>
-      <div>
-        <dt>{{ t('schedule.detailBreak') }}</dt>
-        <dd>{{ formatBreak(selectedSchedule.breakMinutes) }}</dd>
-      </div>
-      <div>
-        <dt>{{ t('schedule.detailStatus') }}</dt>
-        <dd>
-          <span
-            class="employee-schedule-status"
-            :class="`employee-schedule-status--${scheduleStatusTone(selectedSchedule.status)}`"
-          >
-            {{ t(scheduleStatusKey(selectedSchedule.status)) }}
-          </span>
-        </dd>
-      </div>
-      <div class="employee-schedule-detail__memo">
-        <dt>{{ t('schedule.detailMemo') }}</dt>
-        <dd>{{ selectedSchedule.memo || t('schedule.noMemo') }}</dd>
-      </div>
-    </dl>
-  </section>
+      <dl v-else-if="selectedSchedule" class="employee-schedule-detail__grid">
+        <div>
+          <dt>{{ t('schedule.detailDate') }}</dt>
+          <dd>{{ formatDate(selectedSchedule.workDate) }}</dd>
+        </div>
+        <div>
+          <dt>{{ t('schedule.detailTime') }}</dt>
+          <dd>{{ formatTimeRange(selectedSchedule) }}</dd>
+        </div>
+        <div>
+          <dt>{{ t('schedule.detailDuration') }}</dt>
+          <dd>{{ formatDuration(selectedSchedule.scheduledWorkMinutes) }}</dd>
+        </div>
+        <div>
+          <dt>{{ t('schedule.detailBreak') }}</dt>
+          <dd>{{ formatBreak(selectedSchedule.breakMinutes) }}</dd>
+        </div>
+        <div>
+          <dt>{{ t('schedule.detailStatus') }}</dt>
+          <dd>
+            <span
+              class="employee-schedule-status"
+              :class="`employee-schedule-status--${scheduleStatusTone(selectedSchedule.status)}`"
+            >
+              {{ t(scheduleStatusKey(selectedSchedule.status)) }}
+            </span>
+          </dd>
+        </div>
+        <div class="employee-schedule-detail__memo">
+          <dt>{{ t('schedule.detailMemo') }}</dt>
+          <dd>{{ selectedSchedule.memo || t('schedule.noMemo') }}</dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+
+  <div
+    v-if="selectedCoworker"
+    class="employee-schedule-coworker-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="schedule-coworker-heading"
+    @click.self="closeCoworkerDetail"
+  >
+    <section class="employee-schedule-coworker-modal__panel">
+      <header>
+        <div>
+          <p class="employee-schedule__eyebrow">{{ t('schedule.coworkerModalEyebrow') }}</p>
+          <h2 id="schedule-coworker-heading">{{ selectedCoworker.coworker.name }}</h2>
+        </div>
+        <button
+          class="employee-close-button"
+          type="button"
+          :aria-label="t('schedule.closeCoworkerDetail')"
+          @click="closeCoworkerDetail"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+      <dl class="employee-schedule-coworker-modal__grid">
+        <div>
+          <dt>{{ t('schedule.coworkerRole') }}</dt>
+          <dd>{{ selectedCoworker.coworker.role || t('schedule.notProvided') }}</dd>
+        </div>
+        <div>
+          <dt>{{ t('schedule.detailTime') }}</dt>
+          <dd>{{ coworkerSummary(selectedCoworker.coworker) }}</dd>
+        </div>
+        <div>
+          <dt>{{ t('schedule.detailDate') }}</dt>
+          <dd>{{ formatDate(selectedCoworker.schedule.workDate) }}</dd>
+        </div>
+        <div>
+          <dt>{{ t('home.store') }}</dt>
+          <dd>{{ selectedStore?.name || t('schedule.notProvided') }}</dd>
+        </div>
+      </dl>
+    </section>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -276,7 +470,7 @@ import { useI18n } from 'vue-i18n'
 import { useEmployeeAppContext } from '@/app/employeeAppContext'
 import { isUnauthorized } from '@/api/client'
 import { loadEmployeeScheduleDetail, loadEmployeeSchedules } from '@/api/schedule'
-import type { ScheduleResponse } from '@/api/types'
+import type { ScheduleCoworkerSummary, ScheduleResponse } from '@/api/types'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
 import {
   buildScheduleMonthCells,
@@ -307,6 +501,11 @@ const errorMessage = ref('')
 const scheduleItems = ref<ScheduleResponse[]>([])
 const selectedMonthDate = ref(today)
 const selectedSchedule = ref<ScheduleResponse | null>(null)
+const openCoworkerListScheduleId = ref('')
+const selectedCoworker = ref<{
+  schedule: ScheduleResponse
+  coworker: ScheduleCoworkerSummary
+} | null>(null)
 const detailLoading = ref(false)
 const detailError = ref('')
 const detailScheduleId = ref('')
@@ -375,7 +574,7 @@ async function loadSchedules(): Promise<void> {
     })
     if (requestId === scheduleRequestId) {
       scheduleItems.value = response.items
-      syncSelectedMonthDate(response.items)
+      syncSelectedMonthDate()
     }
   } catch (error) {
     if (requestId !== scheduleRequestId) {
@@ -408,27 +607,20 @@ function goToday(): void {
 }
 
 function selectMonthDate(cell: ScheduleMonthCell): void {
-  if (cell.schedules.length === 0) {
-    return
-  }
   selectedMonthDate.value = cell.date
+  openCoworkerListScheduleId.value = ''
 }
 
-function syncSelectedMonthDate(items: ScheduleResponse[]): void {
+function syncSelectedMonthDate(): void {
   if (mode.value !== 'month') {
     return
   }
-  const sortedItems = sortSchedules(items)
-  const selectedDateStillAvailable = sortedItems.some(
-    (schedule) => schedule.workDate === selectedMonthDate.value,
-  )
-  if (selectedDateStillAvailable) {
+  const range = currentRange.value
+  if (selectedMonthDate.value >= range.startDate && selectedMonthDate.value <= range.endDate) {
     return
   }
   selectedMonthDate.value =
-    sortedItems.find((schedule) => schedule.workDate === today)?.workDate ??
-    sortedItems[0]?.workDate ??
-    cursorDate.value
+    today >= range.startDate && today <= range.endDate ? today : range.startDate
 }
 
 async function openSchedule(schedule: ScheduleResponse): Promise<void> {
@@ -475,6 +667,49 @@ function closeDetail(): void {
   selectedSchedule.value = null
   detailError.value = ''
   detailScheduleId.value = ''
+}
+
+function scheduleCoworkers(schedule: ScheduleResponse): ScheduleCoworkerSummary[] {
+  return schedule.coworkers ?? []
+}
+
+function visibleCoworkers(schedule: ScheduleResponse): ScheduleCoworkerSummary[] {
+  return scheduleCoworkers(schedule).slice(0, 2)
+}
+
+function toggleCoworkerList(schedule: ScheduleResponse): void {
+  openCoworkerListScheduleId.value =
+    openCoworkerListScheduleId.value === schedule.scheduleId ? '' : schedule.scheduleId
+}
+
+function openCoworkerDetail(
+  schedule: ScheduleResponse,
+  coworker: ScheduleCoworkerSummary,
+): void {
+  selectedCoworker.value = { schedule, coworker }
+}
+
+function closeCoworkerDetail(): void {
+  selectedCoworker.value = null
+}
+
+function coworkerInitial(name: string): string {
+  return name.trim().slice(0, 1)
+}
+
+function coworkerListLabel(schedule: ScheduleResponse): string {
+  return t('schedule.coworkerGroupLabel', { count: scheduleCoworkers(schedule).length })
+}
+
+function coworkerSummary(coworker: ScheduleCoworkerSummary): string {
+  if (!coworker.startTime || !coworker.endTime) {
+    return coworker.role || t('schedule.notProvided')
+  }
+  const timeRange = `${formatTime(coworker.startTime)} - ${formatTime(coworker.endTime)}`
+  if (!coworker.role) {
+    return timeRange
+  }
+  return `${coworker.role} · ${timeRange}`
 }
 
 function formatDate(value: string): string {
