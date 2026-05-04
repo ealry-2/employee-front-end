@@ -1,6 +1,6 @@
 import { apiClient } from './client'
 import type { EmployeeAxiosRequestConfig } from './client'
-import type { AppAuthBootstrapResponse, LoginResponse } from './types'
+import type { AppAuthBootstrapResponse, AppUserSummary, LoginResponse } from './types'
 import {
   createDemoBootstrap,
   createDemoLoginResponse,
@@ -10,6 +10,13 @@ import { isEmployeeDemoModeEnabled } from '../demo/employeeDemoMode'
 export interface LoginRequest {
   email: string
   password: string
+}
+
+export interface UpdateAppProfileRequest {
+  name: string
+  phone: string | null
+  address: string | null
+  profileImageUrl: string | null
 }
 
 export async function login(request: LoginRequest): Promise<LoginResponse> {
@@ -29,6 +36,24 @@ export async function loadAppBootstrap(): Promise<AppAuthBootstrapResponse> {
   }
 
   const response = await apiClient.get<AppAuthBootstrapResponse>('/api/app/auth/bootstrap')
+  return response.data
+}
+
+export async function updateAppProfile(
+  request: UpdateAppProfileRequest,
+): Promise<AppUserSummary> {
+  if (isEmployeeDemoModeEnabled()) {
+    const bootstrap = createDemoBootstrap()
+    return {
+      ...bootstrap.user,
+      name: request.name,
+      phone: request.phone,
+      address: request.address,
+      profileImageUrl: request.profileImageUrl,
+    }
+  }
+
+  const response = await apiClient.put<AppUserSummary>('/api/app/auth/profile', request)
   return response.data
 }
 

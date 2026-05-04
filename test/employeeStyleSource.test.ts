@@ -134,6 +134,54 @@ test('employee notifications use searchable grouped list with category icons', (
   )
 })
 
+test('employee settings keeps store choice compact and supports editable profile with avatar', () => {
+  const appStyle = readSource('../src/styles/app.scss')
+  const settingsSource = readSource('../src/views/HomeView.vue')
+  const authSource = readSource('../src/api/auth.ts')
+  const typesSource = readSource('../src/api/types.ts')
+
+  assert.equal(settingsSource.includes('class="employee-hero"'), false)
+  assert.ok(settingsSource.includes('class="employee-store-list"'))
+  assert.ok(settingsSource.includes('class="employee-profile-summary"'))
+  assert.ok(settingsSource.includes('class="employee-profile-avatar"'))
+  assert.ok(settingsSource.includes('bootstrap.user.profileImageUrl'))
+  assert.ok(settingsSource.includes('openProfileEditor'))
+  assert.ok(settingsSource.includes('class="employee-profile-edit"'))
+  assert.ok(settingsSource.includes('class="employee-profile-edit__icon"'))
+  assert.ok(settingsSource.includes(':aria-label="t(\'home.editProfile\')"'))
+  assert.equal(settingsSource.includes('class="employee-secondary-button employee-profile-edit"'), false)
+  assert.ok(settingsSource.includes('class="employee-profile-modal"'))
+  assert.ok(settingsSource.includes('role="dialog"'))
+  assert.ok(settingsSource.includes('updateAppProfile'))
+  assert.ok(settingsSource.includes('showEmployeeToast'))
+  assert.ok(authSource.includes("apiClient.put<AppUserSummary>('/api/app/auth/profile'"))
+  assert.ok(typesSource.includes('profileImageUrl: string | null'))
+  assert.match(
+    appStyle,
+    /\.employee-profile-summary\s*\{[\s\S]*?display:\s*flex;[\s\S]*?border-top:\s*1px solid var\(--employee-color-border\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-profile-avatar\s*\{[\s\S]*?width:\s*5\.6rem;[\s\S]*?border-radius:\s*9999px;[\s\S]*?background:\s*var\(--employee-color-primary-soft\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-profile-edit\s*\{[\s\S]*?display:\s*grid;[\s\S]*?width:\s*4\.4rem;[\s\S]*?border:\s*0;[\s\S]*?background:\s*transparent;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-profile-edit__icon\s*\{[\s\S]*?width:\s*2\.4rem;[\s\S]*?stroke:\s*currentColor;[\s\S]*?stroke-width:\s*2\.2;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-profile-modal\s*\{[\s\S]*?position:\s*fixed;[\s\S]*?place-items:\s*center;[\s\S]*?background:\s*rgba\(9, 13, 22, 0\.48\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-profile-editor\s*\{[\s\S]*?width:\s*min\(100%, 42rem\);[\s\S]*?max-height:\s*min\(82vh, 64rem\);[\s\S]*?overflow:\s*auto;[\s\S]*?\}/,
+  )
+})
+
 test('employee schedule month calendar follows the open admin calendar layout', () => {
   const appStyle = readSource('../src/styles/app.scss')
   const scheduleSource = readSource('../src/views/ScheduleView.vue')

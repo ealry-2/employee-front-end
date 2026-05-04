@@ -80,6 +80,7 @@ export function createDemoBootstrap(): AppAuthBootstrapResponse {
       status: 'ACTIVE',
       phone: '010-1234-5678',
       address: '서울 성동구',
+      profileImageUrl: null,
     },
     stores,
     selectedStore: stores[0],

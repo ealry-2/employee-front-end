@@ -47,6 +47,7 @@ export interface AppUserSummary {
   status: UserStatus
   phone: string | null
   address: string | null
+  profileImageUrl: string | null
 }
 
 export interface AppStoreMembershipSummary {

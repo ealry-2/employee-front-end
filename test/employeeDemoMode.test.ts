@@ -7,6 +7,7 @@ test('employee demo data provides a usable bootstrap without owner/admin fields'
   const bootstrap = createDemoBootstrap()
 
   assert.equal(bootstrap.user.userType, 'EMPLOYEE')
+  assert.equal('profileImageUrl' in bootstrap.user, true)
   assert.equal(bootstrap.hasStores, true)
   assert.equal(bootstrap.selectedStore?.storeId, bootstrap.stores[0].storeId)
   assert.ok(bootstrap.stores.every((store) => store.employeeStatus === 'ACTIVE'))
