@@ -1,15 +1,57 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { isEmployeeDemoModeEnabled } from '@/demo/employeeDemoMode'
 import { hasAccessToken } from '@/session/tokenStorage'
-import HomeView from '@/views/HomeView.vue'
+import EmployeeAppShell from '@/component/EmployeeAppShell.vue'
+import AttendanceView from '@/views/AttendanceView.vue'
+import ContractsView from '@/views/ContractsView.vue'
 import LoginView from '@/views/LoginView.vue'
+import NotificationsView from '@/views/NotificationsView.vue'
+import PayrollView from '@/views/PayrollView.vue'
+import ScheduleView from '@/views/ScheduleView.vue'
+import SettingsView from '@/views/HomeView.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      component: EmployeeAppShell,
+      children: [
+        {
+          path: '',
+          name: 'home',
+          component: ScheduleView,
+        },
+        {
+          path: 'schedule',
+          redirect: { name: 'home' },
+        },
+        {
+          path: 'attendance',
+          name: 'attendance',
+          component: AttendanceView,
+        },
+        {
+          path: 'payroll',
+          name: 'payroll',
+          component: PayrollView,
+        },
+        {
+          path: 'contracts',
+          name: 'contracts',
+          component: ContractsView,
+        },
+        {
+          path: 'notifications',
+          name: 'notifications',
+          component: NotificationsView,
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: SettingsView,
+        },
+      ],
     },
     {
       path: '/login',
@@ -20,10 +62,12 @@ export const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  if (to.name !== 'login' && !hasAccessToken()) {
+  const canUseEmployeeApp = isEmployeeDemoModeEnabled() || hasAccessToken()
+
+  if (to.name !== 'login' && !canUseEmployeeApp) {
     return { name: 'login' }
   }
-  if (to.name === 'login' && hasAccessToken()) {
+  if (to.name === 'login' && canUseEmployeeApp) {
     return { name: 'home' }
   }
   return true

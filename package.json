@@ -12,7 +12,9 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@capacitor/barcode-scanner": "^2.2.6",
     "@capacitor/core": "^7.4.4",
+    "@capacitor/geolocation": "^7.1.8",
     "axios": "^1.13.5",
     "vue": "^3.5.18",
     "vue-i18n": "^9.14.5",
