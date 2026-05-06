@@ -20,6 +20,8 @@ jobs:
         with:
           fetch-depth: 1
           sparse-checkout: |
+            /.env.development
+            /.env.example
             /package.json
             /package-lock.json
             /tsconfig.json
