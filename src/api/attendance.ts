@@ -21,7 +21,6 @@ export interface ClockInEmployeeRequest {
 
 export interface ClockOutEmployeeRequest {
   recordId: string
-  breakMinutes?: number | null
 }
 
 export interface ClockInByQrRequest {
@@ -72,9 +71,7 @@ export async function clockOutEmployee(
 
   const response = await apiClient.post<AttendanceResponse>(
     `/api/alba/attendance/${encodeURIComponent(request.recordId)}/clock-out`,
-    {
-      breakMinutes: request.breakMinutes ?? null,
-    },
+    {},
   )
   return response.data
 }

@@ -8,8 +8,6 @@ import {
   attendanceRecordTone,
   buildClockInRequest,
   buildClockOutRequest,
-  isValidBreakMinutesInput,
-  parseBreakMinutesInput,
   resolveAttendanceAction,
   sortAttendanceRecords,
   toDurationParts,
@@ -82,34 +80,17 @@ test('buildClockInRequest uses current-state employee, work date, and schedule i
   })
 })
 
-test('buildClockOutRequest requires open attendance and valid optional break minutes', () => {
+test('buildClockOutRequest requires open attendance', () => {
   const openState = current({
     nextAction: 'CLOCK_OUT',
     canClockOut: true,
     openAttendance: attendance('open', '2026-05-02T09:00:00'),
   })
 
-  assert.deepEqual(buildClockOutRequest(openState, ''), {
+  assert.deepEqual(buildClockOutRequest(openState), {
     recordId: 'open',
-    breakMinutes: null,
   })
-  assert.deepEqual(buildClockOutRequest(openState, '30'), {
-    recordId: 'open',
-    breakMinutes: 30,
-  })
-  assert.equal(buildClockOutRequest(openState, '-1'), null)
-  assert.equal(buildClockOutRequest(current({ nextAction: 'CLOCK_OUT', canClockOut: true }), '10'), null)
-})
-
-test('break minute parsing keeps blank optional and rejects unsafe values', () => {
-  assert.equal(isValidBreakMinutesInput(''), true)
-  assert.equal(isValidBreakMinutesInput('0'), true)
-  assert.equal(isValidBreakMinutesInput('15'), true)
-  assert.equal(isValidBreakMinutesInput('1.5'), false)
-  assert.equal(isValidBreakMinutesInput('-1'), false)
-  assert.equal(parseBreakMinutesInput(''), null)
-  assert.equal(parseBreakMinutesInput('45'), 45)
-  assert.equal(parseBreakMinutesInput('bad'), null)
+  assert.equal(buildClockOutRequest(current({ nextAction: 'CLOCK_OUT', canClockOut: true })), null)
 })
 
 test('sortAttendanceRecords keeps latest records first with stable record fallback', () => {

@@ -17,7 +17,6 @@ export interface ClockInViewRequest {
 
 export interface ClockOutViewRequest {
   recordId: string
-  breakMinutes: number | null
 }
 
 export function attendanceCurrentStatusKey(
@@ -88,36 +87,13 @@ export function buildClockInRequest(
 
 export function buildClockOutRequest(
   current: AppAttendanceCurrentResponse | null,
-  breakMinutesInput: string,
 ): ClockOutViewRequest | null {
   if (resolveAttendanceAction(current) !== 'CLOCK_OUT' || !current?.openAttendance) {
     return null
   }
-  if (!isValidBreakMinutesInput(breakMinutesInput)) {
-    return null
-  }
   return {
     recordId: current.openAttendance.recordId,
-    breakMinutes: parseBreakMinutesInput(breakMinutesInput),
   }
-}
-
-export function isValidBreakMinutesInput(value: string): boolean {
-  const trimmed = value.trim()
-  if (trimmed === '') {
-    return true
-  }
-  const parsed = Number(trimmed)
-  return Number.isInteger(parsed) && parsed >= 0
-}
-
-export function parseBreakMinutesInput(value: string): number | null {
-  const trimmed = value.trim()
-  if (trimmed === '') {
-    return null
-  }
-  const parsed = Number(trimmed)
-  return Number.isInteger(parsed) && parsed >= 0 ? parsed : null
 }
 
 export function sortAttendanceRecords(

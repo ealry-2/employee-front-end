@@ -140,44 +140,24 @@
             >
               {{ t('schedule.selectedDateEmpty') }}
             </p>
-            <article
+            <EmployeeWorkCard
               v-for="schedule in selectedMonthSchedules"
               :key="schedule.scheduleId"
-              class="employee-schedule-card employee-schedule-month-agenda__card"
+              class="employee-schedule-month-agenda__card"
+              :title="selectedStore.name"
+              :location="selectedStore.address || t('schedule.notProvided')"
+              :memo="schedule.memo"
+              :start-time="formatTime(schedule.startTime)"
+              :start-label="t('schedule.startLabel')"
+              :end-time="formatTime(schedule.endTime)"
+              :end-label="t('schedule.endLabel')"
+              :status-label="t(scheduleStatusKey(schedule.status))"
+              :status-tone="scheduleStatusTone(schedule.status)"
+              :accessible-summary="scheduleAccessibleSummary(schedule)"
+              interactive
+              @select="openSchedule(schedule)"
             >
-              <button
-                class="employee-schedule-card__summary"
-                type="button"
-                @click="openSchedule(schedule)"
-              >
-                <span class="employee-schedule-card__main">
-                  <strong>{{ selectedStore.name }}</strong>
-                  <span class="employee-schedule-card__location">
-                    <svg aria-hidden="true" viewBox="0 0 24 24">
-                      <path
-                        d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12Z"
-                      />
-                      <circle cx="12" cy="9" r="2.5" />
-                    </svg>
-                    {{ selectedStore.address || t('schedule.notProvided') }}
-                  </span>
-                  <span v-if="schedule.memo" class="employee-schedule-card__memo">
-                    {{ schedule.memo }}
-                  </span>
-                </span>
-                <span class="employee-schedule-card__times" aria-hidden="true">
-                  <strong>{{ formatTime(schedule.startTime) }}</strong>
-                  <small>{{ t('schedule.startLabel') }}</small>
-                  <strong>{{ formatTime(schedule.endTime) }}</strong>
-                  <small>{{ t('schedule.endLabel') }}</small>
-                </span>
-                <span class="employee-sr-only">
-                  {{ formatTimeRange(schedule) }}
-                  {{ t(scheduleStatusKey(schedule.status)) }}
-                </span>
-              </button>
-
-              <div class="employee-schedule-card__footer">
+              <template #footer>
                 <div
                   v-if="scheduleCoworkers(schedule).length > 0"
                   class="employee-schedule-coworkers"
@@ -201,13 +181,7 @@
                     {{ coworkerListLabel(schedule) }}
                   </button>
                 </div>
-                <span
-                  class="employee-schedule-status"
-                  :class="`employee-schedule-status--${scheduleStatusTone(schedule.status)}`"
-                >
-                  {{ t(scheduleStatusKey(schedule.status)) }}
-                </span>
-              </div>
+              </template>
 
               <div
                 v-if="openCoworkerListScheduleId === schedule.scheduleId"
@@ -229,7 +203,7 @@
                   </span>
                 </button>
               </div>
-            </article>
+            </EmployeeWorkCard>
           </section>
         </template>
 
@@ -248,44 +222,23 @@
               <span>{{ t('schedule.shiftCount', { count: group.schedules.length }) }}</span>
             </header>
 
-            <article
+            <EmployeeWorkCard
               v-for="schedule in group.schedules"
               :key="schedule.scheduleId"
-              class="employee-schedule-card"
+              :title="selectedStore.name"
+              :location="selectedStore.address || t('schedule.notProvided')"
+              :memo="schedule.memo"
+              :start-time="formatTime(schedule.startTime)"
+              :start-label="t('schedule.startLabel')"
+              :end-time="formatTime(schedule.endTime)"
+              :end-label="t('schedule.endLabel')"
+              :status-label="t(scheduleStatusKey(schedule.status))"
+              :status-tone="scheduleStatusTone(schedule.status)"
+              :accessible-summary="scheduleAccessibleSummary(schedule)"
+              interactive
+              @select="openSchedule(schedule)"
             >
-              <button
-                class="employee-schedule-card__summary"
-                type="button"
-                @click="openSchedule(schedule)"
-              >
-                <span class="employee-schedule-card__main">
-                  <strong>{{ selectedStore.name }}</strong>
-                  <span class="employee-schedule-card__location">
-                    <svg aria-hidden="true" viewBox="0 0 24 24">
-                      <path
-                        d="M12 21s7-5.2 7-12a7 7 0 0 0-14 0c0 6.8 7 12 7 12Z"
-                      />
-                      <circle cx="12" cy="9" r="2.5" />
-                    </svg>
-                    {{ selectedStore.address || t('schedule.notProvided') }}
-                  </span>
-                  <span v-if="schedule.memo" class="employee-schedule-card__memo">
-                    {{ schedule.memo }}
-                  </span>
-                </span>
-                <span class="employee-schedule-card__times" aria-hidden="true">
-                  <strong>{{ formatTime(schedule.startTime) }}</strong>
-                  <small>{{ t('schedule.startLabel') }}</small>
-                  <strong>{{ formatTime(schedule.endTime) }}</strong>
-                  <small>{{ t('schedule.endLabel') }}</small>
-                </span>
-                <span class="employee-sr-only">
-                  {{ formatTimeRange(schedule) }}
-                  {{ t(scheduleStatusKey(schedule.status)) }}
-                </span>
-              </button>
-
-              <div class="employee-schedule-card__footer">
+              <template #footer>
                 <div
                   v-if="scheduleCoworkers(schedule).length > 0"
                   class="employee-schedule-coworkers"
@@ -309,13 +262,7 @@
                     {{ coworkerListLabel(schedule) }}
                   </button>
                 </div>
-                <span
-                  class="employee-schedule-status"
-                  :class="`employee-schedule-status--${scheduleStatusTone(schedule.status)}`"
-                >
-                  {{ t(scheduleStatusKey(schedule.status)) }}
-                </span>
-              </div>
+              </template>
 
               <div
                 v-if="openCoworkerListScheduleId === schedule.scheduleId"
@@ -337,7 +284,7 @@
                   </span>
                 </button>
               </div>
-            </article>
+            </EmployeeWorkCard>
           </article>
         </section>
       </template>
@@ -404,8 +351,8 @@
           <dt>{{ t('schedule.detailStatus') }}</dt>
           <dd>
             <span
-              class="employee-schedule-status"
-              :class="`employee-schedule-status--${scheduleStatusTone(selectedSchedule.status)}`"
+              class="employee-work-status"
+              :class="`employee-work-status--${scheduleStatusTone(selectedSchedule.status)}`"
             >
               {{ t(scheduleStatusKey(selectedSchedule.status)) }}
             </span>
@@ -472,6 +419,7 @@ import { isUnauthorized } from '@/api/client'
 import { loadEmployeeScheduleDetail, loadEmployeeSchedules } from '@/api/schedule'
 import type { ScheduleCoworkerSummary, ScheduleResponse } from '@/api/types'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
+import EmployeeWorkCard from '@/component/EmployeeWorkCard.vue'
 import {
   buildScheduleMonthCells,
   groupSchedulesByDate,
@@ -729,6 +677,10 @@ function formatMonth(value: string): string {
 
 function formatTimeRange(schedule: ScheduleResponse): string {
   return `${formatTime(schedule.startTime)} - ${formatTime(schedule.endTime)}`
+}
+
+function scheduleAccessibleSummary(schedule: ScheduleResponse): string {
+  return `${formatTimeRange(schedule)} ${t(scheduleStatusKey(schedule.status))}`
 }
 
 function formatTime(value: string): string {

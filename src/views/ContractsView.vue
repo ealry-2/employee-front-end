@@ -1,16 +1,10 @@
 <template>
   <section class="employee-contracts" aria-labelledby="contracts-heading">
     <div class="employee-contracts__header">
-      <div>
-        <p class="employee-contracts__eyebrow">{{ t('contracts.eyebrow') }}</p>
-        <h2 id="contracts-heading">{{ t('screen.contracts.title') }}</h2>
-      </div>
-      <EmployeeRefreshButton
-        class="employee-contracts__refresh"
-        :label="t('contracts.refresh')"
-        :disabled="loading"
-        @click="loadContracts"
-      />
+      <h2 id="contracts-heading">{{ t('screen.contracts.title') }}</h2>
+      <span v-if="contracts.length > 0" class="employee-contracts__count">
+        {{ t('contracts.listCount', { count: contracts.length }) }}
+      </span>
     </div>
 
     <EmployeeStatePanel
@@ -45,15 +39,7 @@
         @action="loadContracts"
       />
 
-      <section v-else class="employee-contracts-list" aria-labelledby="contracts-list-heading">
-        <div class="employee-contracts-list__header">
-          <div>
-            <p class="employee-contracts__eyebrow">{{ t('contracts.listEyebrow') }}</p>
-            <h3 id="contracts-list-heading">{{ t('contracts.listTitle') }}</h3>
-          </div>
-          <span>{{ t('contracts.listCount', { count: contracts.length }) }}</span>
-        </div>
-
+      <section v-else class="employee-contracts-list" :aria-label="t('contracts.listTitle')">
         <button
           v-for="contract in contracts"
           :key="contract.contractId"
@@ -67,8 +53,8 @@
             <span>{{ formatDateRange(contract.workStartDate, contract.workEndDate) }}</span>
           </span>
           <span
-            class="employee-contract-status"
-            :class="`employee-contract-status--${contractStatusTone(contract.status)}`"
+            class="employee-work-status"
+            :class="`employee-work-status--${contractStatusTone(contract.status)}`"
           >
             {{ t(contractStatusKey(contract.status)) }}
           </span>
@@ -87,11 +73,11 @@
   >
     <div class="employee-contract-detail__header">
       <div>
-        <p class="employee-contracts__eyebrow">{{ t('contracts.detailEyebrow') }}</p>
+        <p class="employee-contract-detail__eyebrow">{{ t('contracts.detailEyebrow') }}</p>
         <h2 id="contract-detail-heading">{{ selectedContract.title }}</h2>
       </div>
       <button
-        class="employee-icon-button"
+        class="employee-contract-detail__close"
         type="button"
         :aria-label="t('contracts.closeDetail')"
         @click="closeDetail"
@@ -174,7 +160,6 @@ import { useEmployeeAppContext } from '@/app/employeeAppContext'
 import { isForbidden, isUnauthorized } from '@/api/client'
 import { loadMyContractDetail, loadMyContracts } from '@/api/contracts'
 import type { AppContractDetailResponse, AppContractListItemResponse } from '@/api/types'
-import EmployeeRefreshButton from '@/component/EmployeeRefreshButton.vue'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
 import {
   contractActionKey,

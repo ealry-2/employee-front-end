@@ -23,12 +23,33 @@ test('employee app global styles follow the Editorial Workspace theme baseline',
   assert.ok(appStyle.includes('.employee-schedule-day.has-schedules'))
   assert.ok(appStyle.includes('background: var(--employee-color-tint-sky);'))
   assert.ok(appStyle.includes('.employee-attendance-card'))
+  assert.ok(appStyle.includes('--employee-qr-guide: #7ee8f6;'))
+  assert.ok(appStyle.includes('--employee-qr-corner: rgba(255, 255, 255, 0.96);'))
+  assert.ok(appStyle.includes('center / 100% 0.24rem no-repeat'))
+  assert.ok(appStyle.includes('linear-gradient(var(--employee-qr-corner), var(--employee-qr-corner)) left top'))
+  assert.ok(appStyle.includes('linear-gradient(var(--employee-qr-corner), var(--employee-qr-corner)) right bottom'))
+  assert.match(
+    appStyle,
+    /#cap-os-barcode-scanner-container\s*\{[\s\S]*?background:\s*transparent !important;[\s\S]*?\}/,
+  )
+  assert.doesNotMatch(
+    appStyle,
+    /#cap-os-barcode-scanner-container\s*\{[\s\S]*?var\(--employee-color-brand-navy\) !important;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /#cap-os-barcode-scanner-container-scanner video\s*\{[\s\S]*?z-index:\s*10001 !important;[\s\S]*?background:\s*transparent !important;[\s\S]*?filter:\s*saturate\(1\.04\) contrast\(1\.04\) brightness\(0\.96\);[\s\S]*?\}/,
+  )
   assert.ok(appStyle.includes('background: var(--employee-color-tint-mint);'))
   assert.ok(appStyle.includes('.employee-payroll-latest'))
   assert.ok(appStyle.includes('.employee-payroll-history'))
   assert.ok(appStyle.includes('.employee-payroll-latest__breakdown'))
   assert.ok(appStyle.includes('.employee-payroll-latest__section'))
   assert.ok(appStyle.includes('.employee-payroll-latest__section-toggle'))
+  assert.match(
+    appStyle,
+    /\.employee-payroll-latest__breakdown\s*\{[\s\S]*?padding:\s*0;[\s\S]*?\}/,
+  )
   assert.ok(appStyle.includes('box-shadow: 0 1.8rem 4rem rgba(13, 19, 38, 0.08);'))
   assert.ok(appStyle.includes('.employee-contract-card.is-selected'))
   assert.ok(appStyle.includes('background: var(--employee-color-tint-lavender);'))
@@ -46,9 +67,21 @@ test('employee app global styles follow the Editorial Workspace theme baseline',
   assert.equal(appStyle.includes('translateX(0.6rem)'), false)
 })
 
-test('employee payroll latest card keeps the full earnings and deductions breakdown', () => {
+test('employee payroll selected card keeps the full earnings and deductions breakdown', () => {
+  const appStyle = readSource('../src/styles/app.scss')
   const payrollSource = readSource('../src/views/PayrollView.vue')
 
+  assert.ok(payrollSource.includes('v-if="selectedPayroll"'))
+  assert.ok(payrollSource.includes('v-for="payroll in payrolls"'))
+  assert.equal(payrollSource.includes('employee-payroll__header'), false)
+  assert.equal(payrollSource.includes('employee-payroll__eyebrow'), false)
+  assert.equal(payrollSource.includes('<EmployeeRefreshButton'), false)
+  assert.equal(payrollSource.includes('import EmployeeRefreshButton'), false)
+  assert.equal(appStyle.includes('.employee-payroll__header'), false)
+  assert.equal(appStyle.includes('.employee-payroll__eyebrow'), false)
+  assert.equal(appStyle.includes('.employee-payroll__refresh'), false)
+  assert.ok(payrollSource.includes("t('payroll.closeDetail')"))
+  assert.ok(payrollSource.includes('@click="closeSelectedPayroll"'))
   assert.ok(payrollSource.includes(':aria-expanded="latestEarningsOpen"'))
   assert.ok(payrollSource.includes(':aria-expanded="latestDeductionsOpen"'))
   assert.ok(payrollSource.includes('v-show="latestEarningsOpen"'))
@@ -66,8 +99,16 @@ test('employee payroll latest card keeps the full earnings and deductions breakd
   assert.ok(payrollSource.includes("t('payroll.employmentInsurance')"))
   assert.ok(payrollSource.includes("t('payroll.incomeTax')"))
   assert.ok(payrollSource.includes("t('payroll.localIncomeTax')"))
-  assert.ok(payrollSource.includes('latest.totalDeductions'))
+  assert.ok(payrollSource.includes('selectedPayroll.totalDeductions'))
+  assert.ok(payrollSource.includes('class="employee-work-status"'))
+  assert.ok(payrollSource.includes('`employee-work-status--${payrollStatusTone(payroll.status)}`'))
+  assert.equal(payrollSource.includes('employee-payroll-status'), false)
+  assert.equal(payrollSource.includes('employee-payroll-latest__badge'), false)
+  assert.equal(payrollSource.includes('employee-payroll-latest__icon'), false)
   assert.equal(payrollSource.includes('employee-payroll-latest__summary'), false)
+  assert.equal(payrollSource.includes('class="employee-payroll-detail"'), false)
+  assert.equal(payrollSource.includes('employee-payroll-breakdown'), false)
+  assert.equal(appStyle.includes('.employee-payroll-status'), false)
 })
 
 test('employee notifications use searchable grouped list with category icons', () => {
@@ -185,9 +226,11 @@ test('employee settings keeps store choice compact and supports editable profile
 test('employee schedule month calendar follows the open admin calendar layout', () => {
   const appStyle = readSource('../src/styles/app.scss')
   const scheduleSource = readSource('../src/views/ScheduleView.vue')
+  const attendanceSource = readSource('../src/views/AttendanceView.vue')
+  const workCardSource = readSource('../src/component/EmployeeWorkCard.vue')
   const scheduleCardHoverBlock =
     appStyle.match(
-      /\.employee-schedule-card:hover,\s*\.employee-schedule-card:focus-within\s*\{[^}]*\}/,
+      /\.employee-work-card:hover,\s*\.employee-work-card:focus-within\s*\{[^}]*\}/,
     )?.[0] ?? ''
 
   assert.ok(scheduleSource.includes('v-if="mode !== \'month\'" class="employee-schedule-range"'))
@@ -232,7 +275,11 @@ test('employee schedule month calendar follows the open admin calendar layout', 
   )
   assert.match(
     appStyle,
-    /\.employee-schedule-month__nav-button\s*\{[\s\S]*?width:\s*4\.4rem;[\s\S]*?border:\s*0;[\s\S]*?background:\s*transparent;[\s\S]*?pointer-events:\s*auto;[\s\S]*?\}/,
+    /\.employee-schedule-month__nav-button\s*\{[\s\S]*?width:\s*4\.4rem;[\s\S]*?border:\s*0;[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*transparent;[\s\S]*?font-size:\s*3\.4rem;[\s\S]*?pointer-events:\s*auto;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-schedule-range__button\s*\{[\s\S]*?width:\s*4\.4rem;[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*transparent;[\s\S]*?font-size:\s*3\.2rem;[\s\S]*?\}/,
   )
   assert.doesNotMatch(
     appStyle,
@@ -266,10 +313,14 @@ test('employee schedule month calendar follows the open admin calendar layout', 
     appStyle,
     /\.employee-schedule-month-agenda__empty\s*\{[\s\S]*?border:\s*1px solid var\(--employee-color-border\);[\s\S]*?color:\s*var\(--employee-color-text-muted\);[\s\S]*?\}/,
   )
-  assert.ok(scheduleSource.includes('class="employee-schedule-card__summary"'))
-  assert.ok(scheduleSource.includes('class="employee-schedule-card__times"'))
-  assert.ok(scheduleSource.includes('class="employee-schedule-card__footer"'))
-  assert.ok(scheduleSource.includes('class="employee-schedule-status"'))
+  assert.ok(scheduleSource.includes('<EmployeeWorkCard'))
+  assert.ok(scheduleSource.includes('import EmployeeWorkCard'))
+  assert.ok(attendanceSource.includes('<EmployeeWorkCard'))
+  assert.ok(attendanceSource.includes('class="employee-attendance-record-item"'))
+  assert.ok(workCardSource.includes('class="employee-work-card__summary"'))
+  assert.ok(workCardSource.includes('class="employee-work-card__times"'))
+  assert.ok(workCardSource.includes('class="employee-work-card__footer"'))
+  assert.ok(workCardSource.includes('class="employee-work-status"'))
   assert.ok(scheduleSource.includes('class="employee-close-button"'))
   assert.ok(scheduleSource.includes('class="employee-schedule-detail-modal"'))
   assert.ok(scheduleSource.includes('@click.self="closeDetail"'))
@@ -285,24 +336,24 @@ test('employee schedule month calendar follows the open admin calendar layout', 
   assert.ok(scheduleSource.includes('coworkerSummary(coworker)'))
   assert.match(
     appStyle,
-    /\.employee-schedule-card__summary\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\) auto;[\s\S]*?min-height:\s*12rem;[\s\S]*?\}/,
+    /\.employee-work-card__summary\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\) auto;[\s\S]*?min-height:\s*12rem;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
-    /\.employee-schedule-card:hover,\s*\.employee-schedule-card:focus-within\s*\{[\s\S]*?border-color:\s*var\(--employee-color-primary\);[\s\S]*?background:\s*var\(--employee-color-surface\);[\s\S]*?\}/,
+    /\.employee-work-card:hover,\s*\.employee-work-card:focus-within\s*\{[\s\S]*?border-color:\s*var\(--employee-color-primary\);[\s\S]*?background:\s*var\(--employee-color-surface\);[\s\S]*?\}/,
   )
   assert.doesNotMatch(scheduleCardHoverBlock, /background:\s*var\(--employee-color-tint-sky\);/)
   assert.match(
     appStyle,
-    /\.employee-schedule-card__times strong\s*\{[\s\S]*?font-size:\s*1\.95rem;[\s\S]*?font-weight:\s*800;[\s\S]*?\}/,
+    /\.employee-work-card__times strong\s*\{[\s\S]*?font-size:\s*1\.95rem;[\s\S]*?font-weight:\s*800;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
-    /\.employee-schedule-card__footer\s*\{[\s\S]*?justify-content:\s*space-between;[\s\S]*?border-top:\s*1px solid var\(--employee-color-border\);[\s\S]*?\}/,
+    /\.employee-work-card__footer\s*\{[\s\S]*?justify-content:\s*space-between;[\s\S]*?border-top:\s*1px solid var\(--employee-color-border\);[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
-    /\.employee-schedule-status\s*\{[\s\S]*?border:\s*1px solid currentColor;[\s\S]*?background:\s*transparent;[\s\S]*?margin-left:\s*auto;[\s\S]*?\}/,
+    /\.employee-work-status\s*\{[\s\S]*?align-self:\s*center;[\s\S]*?width:\s*max-content;[\s\S]*?min-height:\s*2\.6rem;[\s\S]*?border:\s*1px solid currentColor;[\s\S]*?background:\s*transparent;[\s\S]*?padding:\s*0 0\.8rem;[\s\S]*?font-size:\s*1\.15rem;[\s\S]*?margin-left:\s*auto;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
@@ -384,6 +435,10 @@ test('employee shell keeps store switching in settings and uses notification bel
   assert.match(
     appStyle,
     /\.employee-topbar\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?backdrop-filter:\s*saturate\(180%\) blur\(18px\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-topbar\s*\{[\s\S]*?max\(1\.4rem,\s*env\(safe-area-inset-top\)\)[\s\S]*?0\.8rem;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
@@ -479,13 +534,10 @@ test('employee refresh controls use icon-only buttons in repeated screen headers
   const appStyle = readSource('../src/styles/app.scss')
   const refreshSource = readSource('../src/component/EmployeeRefreshButton.vue')
   const attendanceSource = readSource('../src/views/AttendanceView.vue')
-  const payrollSource = readSource('../src/views/PayrollView.vue')
   const contractsSource = readSource('../src/views/ContractsView.vue')
   const notificationsSource = readSource('../src/views/NotificationsView.vue')
   const screenSources = [
     attendanceSource,
-    payrollSource,
-    contractsSource,
     notificationsSource,
   ]
 
@@ -507,4 +559,45 @@ test('employee refresh controls use icon-only buttons in repeated screen headers
     appStyle,
     /\.employee-refresh-button__stroke\s*\{[\s\S]*?stroke:\s*currentColor;[\s\S]*?stroke-linecap:\s*round;[\s\S]*?\}/,
   )
+})
+
+test('employee contracts list avoids nested card headers', () => {
+  const appStyle = readSource('../src/styles/app.scss')
+  const contractsSource = readSource('../src/views/ContractsView.vue')
+  const listRule = appStyle.match(/\.employee-contracts-list\s*\{(?<body>[\s\S]*?)\}/)
+
+  assert.ok(contractsSource.includes('class="employee-contracts__count"'))
+  assert.ok(contractsSource.includes('<h2 id="contracts-heading"'))
+  assert.ok(contractsSource.includes('class="employee-contract-detail__close"'))
+  assert.ok(contractsSource.includes('class="employee-work-status"'))
+  assert.ok(contractsSource.includes('contractStatusKey(contract.status)'))
+  assert.doesNotMatch(contractsSource, /class="employee-icon-button"[\s\S]*?closeDetail/)
+  assert.equal(contractsSource.includes("t('contracts.eyebrow')"), false)
+  assert.equal(contractsSource.includes('<EmployeeRefreshButton'), false)
+  assert.equal(contractsSource.includes('import EmployeeRefreshButton'), false)
+  assert.equal(contractsSource.includes('employee-contracts-list__header'), false)
+  assert.equal(contractsSource.includes('contracts-list-heading'), false)
+  assert.equal(contractsSource.includes('employee-contract-status'), false)
+  assert.equal(contractsSource.includes('contractStatusShortKey'), false)
+  assert.equal(contractsSource.includes("t('contracts.listEyebrow')"), false)
+  assert.equal(appStyle.includes('.employee-contract-status'), false)
+  assert.equal(appStyle.includes('.employee-contracts__eyebrow'), false)
+  assert.equal(appStyle.includes('.employee-contracts__actions'), false)
+  assert.match(
+    appStyle,
+    /\.employee-payroll-history h3\s*\{[\s\S]*?font-size:\s*2rem;[\s\S]*?line-height:\s*1\.2;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-contracts__header h2\s*\{[\s\S]*?font-size:\s*2rem;[\s\S]*?line-height:\s*1\.2;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-contract-detail__close\s*\{[\s\S]*?border:\s*0;[\s\S]*?border-radius:\s*0;[\s\S]*?background:\s*transparent;[\s\S]*?font-size:\s*3rem;[\s\S]*?\}/,
+  )
+  assert.ok(listRule?.groups?.body)
+  assert.match(listRule.groups.body, /margin-top:\s*1\.6rem;/)
+  assert.doesNotMatch(listRule.groups.body, /border:\s*1px solid var\(--employee-color-border\);/)
+  assert.doesNotMatch(listRule.groups.body, /background:\s*var\(--employee-color-surface-raised\);/)
+  assert.doesNotMatch(listRule.groups.body, /padding:\s*1\.8rem;/)
 })

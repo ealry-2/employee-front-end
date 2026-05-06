@@ -191,7 +191,7 @@ export function clockOutDemoEmployee(request: ClockOutEmployeeRequest): Attendan
     clockInAt: setTime(new Date(), 9, 2),
     clockOutAt: new Date().toISOString(),
     totalWorkMinutes: 342,
-    breakMinutes: request.breakMinutes ?? 30,
+    breakMinutes: null,
   })
 }
 

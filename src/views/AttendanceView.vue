@@ -38,73 +38,86 @@
 
       <template v-else-if="current">
         <section class="employee-attendance-card" aria-labelledby="attendance-status-heading">
-          <div class="employee-attendance-card__top">
-            <div>
-              <p class="employee-attendance-card__label">{{ t('attendance.currentLabel') }}</p>
-              <h3 id="attendance-status-heading">
-                {{ t(attendanceCurrentStatusKey(current.status)) }}
-              </h3>
-            </div>
-            <span
-              class="employee-attendance-status"
-              :class="`employee-attendance-status--${attendanceCurrentTone(current.status)}`"
-            >
-              {{ t(attendanceCurrentStatusKey(current.status)) }}
-            </span>
+          <div class="employee-attendance-card__clock">
+            <time :datetime="displayClockIso">{{ displayClockTime }}</time>
+            <span>{{ displayClockDate }}</span>
           </div>
+
+          <button
+            class="employee-attendance-ring-action"
+            type="button"
+            :disabled="actionDisabled"
+            :aria-busy="actionSubmitting || qrScanSubmitting"
+            :aria-label="primaryActionLabel"
+            @click="submitAction"
+          >
+            <span class="employee-attendance-ring-action__icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32" focusable="false">
+                <path d="M14.1 15.1V7.8a1.7 1.7 0 0 1 3.4 0v6.1" />
+                <path d="M17.5 12.2a1.7 1.7 0 0 1 3.4 0v2.2" />
+                <path d="M20.9 13.1a1.7 1.7 0 0 1 3.4 0v3.9" />
+                <path d="m14.1 17.2-1.4-1.4a1.8 1.8 0 0 0-2.5 2.6l4.1 4.8a6.3 6.3 0 0 0 4.9 2.2h0.3a4.8 4.8 0 0 0 4.8-4.8V17" />
+              </svg>
+            </span>
+            <span>{{ primaryActionLabel }}</span>
+          </button>
+
+          <div class="employee-attendance-card__status">
+            <h3 id="attendance-status-heading">
+              {{ t(attendanceCurrentStatusKey(current.status)) }}
+            </h3>
+          </div>
+
+          <dl class="employee-attendance-metrics">
+            <div>
+              <dt>
+                <span class="employee-attendance-metric-icon employee-attendance-metric-icon--in" aria-hidden="true">
+                  <svg viewBox="0 0 32 32" focusable="false">
+                    <circle cx="16" cy="16" r="8.8" />
+                    <path d="M16 10.8v5.5l3.8 2.2" />
+                    <path d="M11.5 6.6 9.3 4.4" />
+                    <path d="M20.5 6.6 22.7 4.4" />
+                  </svg>
+                </span>
+                {{ t('attendance.checkInMetric') }}
+              </dt>
+              <dd>{{ attendanceMetric.checkIn }}</dd>
+            </div>
+            <div>
+              <dt>
+                <span class="employee-attendance-metric-icon employee-attendance-metric-icon--out" aria-hidden="true">
+                  <svg viewBox="0 0 32 32" focusable="false">
+                    <circle cx="16" cy="16" r="8.8" />
+                    <path d="M16 10.8v5.5l3.8 2.2" />
+                    <path d="M11.5 6.6 9.3 4.4" />
+                    <path d="M20.5 6.6 22.7 4.4" />
+                  </svg>
+                </span>
+                {{ t('attendance.checkOutMetric') }}
+              </dt>
+              <dd>{{ attendanceMetric.checkOut }}</dd>
+            </div>
+            <div>
+              <dt>
+                <span class="employee-attendance-metric-icon employee-attendance-metric-icon--total" aria-hidden="true">
+                  <svg viewBox="0 0 32 32" focusable="false">
+                    <circle cx="16" cy="16" r="9.5" />
+                    <path d="M16 10.3v5.9l4 2.3" />
+                  </svg>
+                </span>
+                {{ t('attendance.totalHoursMetric') }}
+              </dt>
+              <dd>{{ attendanceMetric.total }}</dd>
+            </div>
+          </dl>
 
           <p class="employee-attendance-card__description">
             {{ t(currentDescriptionKey) }}
           </p>
 
-          <dl class="employee-attendance-meta">
-            <div>
-              <dt>{{ t('attendance.serverTime') }}</dt>
-              <dd>{{ formatDateTime(current.serverTime) }}</dd>
-            </div>
-            <div>
-              <dt>{{ t('attendance.workDate') }}</dt>
-              <dd>{{ formatDate(current.workDate) }}</dd>
-            </div>
-            <div>
-              <dt>{{ t('attendance.scheduledShift') }}</dt>
-              <dd>{{ formatSchedule(current.scheduledShift) }}</dd>
-            </div>
-            <div>
-              <dt>{{ t('attendance.openAttendance') }}</dt>
-              <dd>{{ formatAttendanceWindow(current.openAttendance) }}</dd>
-            </div>
-          </dl>
-
-          <label v-if="attendanceAction === 'CLOCK_OUT'" class="employee-field employee-attendance-break">
-            <span class="employee-field__label">{{ t('attendance.breakMinutes') }}</span>
-            <input
-              v-model="breakMinutesInput"
-              class="employee-field__control"
-              type="number"
-              min="0"
-              step="1"
-              inputmode="numeric"
-              :aria-invalid="breakMinutesInvalid"
-            />
-            <span v-if="breakMinutesInvalid" class="employee-attendance-break__error">
-              {{ t('attendance.breakInvalid') }}
-            </span>
-          </label>
-
           <p v-if="actionError" class="employee-attendance-action-error" role="alert">
             {{ actionError }}
           </p>
-
-          <button
-            class="employee-primary-button employee-attendance-action"
-            type="button"
-            :disabled="actionDisabled"
-            :aria-busy="actionSubmitting || qrScanSubmitting"
-            @click="submitAction"
-          >
-            {{ primaryActionLabel }}
-          </button>
 
           <p v-if="loading" class="employee-attendance-card__sync">
             {{ t('attendance.syncing') }}
@@ -130,27 +143,30 @@
             <li
               v-for="record in historyRecords"
               :key="record.recordId"
-              class="employee-attendance-record"
+              class="employee-attendance-record-item"
             >
-              <div class="employee-attendance-record__main">
-                <span>{{ formatAttendanceWindow(record) }}</span>
-                <span
-                  class="employee-attendance-status"
-                  :class="`employee-attendance-status--${attendanceRecordTone(record.status)}`"
-                >
-                  {{ t(attendanceRecordStatusKey(record.status)) }}
-                </span>
-              </div>
-              <dl class="employee-attendance-record__meta">
-                <div>
-                  <dt>{{ t('attendance.totalWork') }}</dt>
-                  <dd>{{ formatDuration(record.totalWorkMinutes) }}</dd>
-                </div>
-                <div>
-                  <dt>{{ t('attendance.breakMinutes') }}</dt>
-                  <dd>{{ formatDuration(record.breakMinutes) }}</dd>
-                </div>
-              </dl>
+              <EmployeeWorkCard
+                compact
+                :title="selectedStore.name"
+                :location="formatDate(record.workDate)"
+                :memo="record.memo"
+                :start-time="formatNullableTime(record.clockInAt)"
+                :start-label="t('attendance.checkInMetric')"
+                :end-time="formatNullableTime(record.clockOutAt, t('attendance.notClockedOutValue'))"
+                :end-label="t('attendance.checkOutMetric')"
+                :status-label="t(attendanceRecordStatusKey(record.status))"
+                :status-tone="attendanceRecordTone(record.status)"
+                :accessible-summary="formatAttendanceWindow(record)"
+              >
+                <template #footer>
+                  <dl class="employee-attendance-record__meta">
+                    <div>
+                      <dt>{{ t('attendance.totalWork') }}</dt>
+                      <dd>{{ formatDuration(record.totalWorkMinutes) }}</dd>
+                    </div>
+                  </dl>
+                </template>
+              </EmployeeWorkCard>
             </li>
           </ol>
         </section>
@@ -172,20 +188,19 @@ import {
   clockOutEmployee,
   loadAttendanceCurrent,
 } from '@/api/attendance'
-import type { AppAttendanceCurrentResponse, AttendanceResponse, ScheduleResponse } from '@/api/types'
+import type { AppAttendanceCurrentResponse, AttendanceResponse } from '@/api/types'
 import EmployeeRefreshButton from '@/component/EmployeeRefreshButton.vue'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
+import EmployeeWorkCard from '@/component/EmployeeWorkCard.vue'
 import { registerBrowserResumeHandler, type ResumeHandlerCleanup } from '@/runtime/appResume'
 import { getCurrentQrLocation, scanAttendanceQr } from '@/attendance/qrScanner'
 import {
   attendanceActionLabelKey,
   attendanceCurrentStatusKey,
-  attendanceCurrentTone,
   attendanceRecordStatusKey,
   attendanceRecordTone,
   buildClockInRequest,
   buildClockOutRequest,
-  isValidBreakMinutesInput,
   resolveAttendanceAction,
   sortAttendanceRecords,
   toDurationParts,
@@ -202,9 +217,12 @@ const errorMessage = ref('')
 const actionError = ref('')
 const actionSubmitting = ref(false)
 const qrScanSubmitting = ref(false)
-const breakMinutesInput = ref('')
+const liveServerTime = ref<Date | null>(null)
 let currentRequestId = 0
 let cleanupResumeHandler: ResumeHandlerCleanup | null = null
+let liveClockTimer: ReturnType<typeof setInterval> | null = null
+let serverClockBaseMs: number | null = null
+let clientClockBaseMs: number | null = null
 
 const attendanceAction = computed(() => resolveAttendanceAction(current.value))
 const currentDescriptionKey = computed(() => {
@@ -216,14 +234,20 @@ const currentDescriptionKey = computed(() => {
     .replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase())}`
 })
 const historyRecords = computed(() => sortAttendanceRecords(current.value?.todayAttendances ?? []))
-const breakMinutesInvalid = computed(() => !isValidBreakMinutesInput(breakMinutesInput.value))
+const attendanceMetric = computed(() => buildAttendanceMetric(current.value, liveServerTime.value))
+const displayClockIso = computed(() => liveServerTime.value?.toISOString() ?? current.value?.serverTime ?? '')
+const displayClockTime = computed(() =>
+  liveServerTime.value ? formatClockTime(liveServerTime.value) : t('attendance.noTimeValue'),
+)
+const displayClockDate = computed(() =>
+  liveServerTime.value ? formatLongDate(liveServerTime.value) : '',
+)
 const actionDisabled = computed(
   () =>
     loading.value ||
     actionSubmitting.value ||
     qrScanSubmitting.value ||
-    attendanceAction.value === 'NONE' ||
-    (attendanceAction.value === 'CLOCK_OUT' && breakMinutesInvalid.value),
+    attendanceAction.value === 'NONE',
 )
 const primaryActionLabel = computed(() => {
   if (qrScanSubmitting.value) {
@@ -239,7 +263,6 @@ watch(
   () => selectedStore.value?.storeId,
   () => {
     current.value = null
-    breakMinutesInput.value = ''
     actionError.value = ''
     void loadCurrent()
   },
@@ -257,6 +280,7 @@ watch(
 )
 
 onMounted(() => {
+  startLiveClock()
   if (typeof document !== 'undefined') {
     cleanupResumeHandler = registerBrowserResumeHandler(() => {
       void loadCurrent()
@@ -267,6 +291,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   cleanupResumeHandler?.()
   cleanupResumeHandler = null
+  stopLiveClock()
 })
 
 async function loadCurrent(): Promise<void> {
@@ -275,6 +300,7 @@ async function loadCurrent(): Promise<void> {
 
   if (!storeId) {
     current.value = null
+    resetLiveClock()
     loading.value = false
     errorMessage.value = ''
     return
@@ -287,6 +313,7 @@ async function loadCurrent(): Promise<void> {
     const response = await loadAttendanceCurrent(storeId)
     if (requestId === currentRequestId) {
       current.value = response
+      syncLiveClock(response.serverTime)
     }
   } catch (error) {
     if (requestId !== currentRequestId) {
@@ -323,13 +350,12 @@ async function submitAction(): Promise<void> {
       }
       await clockInEmployee(request)
     } else if (attendanceAction.value === 'CLOCK_OUT') {
-      const request = buildClockOutRequest(current.value, breakMinutesInput.value)
+      const request = buildClockOutRequest(current.value)
       if (!request) {
         actionError.value = t('attendance.stateConflict')
         return
       }
       await clockOutEmployee(request)
-      breakMinutesInput.value = ''
     } else {
       actionError.value = t('attendance.noAvailableAction')
       return
@@ -432,12 +458,60 @@ function resolveQrErrorMessage(error: unknown): string {
   return t('attendance.qrFailed')
 }
 
+function startLiveClock(): void {
+  if (liveClockTimer) {
+    return
+  }
+  liveClockTimer = setInterval(updateLiveClock, 1000)
+}
+
+function stopLiveClock(): void {
+  if (!liveClockTimer) {
+    return
+  }
+  clearInterval(liveClockTimer)
+  liveClockTimer = null
+}
+
+function syncLiveClock(serverTime: string): void {
+  const parsed = toLocalDateTime(serverTime).getTime()
+  if (!Number.isFinite(parsed)) {
+    resetLiveClock()
+    return
+  }
+  serverClockBaseMs = parsed
+  clientClockBaseMs = Date.now()
+  liveServerTime.value = new Date(parsed)
+}
+
+function resetLiveClock(): void {
+  serverClockBaseMs = null
+  clientClockBaseMs = null
+  liveServerTime.value = null
+}
+
+function updateLiveClock(): void {
+  if (serverClockBaseMs == null || clientClockBaseMs == null) {
+    return
+  }
+  liveServerTime.value = new Date(serverClockBaseMs + (Date.now() - clientClockBaseMs))
+}
+
 function formatDate(value: string): string {
   return new Intl.DateTimeFormat(locale.value, {
     month: 'short',
     day: 'numeric',
     weekday: 'short',
   }).format(toLocalDate(value))
+}
+
+function formatLongDate(value: Date): string {
+  return new Intl.DateTimeFormat(locale.value, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    weekday: 'long',
+  }).format(value)
 }
 
 function formatDateTime(value: string): string {
@@ -449,11 +523,13 @@ function formatDateTime(value: string): string {
   }).format(toLocalDateTime(value))
 }
 
-function formatSchedule(schedule: ScheduleResponse | null): string {
-  if (!schedule) {
-    return t('attendance.noSchedule')
-  }
-  return `${formatDate(schedule.workDate)} ${formatTime(schedule.startTime)} - ${formatTime(schedule.endTime)}`
+function formatClockTime(value: Date): string {
+  return new Intl.DateTimeFormat(locale.value, {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).format(value)
 }
 
 function formatAttendanceWindow(record: AttendanceResponse | null): string {
@@ -481,11 +557,72 @@ function formatDuration(minutes: number | null): string {
   })
 }
 
+function formatMetricDuration(minutes: number | null): string {
+  const parts = toDurationParts(minutes)
+  if (!parts) {
+    return t('attendance.noTimeValue')
+  }
+  return `${String(parts.hours).padStart(2, '0')}:${String(parts.minutes).padStart(2, '0')}`
+}
+
 function formatTime(value: string): string {
   if (value.includes('T')) {
-    return value.slice(11, 16)
+    return new Intl.DateTimeFormat(locale.value, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(toLocalDateTime(value))
   }
   return value.slice(0, 5)
+}
+
+function formatNullableTime(value: string | null, fallback = t('attendance.noTimeValue')): string {
+  return value ? formatTime(value) : fallback
+}
+
+function buildAttendanceMetric(
+  currentState: AppAttendanceCurrentResponse | null,
+  serverTime: Date | null,
+): {
+  checkIn: string
+  checkOut: string
+  total: string
+} {
+  const record =
+    currentState?.openAttendance ??
+    currentState?.latestAttendance ??
+    sortAttendanceRecords(currentState?.todayAttendances ?? [])[0] ??
+    null
+  if (!record) {
+    return {
+      checkIn: t('attendance.noTimeValue'),
+      checkOut: t('attendance.noTimeValue'),
+      total: t('attendance.noTimeValue'),
+    }
+  }
+  return {
+    checkIn: formatNullableTime(record.clockInAt),
+    checkOut: formatNullableTime(record.clockOutAt, t('attendance.notClockedOutValue')),
+    total: formatMetricDuration(record.totalWorkMinutes ?? estimateOpenWorkMinutes(record, serverTime)),
+  }
+}
+
+function estimateOpenWorkMinutes(
+  record: AttendanceResponse,
+  serverTime: Date | null,
+): number | null {
+  if (!record.clockInAt || record.clockOutAt || !serverTime) {
+    return null
+  }
+  const startedAt = toLocalDateTime(record.clockInAt).getTime()
+  const serverTimeMs = serverTime.getTime()
+  if (!Number.isFinite(startedAt) || !Number.isFinite(serverTimeMs)) {
+    return null
+  }
+  if (serverTimeMs < startedAt) {
+    return 0
+  }
+  return Math.floor((serverTimeMs - startedAt) / 60000)
 }
 
 function toLocalDate(value: string): Date {
