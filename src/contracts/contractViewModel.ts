@@ -37,7 +37,7 @@ export function contractStatusTone(status: ContractStatus): ContractTone {
 
 export function contractActionKey(contract: AppContractListItemResponse): string {
   if (contract.signingRequired) {
-    return 'contracts.action.signRequired'
+    return 'contracts.action.checkEmail'
   }
   if (contract.documentPreviewAvailable) {
     return 'contracts.action.viewDocument'

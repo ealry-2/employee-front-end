@@ -91,6 +91,27 @@ export function isStateConflict(error: unknown): boolean {
   return status === 400 || status === 409 || status === 422
 }
 
+export function resolveApiMessage(error: unknown, fallback: string): string {
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data
+    if (data && typeof data === 'object') {
+      const body = data as { message?: unknown; error?: unknown }
+      if (typeof body.message === 'string' && body.message.trim().length > 0) {
+        return body.message
+      }
+      if (typeof body.error === 'string' && body.error.trim().length > 0) {
+        return body.error
+      }
+    }
+  }
+
+  if (error instanceof Error && error.message.trim().length > 0) {
+    return error.message
+  }
+
+  return fallback
+}
+
 async function refreshEmployeeTokens(refreshToken: string): Promise<LoginResponse> {
   if (!refreshRequest) {
     const persistence = getActiveTokenPersistence()

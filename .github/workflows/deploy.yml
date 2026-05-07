@@ -3,7 +3,14 @@ name: Build and Deploy Employee App
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
   workflow_dispatch:
+
+concurrency:
+  group: employee-app-deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   REGISTRY: ghcr.io
@@ -11,17 +18,23 @@ env:
   VITE_API_BASE_URL: https://api.il-log.com
 
 jobs:
-  test:
-    name: Test
+  build-and-push:
+    name: Test, Build & Push Docker Image
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
           sparse-checkout: |
+            /.dockerignore
             /.env.development
             /.env.example
+            /Dockerfile
             /package.json
             /package-lock.json
             /tsconfig.json
@@ -31,6 +44,7 @@ jobs:
             /src/**
             /test/**
             /public/**
+            /nginx/**
           sparse-checkout-cone-mode: false
 
       - name: Set up Node.js
@@ -45,31 +59,10 @@ jobs:
       - name: Run tests
         run: npm test
 
-  build-and-push:
-    name: Build & Push Docker Image
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            /.dockerignore
-            /Dockerfile
-            /package.json
-            /package-lock.json
-            /tsconfig.json
-            /vite.config.ts
-            /capacitor.config.ts
-            /index.html
-            /src/**
-            /public/**
-            /nginx/**
-          sparse-checkout-cone-mode: false
+      - name: Build static assets
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: ${{ env.VITE_API_BASE_URL }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -87,7 +80,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=sha,prefix=
             type=raw,value=latest
 
       - name: Build and push
@@ -95,9 +87,10 @@ jobs:
         with:
           context: .
           platforms: linux/arm64
+          target: prebuilt-runtime
           push: true
-          build-args: |
-            VITE_API_BASE_URL=${{ env.VITE_API_BASE_URL }}
+          provenance: false
+          sbom: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -105,8 +98,33 @@ jobs:
     name: Deploy Employee App to Oracle VM
     needs: build-and-push
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
+      - name: Validate deploy secrets
+        env:
+          ORACLE_SSH_HOST: ${{ secrets.ORACLE_SSH_HOST }}
+          ORACLE_SSH_USER: ${{ secrets.ORACLE_SSH_USER }}
+          ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
+          APP_DIR: ${{ secrets.APP_DIR }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+        run: |
+          set -eu
+
+          missing=""
+          for name in ORACLE_SSH_HOST ORACLE_SSH_USER ORACLE_SSH_KEY APP_DIR GHCR_USERNAME GHCR_TOKEN; do
+            eval "value=\${$name:-}"
+            if [ -z "$value" ]; then
+              missing="${missing} ${name}"
+            fi
+          done
+
+          if [ -n "$missing" ]; then
+            echo "Missing deploy secret(s):${missing}"
+            exit 1
+          fi
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -130,6 +148,8 @@ jobs:
               echo "Missing compose file: $APP_DIR/$COMPOSE_FILE"
               exit 1
             fi
+
+            export EMPLOYEE_APP_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
 
             printf '%s\n' "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
