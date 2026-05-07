@@ -2535,6 +2535,11 @@ button {
   line-height: 1.6;
 }
 
+.employee-contract-callout .employee-contract-callout__instruction {
+  color: var(--employee-color-primary);
+  font-weight: 650;
+}
+
 .employee-contract-callout--planned {
   border-color: var(--employee-color-primary-border);
   background: var(--employee-color-tint-lavender);

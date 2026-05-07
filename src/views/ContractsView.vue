@@ -127,9 +127,9 @@
       >
         <strong>{{ t('contracts.signingRequiredTitle') }}</strong>
         <p>{{ t('contracts.signingRequiredDescription') }}</p>
-        <button class="employee-primary-button" type="button" disabled>
-          {{ t('contracts.signingBoundary') }}
-        </button>
+        <p class="employee-contract-callout__instruction">
+          {{ t('contracts.signingEmailInstruction') }}
+        </p>
       </div>
 
       <div

@@ -351,14 +351,14 @@ export const messages = {
       signingRequiredTitle: '서명이 필요합니다',
       signingRequiredDescription:
         '서명 링크는 보안을 위해 앱 응답에 포함하지 않습니다. 수신한 이메일의 서명 링크를 사용해주세요.',
-      signingBoundary: '이메일 서명 링크에서 진행',
+      signingEmailInstruction: '메일함에서 일로그 계약 서명 메일을 열어 진행해주세요.',
       documentReadyTitle: '완료된 계약입니다',
       documentReadyDescription: '계약 내용은 아래 미리보기에서 확인할 수 있습니다.',
       documentPreview: '계약 미리보기',
       noPreview: '표시할 계약 본문이 없습니다.',
       sensitiveFieldWarning: '민감한 계약 필드가 응답에 포함되었습니다. 관리자에게 문의해주세요.',
       action: {
-        signRequired: '서명 필요',
+        checkEmail: '이메일 확인',
         viewDocument: '문서 확인',
         viewDetail: '상세 보기',
       },
@@ -769,14 +769,14 @@ export const messages = {
       signingRequiredTitle: 'Signature required',
       signingRequiredDescription:
         'For security, the signing link is not included in the app response. Use the signing link from your email.',
-      signingBoundary: 'Continue from email link',
+      signingEmailInstruction: 'Open the IL Log contract signing email to continue.',
       documentReadyTitle: 'Completed contract',
       documentReadyDescription: 'You can review the contract content below.',
       documentPreview: 'Contract preview',
       noPreview: 'No contract content is available.',
       sensitiveFieldWarning: 'Sensitive contract fields were included in the response. Contact an administrator.',
       action: {
-        signRequired: 'Signature required',
+        checkEmail: 'Check email',
         viewDocument: 'View document',
         viewDetail: 'View detail',
       },

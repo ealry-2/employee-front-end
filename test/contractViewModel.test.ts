@@ -36,7 +36,7 @@ test('contract status and action helpers map backend values to i18n keys and ton
   assert.equal(contractStatusTone('PENDING'), 'planned')
   assert.equal(contractStatusTone('EXPIRED'), 'warning')
   assert.equal(contractStatusTone('DRAFT'), 'muted')
-  assert.equal(contractActionKey(contract('a', 'PENDING', true)), 'contracts.action.signRequired')
+  assert.equal(contractActionKey(contract('a', 'PENDING', true)), 'contracts.action.checkEmail')
   assert.equal(contractActionKey(contract('b', 'SIGNED', false)), 'contracts.action.viewDocument')
   assert.equal(contractActionKey(contract('c', 'DRAFT', false)), 'contracts.action.viewDetail')
 })
