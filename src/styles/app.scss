@@ -171,6 +171,7 @@ button {
 .employee-field__control:focus,
 .employee-primary-button:focus-visible,
 .employee-secondary-button:focus-visible,
+.employee-auth__links a:focus-visible,
 .employee-icon-button:focus-visible,
 .employee-close-button:focus-visible,
 .employee-toast__close:focus-visible,
@@ -222,7 +223,8 @@ button {
   accent-color: var(--employee-color-primary);
 }
 
-.employee-auth__error {
+.employee-auth__error,
+.employee-auth__success {
   margin: 0;
   border: 1px solid var(--employee-color-error-border);
   border-radius: 0.8rem;
@@ -231,6 +233,52 @@ button {
   padding: 1.2rem 1.4rem;
   font-size: 1.4rem;
   font-weight: 500;
+}
+
+.employee-auth__success {
+  border-color: var(--employee-color-success-border);
+  background: var(--employee-color-success-soft);
+  color: var(--employee-color-success-text);
+}
+
+.employee-auth__help {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.6rem;
+  border: 1px solid var(--employee-color-primary-border);
+  border-radius: 0.8rem;
+  background: var(--employee-color-primary-soft);
+  padding: 1.2rem;
+}
+
+.employee-auth__help p {
+  margin: 0;
+  color: var(--employee-color-primary);
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.employee-auth__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.employee-auth__links a {
+  min-height: 4.4rem;
+  display: inline-flex;
+  align-items: center;
+  color: var(--employee-color-primary);
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.employee-auth__links a:hover {
+  text-decoration: underline;
 }
 
 .employee-primary-button,

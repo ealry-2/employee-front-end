@@ -39,6 +39,15 @@ export interface LoginResponse {
   accessTokenExpiresIn?: number
 }
 
+export interface MessageResponse {
+  message: string
+}
+
+export interface ResetTokenValidationResponse {
+  valid: boolean
+  email: string
+}
+
 export interface AppUserSummary {
   userId: string
   email: string

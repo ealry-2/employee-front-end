@@ -39,6 +39,18 @@
           {{ submitting ? t('login.submitting') : t('login.submit') }}
         </button>
       </form>
+
+      <div v-if="canVerifyEmail" class="employee-auth__help">
+        <p>{{ t('login.verifyHelp') }}</p>
+        <button class="employee-secondary-button" type="button" @click="goToVerification">
+          {{ t('login.verifyAction') }}
+        </button>
+      </div>
+
+      <div class="employee-auth__links">
+        <RouterLink to="/forgot-password">{{ t('authLinks.forgotPassword') }}</RouterLink>
+        <RouterLink to="/verify-email">{{ t('authLinks.verifyEmail') }}</RouterLink>
+      </div>
     </section>
   </main>
 </template>
@@ -48,6 +60,7 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { login } from '@/api/auth'
+import { resolveApiMessage } from '@/api/client'
 import { saveTokens } from '@/session/tokenStorage'
 
 const { t } = useI18n()
@@ -58,6 +71,11 @@ const password = ref('')
 const remember = ref(false)
 const submitting = ref(false)
 const errorMessage = ref('')
+const canVerifyEmail = ref(false)
+
+function isEmailVerificationRequiredMessage(message: string): boolean {
+  return message.includes('이메일 인증') || message.toLowerCase().includes('email verification')
+}
 
 async function submit(): Promise<void> {
   if (submitting.value) {
@@ -66,6 +84,7 @@ async function submit(): Promise<void> {
 
   submitting.value = true
   errorMessage.value = ''
+  canVerifyEmail.value = false
 
   try {
     const response = await login({
@@ -84,10 +103,19 @@ async function submit(): Promise<void> {
       remember.value ? 'local' : 'session',
     )
     await router.replace({ name: 'home' })
-  } catch {
-    errorMessage.value = t('login.failed')
+  } catch (error) {
+    const message = resolveApiMessage(error, t('login.failed'))
+    errorMessage.value = message
+    canVerifyEmail.value = isEmailVerificationRequiredMessage(message)
   } finally {
     submitting.value = false
   }
+}
+
+async function goToVerification(): Promise<void> {
+  await router.push({
+    name: 'verify-email',
+    query: email.value.trim() ? { email: email.value.trim() } : undefined,
+  })
 }
 </script>

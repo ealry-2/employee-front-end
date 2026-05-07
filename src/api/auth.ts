@@ -1,6 +1,12 @@
 import { apiClient } from './client'
 import type { EmployeeAxiosRequestConfig } from './client'
-import type { AppAuthBootstrapResponse, AppUserSummary, LoginResponse } from './types'
+import type {
+  AppAuthBootstrapResponse,
+  AppUserSummary,
+  LoginResponse,
+  MessageResponse,
+  ResetTokenValidationResponse,
+} from './types'
 import {
   createDemoBootstrap,
   createDemoLoginResponse,
@@ -17,6 +23,25 @@ export interface UpdateAppProfileRequest {
   phone: string | null
   address: string | null
   profileImageUrl: string | null
+}
+
+export interface ForgotPasswordRequest {
+  email: string
+}
+
+export interface VerifyEmailRequest {
+  email: string
+  verificationCode: string
+}
+
+export interface ResendVerificationRequest {
+  email: string
+}
+
+export interface ResetPasswordRequest {
+  token: string
+  newPassword: string
+  confirmPassword: string
 }
 
 export async function login(request: LoginRequest): Promise<LoginResponse> {
@@ -36,6 +61,51 @@ export async function loadAppBootstrap(): Promise<AppAuthBootstrapResponse> {
   }
 
   const response = await apiClient.get<AppAuthBootstrapResponse>('/api/app/auth/bootstrap')
+  return response.data
+}
+
+export async function forgotPassword(request: ForgotPasswordRequest): Promise<MessageResponse> {
+  const response = await apiClient.post<MessageResponse>('/api/auth/forgot-password', request, {
+    skipAuthRefresh: true,
+  } as EmployeeAxiosRequestConfig)
+  return response.data
+}
+
+export async function validateResetToken(token: string): Promise<ResetTokenValidationResponse> {
+  const response = await apiClient.get<ResetTokenValidationResponse>(
+    '/api/auth/reset-password/validate',
+    {
+      params: { token },
+      skipAuthRefresh: true,
+    } as EmployeeAxiosRequestConfig,
+  )
+  return response.data
+}
+
+export async function resetPassword(request: ResetPasswordRequest): Promise<MessageResponse> {
+  const response = await apiClient.post<MessageResponse>('/api/auth/reset-password', request, {
+    skipAuthRefresh: true,
+  } as EmployeeAxiosRequestConfig)
+  return response.data
+}
+
+export async function verifyEmail(request: VerifyEmailRequest): Promise<MessageResponse> {
+  const response = await apiClient.post<MessageResponse>('/api/users/verify-email', request, {
+    skipAuthRefresh: true,
+  } as EmployeeAxiosRequestConfig)
+  return response.data
+}
+
+export async function resendVerification(
+  request: ResendVerificationRequest,
+): Promise<MessageResponse> {
+  const response = await apiClient.post<MessageResponse>(
+    '/api/users/resend-verification',
+    request,
+    {
+      skipAuthRefresh: true,
+    } as EmployeeAxiosRequestConfig,
+  )
   return response.data
 }
 
