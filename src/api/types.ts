@@ -36,7 +36,7 @@ export interface LoginResponse {
   email: string
   name: string
   userType: UserType
-  accessTokenExpiresIn?: number
+  expiresIn?: number
 }
 
 export interface MessageResponse {
