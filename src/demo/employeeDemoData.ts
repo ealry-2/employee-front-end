@@ -35,7 +35,7 @@ export function createDemoLoginResponse(): LoginResponse {
     email: 'employee.demo@illog.local',
     name: '김일로그',
     userType: 'EMPLOYEE',
-    accessTokenExpiresIn: 3600,
+    expiresIn: 3600,
   }
 }
 
