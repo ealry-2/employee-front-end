@@ -5,6 +5,7 @@ import {
   compensationTypeKey,
   hasSensitivePayrollPath,
   latestPayroll,
+  payrollIconTone,
   payrollStatusKey,
   payrollStatusTone,
   sortPayrolls,
@@ -27,6 +28,9 @@ test('payroll status and compensation helpers map backend values to i18n keys an
   assert.equal(payrollStatusTone('DRAFT'), 'muted')
   assert.equal(payrollStatusTone('CONFIRMED'), 'planned')
   assert.equal(payrollStatusTone('PAID'), 'success')
+  assert.equal(payrollIconTone('DRAFT'), 'draft')
+  assert.equal(payrollIconTone('CONFIRMED'), 'confirmed')
+  assert.equal(payrollIconTone('PAID'), 'paid')
   assert.equal(compensationTypeKey('MONTHLY'), 'payroll.compensation.monthly')
 })
 

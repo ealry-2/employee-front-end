@@ -3,6 +3,7 @@ import type {
   AppAuthBootstrapResponse,
   AppContractDetailResponse,
   AppContractListResponse,
+  AppContractSigningSessionResponse,
   AppNotificationListResponse,
   AppNotificationResponse,
   AppScheduleListResponse,
@@ -261,6 +262,14 @@ export function loadDemoContractDetail(
   }
 }
 
+export function loadDemoContractSigningSession(
+  request: LoadMyContractsRequest & { contractId: string },
+): AppContractSigningSessionResponse {
+  return {
+    signingUrl: `https://demo.il-log.local/sign/${encodeURIComponent(request.contractId)}`,
+  }
+}
+
 export function loadDemoNotifications(
   request: LoadMyNotificationsRequest,
 ): AppNotificationListResponse {
@@ -423,44 +432,22 @@ function createDemoContracts(storeId: string) {
       contractId: 'demo-contract-1',
       title: '성수점 시간제 근로계약서',
       status: 'PENDING' as const,
-      presetType: 'LABOR_STANDARD' as const,
-      storeId,
       firstPartyName: '일로그 성수점',
-      secondPartyName: '김일로그',
       signingRequired: true,
-      documentPreviewAvailable: true,
-      pdfDownloadAvailable: false,
-      compensationType: 'HOURLY' as const,
-      baseHourlyWage: 12000,
-      monthlySalary: null,
-      annualSalary: null,
       workStartDate: formatDate(shiftDate(today, -30)),
       workEndDate: null,
-      expiresAt: shiftDate(today, 7).toISOString(),
       completedAt: null,
-      createdAt: shiftDate(today, -2).toISOString(),
       updatedAt: shiftDate(today, -1).toISOString(),
     },
     {
       contractId: 'demo-contract-2',
       title: '주말 파트 근로계약서',
       status: 'SIGNED' as const,
-      presetType: 'LABOR_STANDARD' as const,
-      storeId,
       firstPartyName: '일로그 한남점',
-      secondPartyName: '김일로그',
       signingRequired: false,
-      documentPreviewAvailable: true,
-      pdfDownloadAvailable: true,
-      compensationType: 'HOURLY' as const,
-      baseHourlyWage: 11800,
-      monthlySalary: null,
-      annualSalary: null,
       workStartDate: formatDate(shiftDate(today, -90)),
       workEndDate: null,
-      expiresAt: null,
       completedAt: shiftDate(today, -75).toISOString(),
-      createdAt: shiftDate(today, -80).toISOString(),
       updatedAt: shiftDate(today, -75).toISOString(),
     },
   ]

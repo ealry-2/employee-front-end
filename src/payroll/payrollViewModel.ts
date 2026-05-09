@@ -1,6 +1,7 @@
 import type { EmployeeCompensationType, PayrollResponse, PayrollStatus } from '../api/types'
 
 export type PayrollTone = 'planned' | 'success' | 'muted'
+export type PayrollIconTone = 'draft' | 'confirmed' | 'paid'
 
 export interface PayrollTotals {
   earnings: number
@@ -34,6 +35,16 @@ export function payrollStatusTone(status: PayrollStatus): PayrollTone {
     return 'planned'
   }
   return 'muted'
+}
+
+export function payrollIconTone(status: PayrollStatus): PayrollIconTone {
+  if (status === 'PAID') {
+    return 'paid'
+  }
+  if (status === 'CONFIRMED') {
+    return 'confirmed'
+  }
+  return 'draft'
 }
 
 export function compensationTypeKey(type: EmployeeCompensationType | null): string {

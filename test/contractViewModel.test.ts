@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
   contractActionKey,
+  contractIconTone,
   contractStatusKey,
   contractStatusTone,
   hasUnsafeContractFields,
@@ -11,7 +12,6 @@ import {
 import type {
   AppContractListItemResponse,
   ContractStatus,
-  EmployeeCompensationType,
 } from '../src/api/types.ts'
 
 test('sortContracts prioritizes signing-needed contracts before latest updates', () => {
@@ -36,9 +36,17 @@ test('contract status and action helpers map backend values to i18n keys and ton
   assert.equal(contractStatusTone('PENDING'), 'planned')
   assert.equal(contractStatusTone('EXPIRED'), 'warning')
   assert.equal(contractStatusTone('DRAFT'), 'muted')
-  assert.equal(contractActionKey(contract('a', 'PENDING', true)), 'contracts.action.checkEmail')
+  assert.equal(contractActionKey(contract('a', 'PENDING', true)), 'contracts.action.signInApp')
   assert.equal(contractActionKey(contract('b', 'SIGNED', false)), 'contracts.action.viewDocument')
   assert.equal(contractActionKey(contract('c', 'DRAFT', false)), 'contracts.action.viewDetail')
+})
+
+test('contract icon tone distinguishes pending and completed signature states', () => {
+  assert.equal(contractIconTone(contract('pending-sign', 'PENDING', true)), 'pending')
+  assert.equal(contractIconTone(contract('pending-wait', 'PENDING', false)), 'pending')
+  assert.equal(contractIconTone(contract('signed', 'SIGNED', false)), 'signed')
+  assert.equal(contractIconTone(contract('expired', 'EXPIRED', false)), 'warning')
+  assert.equal(contractIconTone(contract('draft', 'DRAFT', false)), 'muted')
 })
 
 test('hasUnsafeContractFields flags redaction-sensitive response fields', () => {
@@ -70,22 +78,11 @@ function contract(
     contractId,
     title: `Contract ${contractId}`,
     status,
-    presetType: 'LABOR_STANDARD',
-    storeId: 'store-1',
     firstPartyName: 'Owner',
-    secondPartyName: 'Employee',
     signingRequired,
-    documentPreviewAvailable: status === 'SIGNED',
-    pdfDownloadAvailable: status === 'SIGNED',
-    compensationType: overrides.compensationType as EmployeeCompensationType ?? 'HOURLY',
-    baseHourlyWage: 10000,
-    monthlySalary: null,
-    annualSalary: null,
     workStartDate: '2026-05-01',
     workEndDate: null,
-    expiresAt: null,
     completedAt: null,
-    createdAt: null,
     updatedAt,
     ...overrides,
   }

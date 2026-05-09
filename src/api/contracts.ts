@@ -2,10 +2,12 @@ import { apiClient } from './client'
 import type {
   AppContractDetailResponse,
   AppContractListResponse,
+  AppContractSigningSessionResponse,
   ContractStatus,
 } from './types'
 import {
   loadDemoContractDetail,
+  loadDemoContractSigningSession,
   loadDemoContracts,
 } from '../demo/employeeDemoData'
 import { isEmployeeDemoModeEnabled } from '../demo/employeeDemoMode'
@@ -18,6 +20,11 @@ export interface LoadMyContractsRequest {
 }
 
 export interface LoadMyContractDetailRequest {
+  storeId: string
+  contractId: string
+}
+
+export interface CreateMyContractSigningSessionRequest {
   storeId: string
   contractId: string
 }
@@ -53,6 +60,21 @@ export async function loadMyContractDetail(
     `/api/app/stores/${encodeURIComponent(request.storeId)}/contracts/${encodeURIComponent(
       request.contractId,
     )}`,
+  )
+  return response.data
+}
+
+export async function createMyContractSigningSession(
+  request: CreateMyContractSigningSessionRequest,
+): Promise<AppContractSigningSessionResponse> {
+  if (isEmployeeDemoModeEnabled()) {
+    return loadDemoContractSigningSession(request)
+  }
+
+  const response = await apiClient.post<AppContractSigningSessionResponse>(
+    `/api/app/stores/${encodeURIComponent(request.storeId)}/contracts/${encodeURIComponent(
+      request.contractId,
+    )}/signing-session`,
   )
   return response.data
 }

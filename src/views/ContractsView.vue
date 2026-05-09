@@ -1,71 +1,4 @@
 <template>
-  <section class="employee-contracts" aria-labelledby="contracts-heading">
-    <div class="employee-contracts__header">
-      <h2 id="contracts-heading">{{ t('screen.contracts.title') }}</h2>
-      <span v-if="contracts.length > 0" class="employee-contracts__count">
-        {{ t('contracts.listCount', { count: contracts.length }) }}
-      </span>
-    </div>
-
-    <EmployeeStatePanel
-      v-if="!selectedStore"
-      tone="empty"
-      :title="t('home.emptyTitle')"
-      :message="t('home.emptyDescription')"
-    />
-
-    <template v-else>
-      <EmployeeStatePanel
-        v-if="loading && contracts.length === 0"
-        tone="loading"
-        :message="t('contracts.loading')"
-      />
-
-      <EmployeeStatePanel
-        v-else-if="errorMessage && contracts.length === 0"
-        tone="error"
-        :title="t('contracts.errorTitle')"
-        :message="errorMessage"
-        :action-label="t('app.retry')"
-        @action="loadContracts"
-      />
-
-      <EmployeeStatePanel
-        v-else-if="contracts.length === 0"
-        tone="empty"
-        :title="t('contracts.emptyTitle')"
-        :message="t('contracts.emptyDescription')"
-        :action-label="t('contracts.refresh')"
-        @action="loadContracts"
-      />
-
-      <section v-else class="employee-contracts-list" :aria-label="t('contracts.listTitle')">
-        <button
-          v-for="contract in contracts"
-          :key="contract.contractId"
-          class="employee-contract-card"
-          :class="{ 'is-selected': selectedContract?.contractId === contract.contractId }"
-          type="button"
-          @click="selectContract(contract)"
-        >
-          <span class="employee-contract-card__main">
-            <span>{{ contract.title }}</span>
-            <span>{{ formatDateRange(contract.workStartDate, contract.workEndDate) }}</span>
-          </span>
-          <span
-            class="employee-work-status"
-            :class="`employee-work-status--${contractStatusTone(contract.status)}`"
-          >
-            {{ t(contractStatusKey(contract.status)) }}
-          </span>
-          <span class="employee-contract-card__meta">
-            {{ t(contractActionKey(contract)) }}
-          </span>
-        </button>
-      </section>
-    </template>
-  </section>
-
   <section
     v-if="selectedContract"
     class="employee-contract-detail"
@@ -121,48 +54,181 @@
         </div>
       </dl>
 
-      <div
-        v-if="selectedContract.signingRequired"
-        class="employee-contract-callout employee-contract-callout--planned"
-      >
-        <strong>{{ t('contracts.signingRequiredTitle') }}</strong>
-        <p>{{ t('contracts.signingRequiredDescription') }}</p>
-        <p class="employee-contract-callout__instruction">
-          {{ t('contracts.signingEmailInstruction') }}
-        </p>
+      <div class="employee-contract-detail__actions">
+        <button
+          v-if="selectedContract.signingRequired"
+          class="employee-primary-button"
+          type="button"
+          :disabled="signingSessionLoading"
+          @click="startSigningSession"
+        >
+          {{ signingSessionLoading ? t('contracts.openingSigning') : t('contracts.startSigning') }}
+        </button>
+
+        <button
+          class="employee-secondary-button"
+          type="button"
+          @click="openPreviewDialog"
+        >
+          {{ t('contracts.documentPreview') }}
+        </button>
       </div>
 
-      <div
-        v-else-if="selectedContract.documentPreviewAvailable"
-        class="employee-contract-callout employee-contract-callout--success"
+      <p
+        v-if="signingSessionError"
+        class="employee-contract-detail__action-error"
+        role="alert"
       >
-        <strong>{{ t('contracts.documentReadyTitle') }}</strong>
-        <p>{{ t('contracts.documentReadyDescription') }}</p>
-      </div>
-
-      <section class="employee-contract-document" aria-labelledby="contract-document-heading">
-        <h3 id="contract-document-heading">{{ t('contracts.documentPreview') }}</h3>
-        <p v-if="detailText">{{ detailText }}</p>
-        <p v-else>{{ t('contracts.noPreview') }}</p>
-      </section>
+        {{ signingSessionError }}
+      </p>
 
       <p v-if="unsafeContractFieldsDetected" class="employee-contract-detail__warning">
         {{ t('contracts.sensitiveFieldWarning') }}
       </p>
     </template>
   </section>
+
+  <EmployeeRecordList
+    class="employee-contracts"
+    title-id="contracts-heading"
+    :title="t('screen.contracts.title')"
+    :count-label="contracts.length > 0 ? t('contracts.listCount', { count: contracts.length }) : ''"
+    :heading-level="2"
+  >
+    <EmployeeStatePanel
+      v-if="!selectedStore"
+      tone="empty"
+      :title="t('home.emptyTitle')"
+      :message="t('home.emptyDescription')"
+    />
+
+    <template v-else>
+      <EmployeeStatePanel
+        v-if="loading && contracts.length === 0"
+        tone="loading"
+        :message="t('contracts.loading')"
+      />
+
+      <EmployeeStatePanel
+        v-else-if="errorMessage && contracts.length === 0"
+        tone="error"
+        :title="t('contracts.errorTitle')"
+        :message="errorMessage"
+        :action-label="t('app.retry')"
+        @action="loadContracts"
+      />
+
+      <EmployeeStatePanel
+        v-else-if="contracts.length === 0"
+        tone="empty"
+        :title="t('contracts.emptyTitle')"
+        :message="t('contracts.emptyDescription')"
+        :action-label="t('contracts.refresh')"
+        @action="loadContracts"
+      />
+
+      <template v-else>
+        <EmployeeRecordCard
+          v-for="contract in contracts"
+          :key="contract.contractId"
+          class="employee-contract-card"
+          selected-tone="lavender"
+          :selected="selectedContract?.contractId === contract.contractId"
+          :icon-class="`employee-contract-card__icon--${contractIconTone(contract)}`"
+          @select="selectContract(contract)"
+        >
+          <template #icon>
+            <svg class="employee-contract-card__svg" viewBox="0 0 24 24" focusable="false">
+              <path class="employee-contract-card__baseline" d="M4.5 18.5h15" />
+              <g v-if="contract.status === 'SIGNED'">
+                <path
+                  class="employee-contract-card__signature-fill"
+                  d="M5.4 14.2c1.1-2.8 2.3-2.8 2.9.1.4 1.9 1.5 2 2.5.2 1-1.8 2.2-2.1 3.1-.5.8 1.3 2 1.6 3.6.7"
+                />
+                <path class="employee-contract-card__check" d="M16.5 8.6l1.5 1.5 3-3.4" />
+              </g>
+              <g v-else>
+                <path class="employee-contract-card__signature-empty" d="M5.4 14.2h8.2" />
+                <path class="employee-contract-card__pen" d="M15.2 7.7l2.9 2.9" />
+                <path class="employee-contract-card__pen" d="M14.4 11.4l3.9-3.9 1.5 1.5-3.9 3.9-2.4.9z" />
+              </g>
+            </svg>
+          </template>
+
+          <span class="employee-contract-card__title">{{ contract.title }}</span>
+          <span class="employee-contract-card__date">
+            {{ formatDateRange(contract.workStartDate, contract.workEndDate) }}
+          </span>
+          <span class="employee-contract-card__meta">
+            {{ t(contractActionKey(contract)) }}
+          </span>
+
+          <template #side>
+            <span
+              class="employee-work-status"
+              :class="`employee-work-status--${contractStatusTone(contract.status)}`"
+            >
+              {{ t(contractStatusKey(contract.status)) }}
+            </span>
+          </template>
+        </EmployeeRecordCard>
+      </template>
+    </template>
+  </EmployeeRecordList>
+
+  <Teleport to="body">
+    <section
+      v-if="previewDialogOpen"
+      class="employee-contract-preview-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="contract-preview-dialog-heading"
+      ref="previewDialogElement"
+      tabindex="-1"
+      @keydown.esc="closePreviewDialog"
+    >
+      <header class="employee-contract-preview-dialog__header">
+        <div>
+          <p class="employee-contract-detail__eyebrow">{{ t('contracts.documentPreview') }}</p>
+          <h2 id="contract-preview-dialog-heading">
+            {{ selectedContract?.title ?? t('contracts.documentPreview') }}
+          </h2>
+        </div>
+        <button
+          class="employee-contract-detail__close"
+          type="button"
+          :aria-label="t('contracts.closePreview')"
+          @click="closePreviewDialog"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+
+      <div class="employee-contract-preview-dialog__body">
+        <p v-if="detailText">{{ detailText }}</p>
+        <p v-else>{{ t('contracts.noPreview') }}</p>
+      </div>
+    </section>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useEmployeeAppContext } from '@/app/employeeAppContext'
 import { isForbidden, isUnauthorized } from '@/api/client'
-import { loadMyContractDetail, loadMyContracts } from '@/api/contracts'
+import {
+  createMyContractSigningSession,
+  loadMyContractDetail,
+  loadMyContracts,
+} from '@/api/contracts'
 import type { AppContractDetailResponse, AppContractListItemResponse } from '@/api/types'
+import EmployeeRecordCard from '@/component/EmployeeRecordCard.vue'
+import EmployeeRecordList from '@/component/EmployeeRecordList.vue'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
 import {
   contractActionKey,
+  contractIconTone,
   contractStatusKey,
   contractStatusTone,
   hasUnsafeContractFields,
@@ -175,8 +241,12 @@ const { selectedStore, logout } = useEmployeeAppContext()
 
 const loading = ref(false)
 const detailLoading = ref(false)
+const signingSessionLoading = ref(false)
 const errorMessage = ref('')
 const detailError = ref('')
+const signingSessionError = ref('')
+const previewDialogOpen = ref(false)
+const previewDialogElement = ref<HTMLElement | null>(null)
 const contractItems = ref<AppContractListItemResponse[]>([])
 const selectedContract = ref<AppContractListItemResponse | null>(null)
 const selectedDetail = ref<AppContractDetailResponse | null>(null)
@@ -250,6 +320,8 @@ async function selectContract(contract: AppContractListItemResponse): Promise<vo
   selectedContract.value = contract
   selectedDetail.value = null
   detailError.value = ''
+  signingSessionError.value = ''
+  previewDialogOpen.value = false
   await loadContractDetail(contract.contractId)
 }
 
@@ -270,6 +342,8 @@ async function loadContractDetail(contractId: string): Promise<void> {
 
   detailLoading.value = true
   detailError.value = ''
+  signingSessionError.value = ''
+  previewDialogOpen.value = false
 
   try {
     const response = await loadMyContractDetail({ storeId, contractId })
@@ -296,11 +370,55 @@ async function loadContractDetail(contractId: string): Promise<void> {
   }
 }
 
+async function startSigningSession(): Promise<void> {
+  const contract = selectedContract.value
+  const storeId = selectedStore.value?.storeId
+  if (!contract || !storeId || signingSessionLoading.value) {
+    return
+  }
+
+  signingSessionLoading.value = true
+  signingSessionError.value = ''
+
+  try {
+    const response = await createMyContractSigningSession({
+      storeId,
+      contractId: contract.contractId,
+    })
+    window.location.assign(response.signingUrl)
+  } catch (error) {
+    if (isUnauthorized(error)) {
+      await logout()
+      return
+    }
+    if (selectedContract.value?.contractId === contract.contractId) {
+      signingSessionError.value = isForbidden(error)
+        ? t('contracts.signingUnavailable')
+        : t('contracts.signingSessionFailed')
+    }
+  } finally {
+    signingSessionLoading.value = false
+  }
+}
+
+async function openPreviewDialog(): Promise<void> {
+  previewDialogOpen.value = true
+  await nextTick()
+  previewDialogElement.value?.focus()
+}
+
+function closePreviewDialog(): void {
+  previewDialogOpen.value = false
+}
+
 function closeDetail(): void {
   selectedContract.value = null
   selectedDetail.value = null
   detailError.value = ''
   detailLoading.value = false
+  signingSessionError.value = ''
+  signingSessionLoading.value = false
+  previewDialogOpen.value = false
 }
 
 function formatDateRange(start: string | null, end: string | null): string {
