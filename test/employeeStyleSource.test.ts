@@ -241,7 +241,19 @@ test('employee notifications use searchable grouped list with category icons', (
   )
   assert.match(
     appStyle,
-    /\.employee-notifications__filter\.is-active strong\s*\{[\s\S]*?background:\s*var\(--employee-color-primary\);[\s\S]*?color:\s*var\(--employee-color-on-primary\);[\s\S]*?\}/,
+    /\.employee-notifications__filter\s*\{[\s\S]*?border:\s*1px solid var\(--employee-color-border\);[\s\S]*?background:\s*var\(--employee-color-surface\);[\s\S]*?padding:\s*0 1\.3rem;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-notifications__filter strong\s*\{[\s\S]*?color:\s*inherit;[\s\S]*?font-weight:\s*800;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-notifications__filter\.is-active\s*\{[\s\S]*?background:\s*var\(--employee-color-primary\);[\s\S]*?color:\s*var\(--employee-color-on-primary\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-notifications__filter\.is-active strong\s*\{[\s\S]*?color:\s*inherit;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
@@ -278,6 +290,7 @@ test('employee settings keeps store choice compact and supports editable profile
   const settingsSource = readSource('../src/views/HomeView.vue')
   const authSource = readSource('../src/api/auth.ts')
   const typesSource = readSource('../src/api/types.ts')
+  const compressionSource = readSource('../src/profile/profileImageCompression.ts')
 
   assert.equal(settingsSource.includes('class="employee-hero"'), false)
   assert.ok(settingsSource.includes('class="employee-store-list"'))
@@ -292,8 +305,28 @@ test('employee settings keeps store choice compact and supports editable profile
   assert.ok(settingsSource.includes('class="employee-profile-modal"'))
   assert.ok(settingsSource.includes('role="dialog"'))
   assert.ok(settingsSource.includes('updateAppProfile'))
+  assert.ok(settingsSource.includes('compressProfileImage'))
+  assert.ok(settingsSource.includes('type="file"'))
+  assert.ok(settingsSource.includes('accept="image/jpeg,image/png,image/webp"'))
+  assert.ok(settingsSource.includes('class="employee-profile-preview"'))
+  assert.ok(settingsSource.includes('id="employee-profile-image-label"'))
+  assert.ok(settingsSource.includes('aria-labelledby="employee-profile-image-label"'))
+  assert.ok(settingsSource.includes('class="employee-profile-file__button"'))
+  assert.ok(settingsSource.includes('class="employee-profile-file__icon"'))
+  assert.ok(settingsSource.includes("t('home.profileImageChange')"))
+  assert.equal(settingsSource.includes("t('home.profileImageHint')"), false)
+  assert.ok(settingsSource.includes('profileImageFile'))
+  assert.ok(settingsSource.includes('profileEditorAvatarUrl'))
+  assert.equal(settingsSource.includes("t('home.profileImageUrl')"), false)
+  assert.equal(settingsSource.includes("t('home.profileImagePlaceholder')"), false)
   assert.ok(settingsSource.includes('showEmployeeToast'))
   assert.ok(authSource.includes("apiClient.put<AppUserSummary>('/api/app/auth/profile'"))
+  assert.ok(authSource.includes('profileImage: Blob | null'))
+  assert.ok(authSource.includes('const formData = new FormData()'))
+  assert.ok(authSource.includes("formData.append('profileImage', request.profileImage, 'profile.jpg')"))
+  assert.ok(compressionSource.includes('PROFILE_IMAGE_MAX_DIMENSION = 320'))
+  assert.ok(compressionSource.includes('PROFILE_IMAGE_JPEG_QUALITY = 0.62'))
+  assert.ok(compressionSource.includes("PROFILE_IMAGE_OUTPUT_TYPE = 'image/jpeg'"))
   assert.ok(typesSource.includes('profileImageUrl: string | null'))
   assert.match(
     appStyle,
@@ -318,6 +351,26 @@ test('employee settings keeps store choice compact and supports editable profile
   assert.match(
     appStyle,
     /\.employee-profile-editor\s*\{[\s\S]*?width:\s*min\(100%, 42rem\);[\s\S]*?max-height:\s*min\(82vh, 64rem\);[\s\S]*?overflow:\s*auto;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-profile-file__button\s*\{[\s\S]*?display:\s*inline-flex;[\s\S]*?min-height:\s*3\.6rem;[\s\S]*?border:\s*1px solid var\(--employee-color-primary-border\);[\s\S]*?background:\s*var\(--employee-color-primary-soft\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-profile-preview\s*\{[\s\S]*?display:\s*grid;[\s\S]*?gap:\s*0\.7rem;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-profile-file\s*\{[\s\S]*?align-self:\s*start;[\s\S]*?margin-top:\s*2\.25rem;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-profile-file__icon\s*\{[\s\S]*?width:\s*1\.7rem;[\s\S]*?stroke:\s*currentColor;[\s\S]*?stroke-width:\s*2\.2;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-profile-editor__avatar\s*\{[\s\S]*?align-items:\s*start;[\s\S]*?\}/,
   )
 })
 
@@ -544,11 +597,11 @@ test('employee shell keeps store switching in settings and uses notification bel
   )
   assert.match(
     appStyle,
-    /\.employee-topbar__brand-link\s*\{[\s\S]*?width:\s*6\.8rem;[\s\S]*?height:\s*2\.4rem;[\s\S]*?overflow:\s*hidden;[\s\S]*?\}/,
+    /\.employee-topbar__brand-link\s*\{[\s\S]*?justify-content:\s*center;[\s\S]*?width:\s*3\.6rem;[\s\S]*?height:\s*3\.6rem;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
-    /\.employee-topbar__brand-logo\s*\{[\s\S]*?width:\s*100%;[\s\S]*?height:\s*100%;[\s\S]*?object-fit:\s*cover;[\s\S]*?\}/,
+    /\.employee-topbar__brand-logo\s*\{[\s\S]*?width:\s*100%;[\s\S]*?height:\s*100%;[\s\S]*?object-fit:\s*contain;[\s\S]*?\}/,
   )
   assert.equal(appStyle.includes('.employee-topbar__brand-mark'), false)
   assert.equal(appStyle.includes('.employee-topbar__brand-text'), false)

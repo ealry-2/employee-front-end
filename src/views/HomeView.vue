@@ -112,23 +112,45 @@
         </header>
 
         <div class="employee-profile-editor__avatar">
-          <span class="employee-profile-avatar employee-profile-avatar--large" aria-hidden="true">
-            <img
-              v-if="profileForm.profileImageUrl"
-              :src="profileForm.profileImageUrl"
-              alt=""
-            />
-            <span v-else>{{ profileFormInitial }}</span>
-          </span>
-          <label>
-            <span>{{ t('home.profileImageUrl') }}</span>
+          <div class="employee-profile-preview">
+            <span id="employee-profile-image-label" class="employee-profile-file__label">
+              {{ t('home.profileImage') }}
+            </span>
+            <span class="employee-profile-avatar employee-profile-avatar--large" aria-hidden="true">
+              <img
+                v-if="profileEditorAvatarUrl"
+                :src="profileEditorAvatarUrl"
+                alt=""
+              />
+              <span v-else>{{ profileFormInitial }}</span>
+            </span>
+          </div>
+          <label class="employee-profile-file">
             <input
-              v-model.trim="profileForm.profileImageUrl"
-              type="url"
-              inputmode="url"
-              autocomplete="url"
-              :placeholder="t('home.profileImagePlaceholder')"
+              ref="profileImageInput"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              aria-labelledby="employee-profile-image-label"
+              @change="handleProfileImageChange"
             />
+            <span class="employee-profile-file__button">
+              <svg
+                class="employee-profile-file__icon"
+                viewBox="0 0 24 24"
+                focusable="false"
+                aria-hidden="true"
+              >
+                <path d="M12 16V4" />
+                <path d="m7 9 5-5 5 5" />
+                <path d="M5 16v3h14v-3" />
+              </svg>
+              <span>
+                {{ selectedProfileImageName ? t('home.profileImageChange') : t('home.profileImageChoose') }}
+              </span>
+            </span>
+            <span v-if="selectedProfileImageName" class="employee-profile-file__name">
+              {{ selectedProfileImageName }}
+            </span>
           </label>
         </div>
 
@@ -183,13 +205,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, onUnmounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useEmployeeAppContext } from '@/app/employeeAppContext'
 import { updateAppProfile } from '@/api/auth'
 import { isUnauthorized } from '@/api/client'
 import { showEmployeeToast } from '@/app/toast'
 import { formatOptionalText } from '@/session/bootstrapState'
+import { compressProfileImage } from '@/profile/profileImageCompression'
 
 const { t } = useI18n()
 const { bootstrap, selectedStore, selectStore, logout } = useEmployeeAppContext()
@@ -197,15 +220,21 @@ const { bootstrap, selectedStore, selectStore, logout } = useEmployeeAppContext(
 const profileEditorOpen = ref(false)
 const profileSaving = ref(false)
 const profileError = ref('')
+const profileImageInput = ref<HTMLInputElement | null>(null)
+const profileImageObjectUrl = ref('')
 const profileForm = reactive({
   name: '',
   phone: '',
   address: '',
-  profileImageUrl: '',
+  profileImageFile: null as File | null,
 })
 
 const profileInitial = computed(() => makeInitial(bootstrap.value?.user.name ?? ''))
 const profileFormInitial = computed(() => makeInitial(profileForm.name))
+const profileEditorAvatarUrl = computed(() => {
+  return profileImageObjectUrl.value || bootstrap.value?.user.profileImageUrl || ''
+})
+const selectedProfileImageName = computed(() => profileForm.profileImageFile?.name ?? '')
 
 function openProfileEditor(): void {
   const user = bootstrap.value?.user
@@ -215,7 +244,7 @@ function openProfileEditor(): void {
   profileForm.name = user.name
   profileForm.phone = user.phone ?? ''
   profileForm.address = user.address ?? ''
-  profileForm.profileImageUrl = user.profileImageUrl ?? ''
+  resetSelectedProfileImage()
   profileError.value = ''
   profileEditorOpen.value = true
 }
@@ -224,7 +253,27 @@ function closeProfileEditor(): void {
   if (profileSaving.value) {
     return
   }
+  resetSelectedProfileImage()
   profileEditorOpen.value = false
+}
+
+function handleProfileImageChange(event: Event): void {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0] ?? null
+  resetSelectedProfileImage(false)
+  profileError.value = ''
+
+  if (!file) {
+    return
+  }
+  if (file.type && !file.type.startsWith('image/')) {
+    profileError.value = t('home.profileImageInvalid')
+    input.value = ''
+    return
+  }
+
+  profileForm.profileImageFile = file
+  profileImageObjectUrl.value = URL.createObjectURL(file)
 }
 
 async function saveProfile(): Promise<void> {
@@ -235,17 +284,29 @@ async function saveProfile(): Promise<void> {
   profileSaving.value = true
   profileError.value = ''
 
+  let profileImage: File | null = null
+  if (profileForm.profileImageFile) {
+    try {
+      profileImage = await compressProfileImage(profileForm.profileImageFile)
+    } catch {
+      profileError.value = t('home.profileImageInvalid')
+      profileSaving.value = false
+      return
+    }
+  }
+
   try {
     const updatedUser = await updateAppProfile({
       name: profileForm.name.trim(),
       phone: nullableText(profileForm.phone),
       address: nullableText(profileForm.address),
-      profileImageUrl: nullableText(profileForm.profileImageUrl),
+      profileImage,
     })
     bootstrap.value = {
       ...bootstrap.value,
       user: updatedUser,
     }
+    resetSelectedProfileImage()
     profileEditorOpen.value = false
     showEmployeeToast(t('home.profileSaved'), 'success')
   } catch (error) {
@@ -259,6 +320,17 @@ async function saveProfile(): Promise<void> {
   }
 }
 
+function resetSelectedProfileImage(resetInput = true): void {
+  if (profileImageObjectUrl.value) {
+    URL.revokeObjectURL(profileImageObjectUrl.value)
+    profileImageObjectUrl.value = ''
+  }
+  profileForm.profileImageFile = null
+  if (resetInput && profileImageInput.value) {
+    profileImageInput.value.value = ''
+  }
+}
+
 function nullableText(value: string): string | null {
   const trimmed = value.trim()
   return trimmed.length > 0 ? trimmed : null
@@ -268,4 +340,6 @@ function makeInitial(name: string): string {
   const trimmed = name.trim()
   return trimmed.length > 0 ? trimmed.slice(0, 1) : '?'
 }
+
+onUnmounted(() => resetSelectedProfileImage())
 </script>

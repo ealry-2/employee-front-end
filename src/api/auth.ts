@@ -22,7 +22,7 @@ export interface UpdateAppProfileRequest {
   name: string
   phone: string | null
   address: string | null
-  profileImageUrl: string | null
+  profileImage: Blob | null
 }
 
 export interface ForgotPasswordRequest {
@@ -119,11 +119,25 @@ export async function updateAppProfile(
       name: request.name,
       phone: request.phone,
       address: request.address,
-      profileImageUrl: request.profileImageUrl,
+      profileImageUrl: request.profileImage
+        ? URL.createObjectURL(request.profileImage)
+        : bootstrap.user.profileImageUrl,
     }
   }
 
-  const response = await apiClient.put<AppUserSummary>('/api/app/auth/profile', request)
+  const formData = new FormData()
+  formData.append('name', request.name)
+  if (request.phone) {
+    formData.append('phone', request.phone)
+  }
+  if (request.address) {
+    formData.append('address', request.address)
+  }
+  if (request.profileImage) {
+    formData.append('profileImage', request.profileImage, 'profile.jpg')
+  }
+
+  const response = await apiClient.put<AppUserSummary>('/api/app/auth/profile', formData)
   return response.data
 }
 

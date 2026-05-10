@@ -358,19 +358,19 @@ button {
   display: inline-flex;
   align-items: center;
   flex: 0 0 auto;
-  width: 6.8rem;
-  height: 2.4rem;
-  border-radius: 0.8rem;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 1rem;
   color: var(--employee-color-primary);
   text-decoration: none;
-  overflow: hidden;
 }
 
 .employee-topbar__brand-logo {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 
@@ -881,10 +881,88 @@ button {
   border-color: var(--employee-color-border-hover);
 }
 
+.employee-profile-preview {
+  display: grid;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.employee-profile-file__label {
+  color: var(--employee-color-text-secondary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.04rem;
+  line-height: 1.3;
+}
+
+.employee-profile-file {
+  position: relative;
+  align-self: start;
+  margin-top: 2.25rem;
+}
+
+.employee-profile-file input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.employee-profile-file__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: max-content;
+  max-width: 100%;
+  min-height: 3.6rem;
+  border: 1px solid var(--employee-color-primary-border);
+  border-radius: 1rem;
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+  padding: 0 1.2rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+.employee-profile-file__icon {
+  flex: 0 0 auto;
+  width: 1.7rem;
+  height: 1.7rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
+}
+
+.employee-profile-file input:focus-visible + .employee-profile-file__button,
+.employee-profile-file:hover .employee-profile-file__button {
+  border-color: var(--employee-color-primary);
+  background: var(--employee-color-tint-sky);
+}
+
+.employee-profile-file__name {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--employee-color-text-secondary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .employee-profile-editor__avatar {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  align-items: end;
+  align-items: start;
   gap: 1.2rem;
 }
 
@@ -2743,35 +2821,40 @@ button {
 .employee-notifications__filter {
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
-  min-height: 4.4rem;
-  border: 0;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 4rem;
+  border: 1px solid var(--employee-color-border);
   border-radius: 9999px;
-  background: var(--employee-color-primary-soft);
-  color: var(--employee-color-primary);
-  padding: 0.5rem 0.5rem 0.5rem 1.1rem;
-  font-size: 1.4rem;
-  font-weight: 600;
+  background: var(--employee-color-surface);
+  color: var(--employee-color-text-secondary);
+  padding: 0 1.3rem;
+  font-size: 1.35rem;
+  font-weight: 700;
   line-height: 1.2;
 }
 
 .employee-notifications__filter strong {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 4.8rem;
-  min-height: 3.4rem;
-  border-radius: 9999px;
-  background: rgba(9, 85, 171, 0.12);
+  color: inherit;
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.employee-notifications__filter:hover {
+  border-color: var(--employee-color-primary-border);
+  background: var(--employee-color-primary-soft);
   color: var(--employee-color-primary);
-  padding: 0 1rem;
-  font-size: 1.4rem;
-  font-weight: 700;
+}
+
+.employee-notifications__filter.is-active {
+  border-color: var(--employee-color-primary);
+  background: var(--employee-color-primary);
+  color: var(--employee-color-on-primary);
 }
 
 .employee-notifications__filter.is-active strong {
-  background: var(--employee-color-primary);
-  color: var(--employee-color-on-primary);
+  color: inherit;
 }
 
 .employee-notifications__mark-all {
