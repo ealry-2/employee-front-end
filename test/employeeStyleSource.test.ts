@@ -770,7 +770,11 @@ test('employee contracts list avoids nested card headers', () => {
   )
   assert.match(
     appStyle,
-    /\.employee-contract-detail__actions\s*\{[\s\S]*?display:\s*grid;[\s\S]*?grid-template-columns:\s*repeat\(auto-fit, minmax\(14rem, 1fr\)\);[\s\S]*?\}/,
+    /\.employee-contract-detail__actions\s*\{[\s\S]*?display:\s*grid;[\s\S]*?grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\);[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-contract-detail__actions > :only-child\s*\{[\s\S]*?grid-column:\s*1 \/ -1;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,
