@@ -32,7 +32,6 @@
   --employee-color-error-text: #9f1023;
   --employee-color-tint-peach: #fff1e8;
   --employee-color-tint-rose: #ffeef3;
-  --employee-color-tint-mint: #eaf8ef;
   --employee-color-tint-lavender: #e8f2ff;
   --employee-color-tint-sky: #eaf5ff;
   --employee-color-tint-yellow: #fff8cf;
@@ -102,8 +101,7 @@ button {
   padding: 2.4rem;
 }
 
-.employee-auth__brand,
-.employee-hero__eyebrow {
+.employee-auth__brand {
   margin: 0 0 0.8rem;
   color: var(--employee-color-primary);
   font-size: 1.2rem;
@@ -113,9 +111,7 @@ button {
   text-transform: uppercase;
 }
 
-.employee-auth__title,
-.employee-topbar__title,
-.employee-hero__store {
+.employee-auth__title {
   margin: 0;
   color: var(--employee-color-text);
   font-size: 3.2rem;
@@ -125,8 +121,6 @@ button {
 }
 
 .employee-auth__subtitle,
-.employee-hero__copy,
-.employee-next-panel p,
 .employee-state p {
   margin: 1.2rem 0 0;
   color: var(--employee-color-text-muted);
@@ -557,38 +551,6 @@ button {
   stroke-linejoin: round;
 }
 
-.employee-store-strip {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 1.2rem;
-  margin-top: 2rem;
-  border: 1px solid var(--employee-color-border);
-  border-radius: 1.2rem;
-  background: var(--employee-color-surface-pearl);
-  padding: 1.2rem 1.4rem;
-}
-
-.employee-store-strip__label,
-.employee-feature-panel__eyebrow {
-  margin: 0;
-  color: var(--employee-color-text-muted);
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: 0.06rem;
-  line-height: 1.3;
-  text-transform: uppercase;
-}
-
-.employee-store-strip__value {
-  margin: 0.2rem 0 0;
-  overflow-wrap: anywhere;
-  color: var(--employee-color-text);
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
 .employee-store-select {
   max-width: 16rem;
   min-height: 4.4rem;
@@ -601,22 +563,13 @@ button {
   font-weight: 400;
 }
 
-.employee-hero,
 .employee-section,
-.employee-next-panel,
-.employee-state,
-.employee-feature-panel {
+.employee-state {
   margin-top: 2rem;
   border: 1px solid var(--employee-color-border);
   border-radius: 1.2rem;
   background: var(--employee-color-surface-raised);
   padding: 1.8rem;
-}
-
-.employee-hero {
-  border-color: var(--employee-color-primary-border);
-  border-left-width: 0.4rem;
-  background: var(--employee-color-surface-raised);
 }
 
 .employee-section__header {
@@ -1003,55 +956,6 @@ button {
 
 .employee-state--empty {
   background: var(--employee-color-tint-cream);
-}
-
-.employee-feature-panel {
-  display: grid;
-  gap: 1.2rem;
-}
-
-.employee-feature-panel h2,
-.employee-feature-panel p {
-  margin: 0;
-}
-
-.employee-feature-panel h2 {
-  color: var(--employee-color-text);
-  font-size: 2.4rem;
-  font-weight: 600;
-  line-height: 1.18;
-}
-
-.employee-feature-panel p:not(.employee-feature-panel__eyebrow) {
-  color: var(--employee-color-text-muted);
-  font-size: 1.7rem;
-  line-height: 1.55;
-}
-
-.employee-feature-panel__context {
-  margin: 0;
-  border-top: 1px solid var(--employee-color-border);
-  padding-top: 1.2rem;
-}
-
-.employee-feature-panel__context div {
-  display: grid;
-  gap: 0.2rem;
-}
-
-.employee-feature-panel__context dt {
-  color: var(--employee-color-text-muted);
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: 0.06rem;
-  text-transform: uppercase;
-}
-
-.employee-feature-panel__context dd {
-  margin: 0;
-  color: var(--employee-color-text);
-  font-size: 1.6rem;
-  font-weight: 600;
 }
 
 .employee-schedule {
@@ -1993,39 +1897,6 @@ button {
   color: var(--employee-color-text);
   font-size: 1.5rem;
   font-weight: 500;
-}
-
-.employee-attendance-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.8rem;
-  border-radius: 9999px;
-  padding: 0 1rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.employee-attendance-status--planned {
-  background: var(--employee-color-tint-mint);
-  color: var(--employee-color-success-text);
-}
-
-.employee-attendance-status--success {
-  background: var(--employee-color-success-soft);
-  color: var(--employee-color-success-text);
-}
-
-.employee-attendance-status--warning {
-  background: var(--employee-color-warning-soft);
-  color: var(--employee-color-warning-text);
-}
-
-.employee-attendance-status--muted {
-  background: var(--employee-color-surface-subtle);
-  color: var(--employee-color-text-muted);
 }
 
 .employee-attendance-history {
@@ -3112,13 +2983,6 @@ button {
 
 .employee-tabbar__icon-fill {
   fill: currentColor;
-}
-
-.employee-tabbar__icon-dot {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 3;
-  stroke-linecap: round;
 }
 
 .employee-tabbar__icon-cutout {

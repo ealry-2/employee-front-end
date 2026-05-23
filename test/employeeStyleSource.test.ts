@@ -40,7 +40,6 @@ test('employee app global styles follow the Editorial Workspace theme baseline',
     appStyle,
     /#cap-os-barcode-scanner-container-scanner video\s*\{[\s\S]*?z-index:\s*10001 !important;[\s\S]*?background:\s*transparent !important;[\s\S]*?filter:\s*saturate\(1\.04\) contrast\(1\.04\) brightness\(0\.96\);[\s\S]*?\}/,
   )
-  assert.ok(appStyle.includes('background: var(--employee-color-tint-mint);'))
   assert.ok(appStyle.includes('.employee-payroll-latest'))
   assert.ok(appStyle.includes('.employee-payroll-history'))
   assert.ok(appStyle.includes('.employee-payroll-latest__breakdown'))
@@ -292,7 +291,6 @@ test('employee settings keeps store choice compact and supports editable profile
   const typesSource = readSource('../src/api/types.ts')
   const compressionSource = readSource('../src/profile/profileImageCompression.ts')
 
-  assert.equal(settingsSource.includes('class="employee-hero"'), false)
   assert.ok(settingsSource.includes('class="employee-store-list"'))
   assert.ok(settingsSource.includes('class="employee-profile-summary"'))
   assert.ok(settingsSource.includes('class="employee-profile-avatar"'))
@@ -580,7 +578,6 @@ test('employee shell keeps store switching in settings and uses notification bel
   assert.ok(shellSource.includes('viewBox="0 0 28 28"'))
   assert.ok(shellSource.includes('employee-tabbar__icon-stroke'))
   assert.ok(shellSource.includes('employee-tabbar__icon-fill'))
-  assert.equal(shellSource.includes('class="employee-store-strip"'), false)
   assert.ok(navSource.includes("item.routeName !== 'notifications' && item.routeName !== 'settings'"))
   assert.equal(navSource.includes("routeName: 'schedule'"), false)
   assert.match(
@@ -689,7 +686,6 @@ test('employee refresh controls use icon-only buttons in repeated screen headers
   const appStyle = readSource('../src/styles/app.scss')
   const refreshSource = readSource('../src/component/EmployeeRefreshButton.vue')
   const attendanceSource = readSource('../src/views/AttendanceView.vue')
-  const contractsSource = readSource('../src/views/ContractsView.vue')
   const notificationsSource = readSource('../src/views/NotificationsView.vue')
   const screenSources = [
     notificationsSource,

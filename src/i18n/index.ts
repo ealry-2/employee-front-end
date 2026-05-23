@@ -49,21 +49,6 @@ export const messages = {
         title: '설정',
       },
     },
-    feature: {
-      eyebrow: '다음 단계 준비됨',
-      schedule: {
-        description: '선택한 사업장 기준으로 내 근무 일정 화면을 연결할 자리입니다.',
-      },
-      attendance: {
-        description: '현재 근무 상태와 출퇴근 체크 화면을 연결할 자리입니다.',
-      },
-      payroll: {
-        description: '월별 급여 목록과 상세 금액 화면을 연결할 자리입니다.',
-      },
-      contracts: {
-        description: '서명 필요 계약과 계약 상세 화면을 연결할 자리입니다.',
-      },
-    },
     login: {
       title: '직원 로그인',
       subtitle: '근무 일정, 출퇴근, 급여와 계약을 확인합니다.',
@@ -466,21 +451,6 @@ export const messages = {
       },
       settings: {
         title: 'Settings',
-      },
-    },
-    feature: {
-      eyebrow: 'Ready for the next slice',
-      schedule: {
-        description: 'This area is ready for the selected store schedule screen.',
-      },
-      attendance: {
-        description: 'This area is ready for current attendance and clock actions.',
-      },
-      payroll: {
-        description: 'This area is ready for monthly payroll list and detail screens.',
-      },
-      contracts: {
-        description: 'This area is ready for signing-needed contracts and contract details.',
       },
     },
     login: {

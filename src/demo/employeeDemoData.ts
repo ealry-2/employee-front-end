@@ -235,7 +235,7 @@ export function loadDemoPayrolls(request: LoadMyPayrollsRequest): PayrollRespons
 }
 
 export function loadDemoContracts(request: LoadMyContractsRequest): AppContractListResponse {
-  const items = createDemoContracts(request.storeId).filter(
+  const items = createDemoContracts().filter(
     (contract) => !request.status || contract.status === request.status,
   )
 
@@ -251,9 +251,9 @@ export function loadDemoContractDetail(
   request: LoadMyContractsRequest & { contractId: string },
 ): AppContractDetailResponse {
   const summary =
-    createDemoContracts(request.storeId).find(
+    createDemoContracts().find(
       (contract) => contract.contractId === request.contractId,
-    ) ?? createDemoContracts(request.storeId)[0]
+    ) ?? createDemoContracts()[0]
 
   return {
     summary,
@@ -425,7 +425,7 @@ function createAttendance(
   }
 }
 
-function createDemoContracts(storeId: string) {
+function createDemoContracts() {
   const today = new Date()
   return [
     {
