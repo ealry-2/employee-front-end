@@ -58,12 +58,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { login } from '@/api/auth'
 import { resolveApiMessage } from '@/api/client'
 import { saveTokens } from '@/session/tokenStorage'
 
 const { t } = useI18n()
+const route = useRoute()
 const router = useRouter()
 
 const email = ref('')
@@ -102,7 +103,7 @@ async function submit(): Promise<void> {
       response.refreshToken,
       remember.value ? 'local' : 'session',
     )
-    await router.replace({ name: 'home' })
+    await router.replace(resolveRedirectAfterLogin() ?? { name: 'home' })
   } catch (error) {
     const message = resolveApiMessage(error, t('login.failed'))
     errorMessage.value = message
@@ -110,6 +111,14 @@ async function submit(): Promise<void> {
   } finally {
     submitting.value = false
   }
+}
+
+function resolveRedirectAfterLogin(): string | null {
+  const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : ''
+  if (!redirect || !redirect.startsWith('/') || redirect.startsWith('//')) {
+    return null
+  }
+  return redirect
 }
 
 async function goToVerification(): Promise<void> {

@@ -3,6 +3,8 @@ import type { EmployeeAxiosRequestConfig } from './client'
 import type {
   AppAuthBootstrapResponse,
   AppUserSummary,
+  AcceptEmployeeInvitationRequest,
+  EmployeeInvitationResponse,
   LoginResponse,
   MessageResponse,
   ResetTokenValidationResponse,
@@ -86,6 +88,45 @@ export async function resetPassword(request: ResetPasswordRequest): Promise<Mess
   const response = await apiClient.post<MessageResponse>('/api/auth/reset-password', request, {
     skipAuthRefresh: true,
   } as EmployeeAxiosRequestConfig)
+  return response.data
+}
+
+const employeeInvitationPath = (token: string): string =>
+  `/api/app/employee-invitations/${encodeURIComponent(token)}`
+
+export async function loadEmployeeInvitation(
+  token: string,
+): Promise<EmployeeInvitationResponse> {
+  const response = await apiClient.get<EmployeeInvitationResponse>(
+    employeeInvitationPath(token),
+    {
+      skipAuthRefresh: true,
+    } as EmployeeAxiosRequestConfig,
+  )
+  return response.data
+}
+
+export async function acceptEmployeeInvitation(
+  token: string,
+  request: AcceptEmployeeInvitationRequest,
+): Promise<EmployeeInvitationResponse> {
+  const response = await apiClient.post<EmployeeInvitationResponse>(
+    `${employeeInvitationPath(token)}/accept`,
+    request,
+  )
+  return response.data
+}
+
+export async function declineEmployeeInvitation(
+  token: string,
+): Promise<EmployeeInvitationResponse> {
+  const response = await apiClient.post<EmployeeInvitationResponse>(
+    `${employeeInvitationPath(token)}/decline`,
+    undefined,
+    {
+      skipAuthRefresh: true,
+    } as EmployeeAxiosRequestConfig,
+  )
   return response.data
 }
 
