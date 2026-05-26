@@ -1,6 +1,13 @@
 export type UserType = 'OWNER' | 'EMPLOYEE'
 export type UserStatus = 'PENDING' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'LOCKED'
-export type EmployeeStatus = 'ACTIVE' | 'INACTIVE' | 'RESIGNED'
+export type EmployeeStatus =
+  | 'INVITED'
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'DECLINED'
+  | 'EXPIRED'
+  | 'CANCELLED'
+  | 'RESIGNED'
 export type ScheduleStatus = 'SCHEDULED' | 'COMPLETED' | 'CANCELLED'
 export type AttendanceStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
 export type AttendanceSource = 'MANUAL' | 'AUTO_SCHEDULE' | 'QR_SCAN'
@@ -45,6 +52,27 @@ export interface MessageResponse {
 export interface ResetTokenValidationResponse {
   valid: boolean
   email: string
+}
+
+export interface AcceptEmployeeInvitationRequest {
+  password: string | null
+  confirmPassword: string | null
+  agreeTerms: boolean
+  agreePrivacy: boolean
+}
+
+export interface EmployeeInvitationResponse {
+  invitationStatus: string
+  email: string
+  employeeName: string
+  storeName: string
+  hireDate: string | null
+  role: string | null
+  employeeStatus: EmployeeStatus
+  userStatus: UserStatus
+  requiresLogin: boolean
+  requiresPasswordSetup: boolean
+  expiresAt: string | null
 }
 
 export interface AppUserSummary {
