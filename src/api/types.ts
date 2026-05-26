@@ -7,7 +7,6 @@ export type AttendanceSource = 'MANUAL' | 'AUTO_SCHEDULE' | 'QR_SCAN'
 export type EmployeeCompensationType = 'HOURLY' | 'MONTHLY' | 'ANNUAL'
 export type PayrollStatus = 'DRAFT' | 'CONFIRMED' | 'PAID'
 export type ContractStatus = 'DRAFT' | 'PENDING' | 'SIGNED' | 'CANCELLED' | 'EXPIRED'
-export type ContractPresetType = 'NONE' | 'LABOR_STANDARD'
 export type AppNotificationType =
   | 'CONTRACT_SIGNING_REQUEST'
   | 'CONTRACT_COMPLETED'
@@ -192,28 +191,21 @@ export interface AppContractListItemResponse {
   contractId: string
   title: string
   status: ContractStatus
-  presetType: ContractPresetType | null
-  storeId: string
   firstPartyName: string | null
-  secondPartyName: string | null
   signingRequired: boolean
-  documentPreviewAvailable: boolean
-  pdfDownloadAvailable: boolean
-  compensationType: EmployeeCompensationType | null
-  baseHourlyWage: number | null
-  monthlySalary: number | null
-  annualSalary: number | null
   workStartDate: string | null
   workEndDate: string | null
-  expiresAt: string | null
   completedAt: string | null
-  createdAt: string | null
   updatedAt: string | null
 }
 
 export interface AppContractDetailResponse {
   summary: AppContractListItemResponse
   content: string
+}
+
+export interface AppContractSigningSessionResponse {
+  signingUrl: string
 }
 
 export interface AppContractListResponse {

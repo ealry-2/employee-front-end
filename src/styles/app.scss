@@ -32,12 +32,10 @@
   --employee-color-error-text: #9f1023;
   --employee-color-tint-peach: #fff1e8;
   --employee-color-tint-rose: #ffeef3;
-  --employee-color-tint-mint: #eaf8ef;
   --employee-color-tint-lavender: #e8f2ff;
   --employee-color-tint-sky: #eaf5ff;
   --employee-color-tint-yellow: #fff8cf;
   --employee-color-tint-yellow-bold: #ffe45c;
-  --employee-shadow-artifact: rgba(15, 15, 15, 0.2) 0 2.4rem 4.8rem -0.8rem;
   color: var(--employee-color-text);
   background: var(--employee-color-surface);
   font-family:
@@ -103,8 +101,7 @@ button {
   padding: 2.4rem;
 }
 
-.employee-auth__brand,
-.employee-hero__eyebrow {
+.employee-auth__brand {
   margin: 0 0 0.8rem;
   color: var(--employee-color-primary);
   font-size: 1.2rem;
@@ -114,9 +111,7 @@ button {
   text-transform: uppercase;
 }
 
-.employee-auth__title,
-.employee-topbar__title,
-.employee-hero__store {
+.employee-auth__title {
   margin: 0;
   color: var(--employee-color-text);
   font-size: 3.2rem;
@@ -126,8 +121,6 @@ button {
 }
 
 .employee-auth__subtitle,
-.employee-hero__copy,
-.employee-next-panel p,
 .employee-state p {
   margin: 1.2rem 0 0;
   color: var(--employee-color-text-muted);
@@ -326,7 +319,6 @@ button {
 
 .employee-shell {
   width: 100%;
-  max-width: 54rem;
   margin: 0 auto;
 }
 
@@ -360,19 +352,19 @@ button {
   display: inline-flex;
   align-items: center;
   flex: 0 0 auto;
-  width: 6.8rem;
-  height: 2.4rem;
-  border-radius: 0.8rem;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border-radius: 1rem;
   color: var(--employee-color-primary);
   text-decoration: none;
-  overflow: hidden;
 }
 
 .employee-topbar__brand-logo {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 
@@ -559,38 +551,6 @@ button {
   stroke-linejoin: round;
 }
 
-.employee-store-strip {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 1.2rem;
-  margin-top: 2rem;
-  border: 1px solid var(--employee-color-border);
-  border-radius: 1.2rem;
-  background: var(--employee-color-surface-pearl);
-  padding: 1.2rem 1.4rem;
-}
-
-.employee-store-strip__label,
-.employee-feature-panel__eyebrow {
-  margin: 0;
-  color: var(--employee-color-text-muted);
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: 0.06rem;
-  line-height: 1.3;
-  text-transform: uppercase;
-}
-
-.employee-store-strip__value {
-  margin: 0.2rem 0 0;
-  overflow-wrap: anywhere;
-  color: var(--employee-color-text);
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
 .employee-store-select {
   max-width: 16rem;
   min-height: 4.4rem;
@@ -603,22 +563,13 @@ button {
   font-weight: 400;
 }
 
-.employee-hero,
 .employee-section,
-.employee-next-panel,
-.employee-state,
-.employee-feature-panel {
+.employee-state {
   margin-top: 2rem;
   border: 1px solid var(--employee-color-border);
   border-radius: 1.2rem;
   background: var(--employee-color-surface-raised);
   padding: 1.8rem;
-}
-
-.employee-hero {
-  border-color: var(--employee-color-primary-border);
-  border-left-width: 0.4rem;
-  background: var(--employee-color-surface-raised);
 }
 
 .employee-section__header {
@@ -883,10 +834,88 @@ button {
   border-color: var(--employee-color-border-hover);
 }
 
+.employee-profile-preview {
+  display: grid;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.employee-profile-file__label {
+  color: var(--employee-color-text-secondary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.04rem;
+  line-height: 1.3;
+}
+
+.employee-profile-file {
+  position: relative;
+  align-self: start;
+  margin-top: 2.25rem;
+}
+
+.employee-profile-file input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.employee-profile-file__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: max-content;
+  max-width: 100%;
+  min-height: 3.6rem;
+  border: 1px solid var(--employee-color-primary-border);
+  border-radius: 1rem;
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+  padding: 0 1.2rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+.employee-profile-file__icon {
+  flex: 0 0 auto;
+  width: 1.7rem;
+  height: 1.7rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
+}
+
+.employee-profile-file input:focus-visible + .employee-profile-file__button,
+.employee-profile-file:hover .employee-profile-file__button {
+  border-color: var(--employee-color-primary);
+  background: var(--employee-color-tint-sky);
+}
+
+.employee-profile-file__name {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--employee-color-text-secondary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .employee-profile-editor__avatar {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  align-items: end;
+  align-items: start;
   gap: 1.2rem;
 }
 
@@ -927,55 +956,6 @@ button {
 
 .employee-state--empty {
   background: var(--employee-color-tint-cream);
-}
-
-.employee-feature-panel {
-  display: grid;
-  gap: 1.2rem;
-}
-
-.employee-feature-panel h2,
-.employee-feature-panel p {
-  margin: 0;
-}
-
-.employee-feature-panel h2 {
-  color: var(--employee-color-text);
-  font-size: 2.4rem;
-  font-weight: 600;
-  line-height: 1.18;
-}
-
-.employee-feature-panel p:not(.employee-feature-panel__eyebrow) {
-  color: var(--employee-color-text-muted);
-  font-size: 1.7rem;
-  line-height: 1.55;
-}
-
-.employee-feature-panel__context {
-  margin: 0;
-  border-top: 1px solid var(--employee-color-border);
-  padding-top: 1.2rem;
-}
-
-.employee-feature-panel__context div {
-  display: grid;
-  gap: 0.2rem;
-}
-
-.employee-feature-panel__context dt {
-  color: var(--employee-color-text-muted);
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: 0.06rem;
-  text-transform: uppercase;
-}
-
-.employee-feature-panel__context dd {
-  margin: 0;
-  color: var(--employee-color-text);
-  font-size: 1.6rem;
-  font-weight: 600;
 }
 
 .employee-schedule {
@@ -1696,7 +1676,6 @@ button {
   margin-top: 2rem;
 }
 
-.employee-attendance__header,
 .employee-attendance-history__header {
   display: flex;
   align-items: flex-start;
@@ -1704,7 +1683,6 @@ button {
   gap: 1.2rem;
 }
 
-.employee-attendance__header h2,
 .employee-attendance-history h3 {
   margin: 0;
   color: var(--employee-color-text);
@@ -1733,12 +1711,8 @@ button {
   text-transform: uppercase;
 }
 
-.employee-attendance__refresh {
-  margin-top: 0.1rem;
-}
-
 .employee-attendance-card {
-  margin-top: 1.6rem;
+  margin-top: 0;
   display: grid;
   justify-items: center;
   gap: 1.6rem;
@@ -1786,7 +1760,6 @@ button {
   border-radius: 9999px;
   background: #ee3e63;
   color: var(--employee-color-on-primary);
-  box-shadow: 0 1.8rem 4rem rgba(238, 29, 54, 0.18);
 }
 
 .employee-attendance-ring-action:hover:not(:disabled) {
@@ -1797,7 +1770,6 @@ button {
   background: var(--employee-color-surface-subtle);
   color: var(--employee-color-text-muted);
   cursor: not-allowed;
-  box-shadow: none;
 }
 
 .employee-attendance-ring-action__icon {
@@ -1927,39 +1899,6 @@ button {
   font-weight: 500;
 }
 
-.employee-attendance-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.8rem;
-  border-radius: 9999px;
-  padding: 0 1rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.employee-attendance-status--planned {
-  background: var(--employee-color-tint-mint);
-  color: var(--employee-color-success-text);
-}
-
-.employee-attendance-status--success {
-  background: var(--employee-color-success-soft);
-  color: var(--employee-color-success-text);
-}
-
-.employee-attendance-status--warning {
-  background: var(--employee-color-warning-soft);
-  color: var(--employee-color-warning-text);
-}
-
-.employee-attendance-status--muted {
-  background: var(--employee-color-surface-subtle);
-  color: var(--employee-color-text-muted);
-}
-
 .employee-attendance-history {
   display: grid;
   gap: 1.4rem;
@@ -1993,15 +1932,109 @@ button {
   margin-top: 2rem;
 }
 
-.employee-payroll-list__header {
+.employee-record-list {
+  display: grid;
+  gap: 1.6rem;
+}
+
+.employee-record-list__header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 1.2rem;
 }
 
-.employee-payroll-latest__amount h3,
-.employee-payroll-history h3 {
+.employee-record-list__title {
+  margin: 0;
+  color: var(--employee-color-text);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.employee-record-list__count {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  width: max-content;
+  max-width: 100%;
+  border-radius: 9999px;
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.employee-record-list__items {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.employee-record-card {
+  display: grid;
+  grid-template-columns: 4.4rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.2rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 8.8rem;
+  border: 1px solid var(--employee-color-border);
+  border-radius: 1.4rem;
+  background: var(--employee-color-surface-raised);
+  padding: 1.2rem;
+  text-align: left;
+}
+
+.employee-record-card:hover,
+.employee-record-card.is-selected {
+  border-color: var(--employee-color-primary);
+}
+
+.employee-record-card.is-selected {
+  background: var(--employee-color-primary-soft);
+}
+
+.employee-record-card--selected-lavender.is-selected {
+  background: var(--employee-color-tint-lavender);
+}
+
+.employee-record-card__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  border-radius: 9999px;
+  background: var(--employee-color-surface-subtle);
+  color: var(--employee-color-text-muted);
+}
+
+.employee-record-card__icon svg {
+  width: 2.1rem;
+  height: 2.1rem;
+}
+
+.employee-record-card__main,
+.employee-record-card__side {
+  display: grid;
+  min-width: 0;
+}
+
+.employee-record-card__main {
+  gap: 0.3rem;
+}
+
+.employee-record-card__side {
+  justify-items: end;
+  gap: 0.7rem;
+  min-width: max-content;
+}
+
+.employee-payroll-latest__amount h3 {
   margin: 0;
   color: var(--employee-color-text);
   font-size: 2.4rem;
@@ -2079,15 +2112,8 @@ button {
   line-height: 1.35;
 }
 
-.employee-payroll-card__icon {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  color: var(--employee-color-primary);
-}
-
-.employee-payroll-card__icon svg,
+.employee-payroll-card__svg,
+.employee-contract-card__svg,
 .employee-payroll-latest__close svg,
 .employee-payroll-latest__download svg {
   fill: none;
@@ -2247,80 +2273,94 @@ button {
 }
 
 .employee-payroll-history {
-  display: grid;
-  gap: 1rem;
+  margin-top: 0;
   border: 0;
   background: transparent;
   padding: 0;
   box-shadow: none;
 }
 
-.employee-payroll-history h3 {
-  font-size: 2rem;
-  line-height: 1.2;
+.employee-payroll-latest + .employee-payroll-history {
+  margin-top: 1.6rem;
 }
 
-.employee-payroll-list__header span {
-  border-radius: 9999px;
+.employee-payroll-card__icon--confirmed {
   background: var(--employee-color-primary-soft);
   color: var(--employee-color-primary);
-  padding: 0.5rem 1rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
 }
 
-.employee-payroll-card {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  width: 100%;
-  min-height: 8.8rem;
-  border: 1px solid var(--employee-color-border);
-  border-radius: 1.4rem;
-  background: var(--employee-color-surface-raised);
-  padding: 1.2rem;
-  text-align: left;
+.employee-payroll-card__icon--paid {
+  background: var(--employee-color-success-soft);
+  color: var(--employee-color-success-text);
 }
 
-.employee-payroll-card:hover,
-.employee-payroll-card.is-selected {
-  border-color: var(--employee-color-primary);
-}
-
-.employee-payroll-card.is-selected {
-  background: var(--employee-color-primary-soft);
-}
-
-.employee-payroll-card__icon {
-  width: 4.4rem;
-  height: 4.4rem;
-  border-radius: 9999px;
+.employee-payroll-card__icon--draft {
   background: var(--employee-color-surface-subtle);
   color: var(--employee-color-text-muted);
 }
 
-.employee-payroll-card__icon svg {
-  width: 2.1rem;
-  height: 2.1rem;
+.employee-record-card__icon .employee-payroll-card__svg {
+  width: 3.4rem;
+  height: 3.4rem;
+  overflow: visible;
 }
 
-.employee-payroll-card__main,
-.employee-payroll-card__side {
-  display: grid;
-  min-width: 0;
+.employee-payroll-card__bag {
+  fill: currentColor;
+  opacity: 0.74;
+  stroke: none;
 }
 
-.employee-payroll-card__main {
-  flex: 1 1 auto;
-  gap: 0.3rem;
+.employee-payroll-card__bag-tie {
+  fill: none;
+  opacity: 0.58;
+  stroke: var(--employee-color-text-secondary);
+  stroke-width: 1.7;
 }
 
-.employee-payroll-card__side {
-  flex: 0 0 auto;
-  justify-items: end;
-  gap: 0.7rem;
+.employee-payroll-card__bag-won {
+  dominant-baseline: central;
+  fill: var(--employee-color-surface-raised);
+  font-size: 11px;
+  font-weight: 900;
+  stroke: none;
+  text-anchor: middle;
+}
+
+.employee-payroll-card__status-badge {
+  stroke: var(--employee-color-surface-raised);
+  stroke-width: 1.6;
+}
+
+.employee-payroll-card__status-badge--paid {
+  fill: var(--employee-color-green);
+}
+
+.employee-payroll-card__status-badge--confirmed {
+  fill: var(--employee-color-primary);
+}
+
+.employee-payroll-card__status-badge--draft {
+  fill: var(--employee-color-text-muted);
+}
+
+.employee-payroll-card__status-check,
+.employee-payroll-card__status-dash,
+.employee-payroll-card__status-clock,
+.employee-payroll-card__status-clock-hand {
+  fill: none;
+  stroke: var(--employee-color-on-primary);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.1;
+}
+
+.employee-payroll-card__status-clock {
+  stroke-width: 1.7;
+}
+
+.employee-payroll-card__status-clock-hand {
+  stroke-width: 1.5;
 }
 
 .employee-payroll-card__period,
@@ -2342,7 +2382,6 @@ button {
   margin-top: 2rem;
 }
 
-.employee-contracts__header,
 .employee-contract-detail__header {
   display: flex;
   align-items: flex-start;
@@ -2350,24 +2389,13 @@ button {
   gap: 1.2rem;
 }
 
-.employee-contracts__header h2,
-.employee-contract-detail__header h2,
-.employee-contract-document h3 {
+.employee-contract-detail__header h2 {
   margin: 0;
   color: var(--employee-color-text);
   font-size: 2.4rem;
   font-weight: 600;
   letter-spacing: 0;
   line-height: 1.18;
-}
-
-.employee-contracts__header h2 {
-  font-size: 2rem;
-  line-height: 1.2;
-}
-
-.employee-contract-document h3 {
-  font-size: 1.7rem;
 }
 
 .employee-contract-detail__eyebrow {
@@ -2400,18 +2428,6 @@ button {
   color: var(--employee-color-primary-hover);
 }
 
-.employee-contracts__count {
-  flex: 0 0 auto;
-  border-radius: 9999px;
-  background: var(--employee-color-primary-soft);
-  color: var(--employee-color-primary);
-  padding: 0.5rem 1rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
 .employee-contract-detail {
   margin-top: 1.6rem;
   border: 1px solid var(--employee-color-border);
@@ -2420,62 +2436,52 @@ button {
   padding: 1.8rem;
 }
 
-.employee-contracts-list {
-  margin-top: 1.6rem;
-}
-
-.employee-contracts-list,
-.employee-contract-detail,
-.employee-contract-document {
+.employee-contract-detail {
   display: grid;
   gap: 1.2rem;
 }
 
-.employee-contract-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.8rem 1rem;
-  width: 100%;
-  min-height: 7.6rem;
-  border: 1px solid var(--employee-color-border);
-  border-radius: 1.2rem;
-  background: var(--employee-color-surface);
-  padding: 1.2rem;
-  text-align: left;
+.employee-contract-card__icon--pending {
+  background: var(--employee-color-primary-soft);
+  color: var(--employee-color-primary);
 }
 
-.employee-contract-card:hover,
-.employee-contract-card.is-selected {
-  border-color: var(--employee-color-primary);
+.employee-contract-card__icon--signed {
+  background: var(--employee-color-success-soft);
+  color: var(--employee-color-success-text);
 }
 
-.employee-contract-card.is-selected {
-  background: var(--employee-color-tint-lavender);
+.employee-contract-card__icon--warning {
+  background: var(--employee-color-warning-soft);
+  color: var(--employee-color-warning-text);
 }
 
-.employee-contract-card__main {
-  display: grid;
-  gap: 0.3rem;
-  min-width: 0;
+.employee-contract-card__signature-fill {
+  stroke-width: 2.2;
 }
 
-.employee-contract-card__main span:first-child {
+.employee-contract-card__signature-empty {
+  stroke-dasharray: 1.6 2.2;
+}
+
+.employee-contract-card__baseline {
+  color: var(--employee-color-text-placeholder);
+}
+
+.employee-contract-card__title {
+  overflow-wrap: anywhere;
   color: var(--employee-color-text);
   font-size: 1.6rem;
   font-weight: 650;
   line-height: 1.3;
 }
 
-.employee-contract-card__main span:last-child,
+.employee-contract-card__date,
 .employee-contract-card__meta {
   color: var(--employee-color-text-muted);
   font-size: 1.3rem;
   font-weight: 500;
   line-height: 1.4;
-}
-
-.employee-contract-card__meta {
-  grid-column: 1 / -1;
 }
 
 .employee-contract-detail__grid {
@@ -2508,57 +2514,72 @@ button {
   font-weight: 500;
 }
 
-.employee-contract-callout,
-.employee-contract-document {
-  border: 1px solid var(--employee-color-border);
-  border-radius: 1.2rem;
-  background: var(--employee-color-surface-pearl);
-  padding: 1.4rem;
-}
-
-.employee-contract-callout {
+.employee-contract-detail__actions {
   display: grid;
-  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
 }
 
-.employee-contract-callout strong {
-  color: var(--employee-color-text);
-  font-size: 1.7rem;
-  font-weight: 650;
+.employee-contract-detail__actions > :only-child {
+  grid-column: 1 / -1;
 }
 
-.employee-contract-callout p,
-.employee-contract-document p {
+.employee-contract-detail__actions .employee-primary-button,
+.employee-contract-detail__actions .employee-secondary-button {
+  width: 100%;
+  min-width: 0;
+}
+
+.employee-contract-detail__action-error {
   margin: 0;
-  color: var(--employee-color-text-muted);
+  color: var(--employee-color-error-text);
   font-size: 1.4rem;
-  line-height: 1.6;
+  font-weight: 600;
 }
 
-.employee-contract-callout .employee-contract-callout__instruction {
-  color: var(--employee-color-primary);
-  font-weight: 650;
-}
-
-.employee-contract-callout--planned {
-  border-color: var(--employee-color-primary-border);
-  background: var(--employee-color-tint-lavender);
-}
-
-.employee-contract-callout--success {
-  border-color: var(--employee-color-success-border);
-}
-
-.employee-contract-document p {
-  max-height: 22rem;
-  overflow: auto;
-  color: var(--employee-color-text-secondary);
-  white-space: pre-wrap;
-}
-
-.employee-contract-document {
+.employee-contract-preview-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   background: var(--employee-color-surface);
-  box-shadow: var(--employee-shadow-artifact);
+  padding:
+    max(1.6rem, env(safe-area-inset-top))
+    2rem
+    max(2rem, env(safe-area-inset-bottom));
+}
+
+.employee-contract-preview-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
+  border-bottom: 1px solid var(--employee-color-border);
+  padding-bottom: 1.2rem;
+}
+
+.employee-contract-preview-dialog__header h2 {
+  margin: 0.2rem 0 0;
+  color: var(--employee-color-text);
+  font-size: 2rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.employee-contract-preview-dialog__body {
+  overflow: auto;
+  padding: 1.6rem 0 0;
+}
+
+.employee-contract-preview-dialog__body p {
+  margin: 0;
+  color: var(--employee-color-text-secondary);
+  font-size: 1.5rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
 }
 
 .employee-contract-detail__warning {
@@ -2671,35 +2692,40 @@ button {
 .employee-notifications__filter {
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
-  min-height: 4.4rem;
-  border: 0;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 4rem;
+  border: 1px solid var(--employee-color-border);
   border-radius: 9999px;
-  background: var(--employee-color-primary-soft);
-  color: var(--employee-color-primary);
-  padding: 0.5rem 0.5rem 0.5rem 1.1rem;
-  font-size: 1.4rem;
-  font-weight: 600;
+  background: var(--employee-color-surface);
+  color: var(--employee-color-text-secondary);
+  padding: 0 1.3rem;
+  font-size: 1.35rem;
+  font-weight: 700;
   line-height: 1.2;
 }
 
 .employee-notifications__filter strong {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 4.8rem;
-  min-height: 3.4rem;
-  border-radius: 9999px;
-  background: rgba(9, 85, 171, 0.12);
+  color: inherit;
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.employee-notifications__filter:hover {
+  border-color: var(--employee-color-primary-border);
+  background: var(--employee-color-primary-soft);
   color: var(--employee-color-primary);
-  padding: 0 1rem;
-  font-size: 1.4rem;
-  font-weight: 700;
+}
+
+.employee-notifications__filter.is-active {
+  border-color: var(--employee-color-primary);
+  background: var(--employee-color-primary);
+  color: var(--employee-color-on-primary);
 }
 
 .employee-notifications__filter.is-active strong {
-  background: var(--employee-color-primary);
-  color: var(--employee-color-on-primary);
+  color: inherit;
 }
 
 .employee-notifications__mark-all {
@@ -2864,7 +2890,6 @@ button {
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0;
   width: 100%;
-  max-width: 54rem;
   margin: 0 auto;
   border-top: 1px solid rgba(224, 224, 224, 0.86);
   background: rgba(255, 255, 255, 0.94);
@@ -2958,13 +2983,6 @@ button {
 
 .employee-tabbar__icon-fill {
   fill: currentColor;
-}
-
-.employee-tabbar__icon-dot {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 3;
-  stroke-linecap: round;
 }
 
 .employee-tabbar__icon-cutout {
@@ -3251,24 +3269,14 @@ body.employee-qr-scanner-active #cap-os-barcode-scanner-container::after {
     grid-template-columns: 1fr;
   }
 
-  .employee-attendance__header,
   .employee-attendance-history__header,
+  .employee-record-list__header,
   .employee-work-card__footer,
-  .employee-payroll-list__header,
-  .employee-contracts__header,
   .employee-contract-detail__header,
   .employee-notifications__header,
   .employee-notifications__toolbar {
     align-items: stretch;
     flex-direction: column;
-  }
-
-  .employee-contract-card {
-    grid-template-columns: 1fr;
-  }
-
-  .employee-payroll-card {
-    align-items: flex-start;
   }
 }
 

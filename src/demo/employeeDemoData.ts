@@ -3,6 +3,7 @@ import type {
   AppAuthBootstrapResponse,
   AppContractDetailResponse,
   AppContractListResponse,
+  AppContractSigningSessionResponse,
   AppNotificationListResponse,
   AppNotificationResponse,
   AppScheduleListResponse,
@@ -234,7 +235,7 @@ export function loadDemoPayrolls(request: LoadMyPayrollsRequest): PayrollRespons
 }
 
 export function loadDemoContracts(request: LoadMyContractsRequest): AppContractListResponse {
-  const items = createDemoContracts(request.storeId).filter(
+  const items = createDemoContracts().filter(
     (contract) => !request.status || contract.status === request.status,
   )
 
@@ -250,14 +251,22 @@ export function loadDemoContractDetail(
   request: LoadMyContractsRequest & { contractId: string },
 ): AppContractDetailResponse {
   const summary =
-    createDemoContracts(request.storeId).find(
+    createDemoContracts().find(
       (contract) => contract.contractId === request.contractId,
-    ) ?? createDemoContracts(request.storeId)[0]
+    ) ?? createDemoContracts()[0]
 
   return {
     summary,
     content:
       '근로 장소, 담당 업무, 임금, 근로 시간, 휴게 시간, 계약 기간을 포함한 직원 확인용 계약서 미리보기입니다. 실제 서명 토큰과 원본 저장 경로는 demo 응답에 포함하지 않습니다.',
+  }
+}
+
+export function loadDemoContractSigningSession(
+  request: LoadMyContractsRequest & { contractId: string },
+): AppContractSigningSessionResponse {
+  return {
+    signingUrl: `https://demo.il-log.local/sign/${encodeURIComponent(request.contractId)}`,
   }
 }
 
@@ -416,51 +425,29 @@ function createAttendance(
   }
 }
 
-function createDemoContracts(storeId: string) {
+function createDemoContracts() {
   const today = new Date()
   return [
     {
       contractId: 'demo-contract-1',
       title: '성수점 시간제 근로계약서',
       status: 'PENDING' as const,
-      presetType: 'LABOR_STANDARD' as const,
-      storeId,
       firstPartyName: '일로그 성수점',
-      secondPartyName: '김일로그',
       signingRequired: true,
-      documentPreviewAvailable: true,
-      pdfDownloadAvailable: false,
-      compensationType: 'HOURLY' as const,
-      baseHourlyWage: 12000,
-      monthlySalary: null,
-      annualSalary: null,
       workStartDate: formatDate(shiftDate(today, -30)),
       workEndDate: null,
-      expiresAt: shiftDate(today, 7).toISOString(),
       completedAt: null,
-      createdAt: shiftDate(today, -2).toISOString(),
       updatedAt: shiftDate(today, -1).toISOString(),
     },
     {
       contractId: 'demo-contract-2',
       title: '주말 파트 근로계약서',
       status: 'SIGNED' as const,
-      presetType: 'LABOR_STANDARD' as const,
-      storeId,
       firstPartyName: '일로그 한남점',
-      secondPartyName: '김일로그',
       signingRequired: false,
-      documentPreviewAvailable: true,
-      pdfDownloadAvailable: true,
-      compensationType: 'HOURLY' as const,
-      baseHourlyWage: 11800,
-      monthlySalary: null,
-      annualSalary: null,
       workStartDate: formatDate(shiftDate(today, -90)),
       workEndDate: null,
-      expiresAt: null,
       completedAt: shiftDate(today, -75).toISOString(),
-      createdAt: shiftDate(today, -80).toISOString(),
       updatedAt: shiftDate(today, -75).toISOString(),
     },
   ]

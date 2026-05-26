@@ -188,37 +188,63 @@
           </button>
         </section>
 
-        <section class="employee-payroll-history" aria-labelledby="payroll-list-heading">
-          <div class="employee-payroll-list__header">
-            <h3 id="payroll-list-heading">{{ t('payroll.historyTitle') }}</h3>
-            <span>{{ t('payroll.listCount', { count: payrolls.length }) }}</span>
-          </div>
-
-          <button
+        <EmployeeRecordList
+          class="employee-payroll-history"
+          title-id="payroll-list-heading"
+          :title="t('payroll.historyTitle')"
+          :count-label="t('payroll.listCount', { count: payrolls.length })"
+        >
+          <EmployeeRecordCard
             v-for="payroll in payrolls"
             :key="payroll.payrollId"
             class="employee-payroll-card"
-            :class="{ 'is-selected': selectedPayroll?.payrollId === payroll.payrollId }"
-            type="button"
-            @click="selectPayroll(payroll)"
+            :selected="selectedPayroll?.payrollId === payroll.payrollId"
+            :icon-class="`employee-payroll-card__icon--${payrollIconTone(payroll.status)}`"
+            @select="selectPayroll(payroll)"
           >
-            <span class="employee-payroll-card__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M7 3v3" />
-                <path d="M17 3v3" />
-                <path d="M4 8h16" />
-                <path d="M5 5h14v15H5z" />
-                <path d="M8 12h2" />
-                <path d="M12 12h2" />
-                <path d="M8 16h2" />
-                <path d="M12 16h2" />
+            <template #icon>
+              <svg class="employee-payroll-card__svg" viewBox="0 0 28 28" focusable="false">
+                <path
+                  class="employee-payroll-card__bag"
+                  d="M10.2 7.9 8.9 4.9h10.2l-1.3 3c2.8 1.9 4.5 5.1 4.5 8.6 0 5-3.2 7-8.3 7s-8.3-2-8.3-7c0-3.5 1.7-6.7 4.5-8.6Z"
+                />
+                <path class="employee-payroll-card__bag-tie" d="M10.2 7.9h7.6" />
+                <text class="employee-payroll-card__bag-won" x="14" y="15.4">₩</text>
+                <g v-if="payroll.status === 'PAID'">
+                  <circle
+                    class="employee-payroll-card__status-badge employee-payroll-card__status-badge--paid"
+                    cx="21"
+                    cy="21"
+                    r="5"
+                  />
+                  <path class="employee-payroll-card__status-check" d="m18.8 20.8 1.5 1.6 3-3.5" />
+                </g>
+                <g v-else-if="payroll.status === 'CONFIRMED'">
+                  <circle
+                    class="employee-payroll-card__status-badge employee-payroll-card__status-badge--confirmed"
+                    cx="21"
+                    cy="21"
+                    r="5"
+                  />
+                  <circle class="employee-payroll-card__status-clock" cx="21" cy="21" r="2.5" />
+                  <path class="employee-payroll-card__status-clock-hand" d="M21 19.6V21l1.2 0.8" />
+                </g>
+                <g v-else>
+                  <circle
+                    class="employee-payroll-card__status-badge employee-payroll-card__status-badge--draft"
+                    cx="21"
+                    cy="21"
+                    r="5"
+                  />
+                  <path class="employee-payroll-card__status-dash" d="M18.8 21h4.4" />
+                </g>
               </svg>
-            </span>
-            <span class="employee-payroll-card__main">
-              <span class="employee-payroll-card__period">{{ formatMonth(payroll.payPeriodEnd) }}</span>
-              <span class="employee-payroll-card__meta">{{ formatPaidDate(payroll) }}</span>
-            </span>
-            <span class="employee-payroll-card__side">
+            </template>
+
+            <span class="employee-payroll-card__period">{{ formatMonth(payroll.payPeriodEnd) }}</span>
+            <span class="employee-payroll-card__meta">{{ formatPaidDate(payroll) }}</span>
+
+            <template #side>
               <span class="employee-payroll-card__amount">{{ formatMoney(payroll.netPay) }}</span>
               <span
                 class="employee-work-status"
@@ -226,9 +252,9 @@
               >
                 {{ t(payrollStatusKey(payroll.status)) }}
               </span>
-            </span>
-          </button>
-        </section>
+            </template>
+          </EmployeeRecordCard>
+        </EmployeeRecordList>
       </template>
     </template>
   </section>
@@ -241,8 +267,11 @@ import { useEmployeeAppContext } from '@/app/employeeAppContext'
 import { isForbidden, isUnauthorized } from '@/api/client'
 import { loadMyPayrolls } from '@/api/payroll'
 import type { PayrollResponse } from '@/api/types'
+import EmployeeRecordCard from '@/component/EmployeeRecordCard.vue'
+import EmployeeRecordList from '@/component/EmployeeRecordList.vue'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
 import {
+  payrollIconTone,
   payrollStatusKey,
   payrollStatusTone,
   sortPayrolls,

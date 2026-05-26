@@ -1,6 +1,7 @@
 import type { AppContractListItemResponse, ContractStatus } from '../api/types'
 
 export type ContractTone = 'planned' | 'success' | 'warning' | 'muted'
+export type ContractIconTone = 'pending' | 'signed' | 'warning' | 'muted'
 
 export function sortContracts(
   contracts: AppContractListItemResponse[],
@@ -37,12 +38,25 @@ export function contractStatusTone(status: ContractStatus): ContractTone {
 
 export function contractActionKey(contract: AppContractListItemResponse): string {
   if (contract.signingRequired) {
-    return 'contracts.action.checkEmail'
+    return 'contracts.action.signInApp'
   }
-  if (contract.documentPreviewAvailable) {
+  if (contract.status === 'SIGNED') {
     return 'contracts.action.viewDocument'
   }
   return 'contracts.action.viewDetail'
+}
+
+export function contractIconTone(contract: AppContractListItemResponse): ContractIconTone {
+  if (contract.status === 'SIGNED') {
+    return 'signed'
+  }
+  if (contract.signingRequired || contract.status === 'PENDING') {
+    return 'pending'
+  }
+  if (contract.status === 'EXPIRED' || contract.status === 'CANCELLED') {
+    return 'warning'
+  }
+  return 'muted'
 }
 
 export function contractPriority(contract: AppContractListItemResponse): number {

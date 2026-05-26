@@ -41,12 +41,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import { forgotPassword } from '@/api/auth'
 import { resolveApiMessage } from '@/api/client'
 
 const { t } = useI18n()
+const route = useRoute()
 
-const email = ref('')
+const queryEmail = typeof route.query.email === 'string' ? route.query.email : ''
+
+const email = ref(queryEmail)
 const submitting = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')

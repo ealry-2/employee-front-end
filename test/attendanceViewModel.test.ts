@@ -3,7 +3,6 @@ import assert from 'node:assert/strict'
 import {
   attendanceActionLabelKey,
   attendanceCurrentStatusKey,
-  attendanceCurrentTone,
   attendanceRecordStatusKey,
   attendanceRecordTone,
   buildClockInRequest,
@@ -27,8 +26,6 @@ test('attendance status helpers map backend values to i18n keys and tones', () =
   assert.equal(attendanceCurrentStatusKey('CLOCKED_IN'), 'attendance.currentStatus.clockedIn')
   assert.equal(attendanceActionLabelKey('CLOCK_OUT'), 'attendance.action.clockOut')
   assert.equal(attendanceRecordStatusKey('PENDING'), 'attendance.recordStatus.pending')
-  assert.equal(attendanceCurrentTone('CLOCKED_IN'), 'success')
-  assert.equal(attendanceCurrentTone('NO_SCHEDULE'), 'warning')
   assert.equal(attendanceRecordTone('APPROVED'), 'success')
   assert.equal(attendanceRecordTone('REJECTED'), 'warning')
 })

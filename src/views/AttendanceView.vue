@@ -1,18 +1,5 @@
 <template>
-  <section class="employee-attendance" aria-labelledby="attendance-heading">
-    <div class="employee-attendance__header">
-      <div>
-        <p class="employee-attendance__eyebrow">{{ t('attendance.eyebrow') }}</p>
-        <h2 id="attendance-heading">{{ t('screen.attendance.title') }}</h2>
-      </div>
-      <EmployeeRefreshButton
-        class="employee-attendance__refresh"
-        :label="t('attendance.refresh')"
-        :disabled="loading || actionSubmitting || qrScanSubmitting"
-        @click="loadCurrent"
-      />
-    </div>
-
+  <section class="employee-attendance" :aria-label="t('screen.attendance.title')">
     <EmployeeStatePanel
       v-if="!selectedStore"
       tone="empty"
@@ -73,10 +60,9 @@
               <dt>
                 <span class="employee-attendance-metric-icon employee-attendance-metric-icon--in" aria-hidden="true">
                   <svg viewBox="0 0 32 32" focusable="false">
-                    <circle cx="16" cy="16" r="8.8" />
-                    <path d="M16 10.8v5.5l3.8 2.2" />
-                    <path d="M11.5 6.6 9.3 4.4" />
-                    <path d="M20.5 6.6 22.7 4.4" />
+                    <path class="employee-attendance-metric-icon__door" d="M13 10V7.8c0-1.1.9-2 2-2h9.2c1.1 0 2 .9 2 2v16.4c0 1.1-.9 2-2 2H15c-1.1 0-2-.9-2-2V22" />
+                    <path class="employee-attendance-metric-icon__arrow" d="M5.2 16h16.8" />
+                    <path class="employee-attendance-metric-icon__arrow" d="m18.2 12.2 3.8 3.8-3.8 3.8" />
                   </svg>
                 </span>
                 {{ t('attendance.checkInMetric') }}
@@ -87,10 +73,9 @@
               <dt>
                 <span class="employee-attendance-metric-icon employee-attendance-metric-icon--out" aria-hidden="true">
                   <svg viewBox="0 0 32 32" focusable="false">
-                    <circle cx="16" cy="16" r="8.8" />
-                    <path d="M16 10.8v5.5l3.8 2.2" />
-                    <path d="M11.5 6.6 9.3 4.4" />
-                    <path d="M20.5 6.6 22.7 4.4" />
+                    <path class="employee-attendance-metric-icon__door" d="M13 10V7.8c0-1.1.9-2 2-2h9.2c1.1 0 2 .9 2 2v16.4c0 1.1-.9 2-2 2H15c-1.1 0-2-.9-2-2V22" />
+                    <path class="employee-attendance-metric-icon__arrow" d="M23.2 16H6.8" />
+                    <path class="employee-attendance-metric-icon__arrow" d="m10.6 12.2-3.8 3.8 3.8 3.8" />
                   </svg>
                 </span>
                 {{ t('attendance.checkOutMetric') }}
@@ -189,7 +174,6 @@ import {
   loadAttendanceCurrent,
 } from '@/api/attendance'
 import type { AppAttendanceCurrentResponse, AttendanceResponse } from '@/api/types'
-import EmployeeRefreshButton from '@/component/EmployeeRefreshButton.vue'
 import EmployeeStatePanel from '@/component/EmployeeStatePanel.vue'
 import EmployeeWorkCard from '@/component/EmployeeWorkCard.vue'
 import { registerBrowserResumeHandler, type ResumeHandlerCleanup } from '@/runtime/appResume'

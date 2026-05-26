@@ -29,19 +29,6 @@ export function attendanceRecordStatusKey(status: AttendanceStatus): string {
   return `attendance.recordStatus.${status.toLowerCase()}`
 }
 
-export function attendanceCurrentTone(status: AppAttendanceCurrentStatus): AttendanceTone {
-  if (status === 'CLOCKED_IN') {
-    return 'success'
-  }
-  if (status === 'CLOCKED_OUT') {
-    return 'muted'
-  }
-  if (status === 'NO_SCHEDULE') {
-    return 'warning'
-  }
-  return 'planned'
-}
-
 export function attendanceRecordTone(status: AttendanceStatus): AttendanceTone {
   if (status === 'APPROVED') {
     return 'success'
