@@ -185,6 +185,8 @@ import {
   attendanceRecordTone,
   buildClockInRequest,
   buildClockOutRequest,
+  resolveOpenWorkSeconds,
+  resolveTodayTotalWorkMinutes,
   resolveAttendanceAction,
   sortAttendanceRecords,
   toDurationParts,
@@ -219,9 +221,9 @@ const currentDescriptionKey = computed(() => {
 })
 const historyRecords = computed(() => sortAttendanceRecords(current.value?.todayAttendances ?? []))
 const attendanceMetric = computed(() => buildAttendanceMetric(current.value, liveServerTime.value))
-const displayClockIso = computed(() => liveServerTime.value?.toISOString() ?? current.value?.serverTime ?? '')
+const displayClockIso = computed(() => `PT${resolveOpenWorkSeconds(current.value, liveServerTime.value)}S`)
 const displayClockTime = computed(() =>
-  liveServerTime.value ? formatClockTime(liveServerTime.value) : t('attendance.noTimeValue'),
+  formatWorkTimer(resolveOpenWorkSeconds(current.value, liveServerTime.value)),
 )
 const displayClockDate = computed(() =>
   liveServerTime.value ? formatLongDate(liveServerTime.value) : '',
@@ -507,15 +509,6 @@ function formatDateTime(value: string): string {
   }).format(toLocalDateTime(value))
 }
 
-function formatClockTime(value: Date): string {
-  return new Intl.DateTimeFormat(locale.value, {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  }).format(value)
-}
-
 function formatAttendanceWindow(record: AttendanceResponse | null): string {
   if (!record?.clockInAt) {
     return t('attendance.noAttendance')
@@ -547,6 +540,14 @@ function formatMetricDuration(minutes: number | null): string {
     return t('attendance.noTimeValue')
   }
   return `${String(parts.hours).padStart(2, '0')}:${String(parts.minutes).padStart(2, '0')}`
+}
+
+function formatWorkTimer(seconds: number): string {
+  const normalizedSeconds = Math.max(0, seconds)
+  const hours = Math.floor(normalizedSeconds / 3600)
+  const minutes = Math.floor((normalizedSeconds % 3600) / 60)
+  const remainingSeconds = normalizedSeconds % 60
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`
 }
 
 function formatTime(value: string): string {
@@ -581,32 +582,14 @@ function buildAttendanceMetric(
     return {
       checkIn: t('attendance.noTimeValue'),
       checkOut: t('attendance.noTimeValue'),
-      total: t('attendance.noTimeValue'),
+      total: formatMetricDuration(resolveTodayTotalWorkMinutes(currentState, serverTime)),
     }
   }
   return {
     checkIn: formatNullableTime(record.clockInAt),
     checkOut: formatNullableTime(record.clockOutAt, t('attendance.notClockedOutValue')),
-    total: formatMetricDuration(record.totalWorkMinutes ?? estimateOpenWorkMinutes(record, serverTime)),
+    total: formatMetricDuration(resolveTodayTotalWorkMinutes(currentState, serverTime)),
   }
-}
-
-function estimateOpenWorkMinutes(
-  record: AttendanceResponse,
-  serverTime: Date | null,
-): number | null {
-  if (!record.clockInAt || record.clockOutAt || !serverTime) {
-    return null
-  }
-  const startedAt = toLocalDateTime(record.clockInAt).getTime()
-  const serverTimeMs = serverTime.getTime()
-  if (!Number.isFinite(startedAt) || !Number.isFinite(serverTimeMs)) {
-    return null
-  }
-  if (serverTimeMs < startedAt) {
-    return 0
-  }
-  return Math.floor((serverTimeMs - startedAt) / 60000)
 }
 
 function toLocalDate(value: string): Date {

@@ -7,6 +7,8 @@ import {
   attendanceRecordTone,
   buildClockInRequest,
   buildClockOutRequest,
+  resolveOpenWorkSeconds,
+  resolveTodayTotalWorkMinutes,
   resolveAttendanceAction,
   sortAttendanceRecords,
   toDurationParts,
@@ -106,6 +108,55 @@ test('toDurationParts converts minutes into hour and minute parts', () => {
   assert.equal(toDurationParts(null), null)
 })
 
+test('resolveOpenWorkSeconds only runs while an attendance record is open', () => {
+  const serverTime = new Date('2026-05-02T09:00:07')
+  assert.equal(
+    resolveOpenWorkSeconds(
+      current({
+        status: 'CLOCKED_IN',
+        openAttendance: attendance('open', '2026-05-02T09:00:00'),
+      }),
+      serverTime,
+    ),
+    7,
+  )
+  assert.equal(
+    resolveOpenWorkSeconds(
+      current({
+        status: 'CLOCKED_OUT',
+        latestAttendance: completedAttendance('done', 10),
+      }),
+      serverTime,
+    ),
+    0,
+  )
+})
+
+test('resolveTodayTotalWorkMinutes adds completed records and the current open segment', () => {
+  const completed = completedAttendance('done', 45)
+  const open = attendance('open', '2026-05-02T09:45:00')
+  assert.equal(
+    resolveTodayTotalWorkMinutes(
+      current({
+        openAttendance: open,
+        todayAttendances: [completed, open],
+      }),
+      new Date('2026-05-02T10:00:30'),
+    ),
+    60,
+  )
+  assert.equal(
+    resolveTodayTotalWorkMinutes(
+      current({
+        status: 'CLOCKED_OUT',
+        todayAttendances: [completed],
+      }),
+      new Date('2026-05-02T10:00:30'),
+    ),
+    45,
+  )
+})
+
 function current(
   overrides: Partial<AppAttendanceCurrentResponse> = {},
 ): AppAttendanceCurrentResponse {
@@ -152,5 +203,13 @@ function attendance(
     memo: null,
     createdAt: null,
     updatedAt: null,
+  }
+}
+
+function completedAttendance(recordId: string, totalWorkMinutes: number): AttendanceResponse {
+  return {
+    ...attendance(recordId, '2026-05-02T08:00:00'),
+    clockOutAt: '2026-05-02T08:45:00',
+    totalWorkMinutes,
   }
 }
