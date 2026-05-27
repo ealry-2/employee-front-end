@@ -1,197 +1,198 @@
 <template>
   <section class="employee-payroll" :aria-label="t('screen.payroll.title')">
-    <EmployeeStatePanel
-      v-if="!selectedStore"
-      tone="empty"
-      :title="t('home.emptyTitle')"
-      :message="t('home.emptyDescription')"
-    />
+    <section
+      v-if="selectedStore && selectedPayroll"
+      class="employee-payroll-latest"
+      aria-labelledby="payroll-summary-heading"
+    >
+      <div class="employee-payroll-latest__top">
+        <p class="employee-payroll-latest__period">
+          {{ formatMonth(selectedPayroll.payPeriodEnd) }}
+        </p>
+        <button
+          class="employee-payroll-latest__close"
+          type="button"
+          :aria-label="t('payroll.closeDetail')"
+          @click="closeSelectedPayroll"
+        >
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </div>
 
-    <template v-else>
-      <EmployeeStatePanel
-        v-if="loading && payrolls.length === 0"
-        tone="loading"
-        :message="t('payroll.loading')"
-      />
+      <div class="employee-payroll-latest__amount">
+        <h3 id="payroll-summary-heading">{{ formatMoney(selectedPayroll.netPay) }}</h3>
+        <p>{{ t('payroll.netPayDescription') }}</p>
+      </div>
 
-      <EmployeeStatePanel
-        v-else-if="errorMessage && payrolls.length === 0"
-        tone="error"
-        :title="t('payroll.errorTitle')"
-        :message="errorMessage"
-        :action-label="t('app.retry')"
-        @action="loadPayrolls"
-      />
+      <div class="employee-payroll-latest__breakdown">
+        <section
+          class="employee-payroll-latest__section"
+          :class="{ 'is-open': latestEarningsOpen }"
+          aria-labelledby="payroll-latest-earnings-heading"
+        >
+          <button
+            class="employee-payroll-latest__section-toggle"
+            type="button"
+            :aria-expanded="latestEarningsOpen"
+            aria-controls="payroll-latest-earnings-list"
+            :aria-label="t('payroll.toggleEarnings')"
+            @click="latestEarningsOpen = !latestEarningsOpen"
+          >
+            <span>
+              <span id="payroll-latest-earnings-heading">{{ t('payroll.earnings') }}</span>
+              <strong>{{ formatMoney(selectedPayroll.grossPay) }}</strong>
+            </span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="m8 10 4 4 4-4" />
+            </svg>
+          </button>
+          <dl id="payroll-latest-earnings-list" v-show="latestEarningsOpen">
+            <div>
+              <dt>{{ t('payroll.basePay') }}</dt>
+              <dd>{{ formatMoney(selectedPayroll.basePay) }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('payroll.overtimePay') }}</dt>
+              <dd class="employee-payroll-latest__positive">
+                {{ formatMoney(selectedPayroll.overtimePay) }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t('payroll.nightPay') }}</dt>
+              <dd class="employee-payroll-latest__positive">
+                {{ formatMoney(selectedPayroll.nightPay) }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t('payroll.holidayPay') }}</dt>
+              <dd class="employee-payroll-latest__positive">
+                {{ formatMoney(selectedPayroll.holidayPay) }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t('payroll.weeklyHolidayPay') }}</dt>
+              <dd class="employee-payroll-latest__positive">
+                {{ formatMoney(selectedPayroll.weeklyHolidayPay) }}
+              </dd>
+            </div>
+          </dl>
+        </section>
 
+        <section
+          class="employee-payroll-latest__section"
+          :class="{ 'is-open': latestDeductionsOpen }"
+          aria-labelledby="payroll-latest-deductions-heading"
+        >
+          <button
+            class="employee-payroll-latest__section-toggle"
+            type="button"
+            :aria-expanded="latestDeductionsOpen"
+            aria-controls="payroll-latest-deductions-list"
+            :aria-label="t('payroll.toggleDeductions')"
+            @click="latestDeductionsOpen = !latestDeductionsOpen"
+          >
+            <span>
+              <span id="payroll-latest-deductions-heading">{{ t('payroll.deductions') }}</span>
+              <strong class="employee-payroll-latest__negative">
+                {{ formatMoney(negativeAmount(selectedPayroll.totalDeductions)) }}
+              </strong>
+            </span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="m8 10 4 4 4-4" />
+            </svg>
+          </button>
+          <dl id="payroll-latest-deductions-list" v-show="latestDeductionsOpen">
+            <div>
+              <dt>{{ t('payroll.nationalPension') }}</dt>
+              <dd class="employee-payroll-latest__negative">
+                {{ formatMoney(negativeAmount(selectedPayroll.nationalPension)) }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t('payroll.healthInsurance') }}</dt>
+              <dd class="employee-payroll-latest__negative">
+                {{ formatMoney(negativeAmount(selectedPayroll.healthInsurance)) }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t('payroll.longTermCare') }}</dt>
+              <dd class="employee-payroll-latest__negative">
+                {{ formatMoney(negativeAmount(selectedPayroll.longTermCare)) }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t('payroll.employmentInsurance') }}</dt>
+              <dd class="employee-payroll-latest__negative">
+                {{ formatMoney(negativeAmount(selectedPayroll.employmentInsurance)) }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t('payroll.incomeTax') }}</dt>
+              <dd class="employee-payroll-latest__negative">
+                {{ formatMoney(negativeAmount(selectedPayroll.incomeTax)) }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ t('payroll.localIncomeTax') }}</dt>
+              <dd class="employee-payroll-latest__negative">
+                {{ formatMoney(negativeAmount(selectedPayroll.localIncomeTax)) }}
+              </dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+
+      <button class="employee-payroll-latest__download" type="button" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 4v10" />
+          <path d="m8 10 4 4 4-4" />
+          <path d="M5 20h14" />
+        </svg>
+        <span>{{ t('payroll.downloadUnavailable') }}</span>
+      </button>
+    </section>
+
+    <EmployeeRecordList
+      class="employee-payroll-history"
+      title-id="payroll-list-heading"
+      :title="t('screen.payroll.title')"
+      :count-label="payrolls.length > 0 ? t('payroll.listCount', { count: payrolls.length }) : ''"
+      :heading-level="2"
+    >
       <EmployeeStatePanel
-        v-else-if="payrolls.length === 0"
+        v-if="!selectedStore"
         tone="empty"
-        :title="t('payroll.emptyTitle')"
-        :message="t('payroll.emptyDescription')"
+        :title="t('home.emptyTitle')"
+        :message="t('home.emptyDescription')"
       />
 
       <template v-else>
-        <section
-          v-if="selectedPayroll"
-          class="employee-payroll-latest"
-          aria-labelledby="payroll-summary-heading"
-        >
-          <div class="employee-payroll-latest__top">
-            <p class="employee-payroll-latest__period">
-              {{ formatMonth(selectedPayroll.payPeriodEnd) }}
-            </p>
-            <button
-              class="employee-payroll-latest__close"
-              type="button"
-              :aria-label="t('payroll.closeDetail')"
-              @click="closeSelectedPayroll"
-            >
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-              </svg>
-            </button>
-          </div>
+        <EmployeeStatePanel
+          v-if="loading && payrolls.length === 0"
+          tone="loading"
+          :message="t('payroll.loading')"
+        />
 
-          <div class="employee-payroll-latest__amount">
-            <h3 id="payroll-summary-heading">{{ formatMoney(selectedPayroll.netPay) }}</h3>
-            <p>{{ t('payroll.netPayDescription') }}</p>
-          </div>
+        <EmployeeStatePanel
+          v-else-if="errorMessage && payrolls.length === 0"
+          tone="error"
+          :title="t('payroll.errorTitle')"
+          :message="errorMessage"
+          :action-label="t('app.retry')"
+          @action="loadPayrolls"
+        />
 
-          <div class="employee-payroll-latest__breakdown">
-            <section
-              class="employee-payroll-latest__section"
-              :class="{ 'is-open': latestEarningsOpen }"
-              aria-labelledby="payroll-latest-earnings-heading"
-            >
-              <button
-                class="employee-payroll-latest__section-toggle"
-                type="button"
-                :aria-expanded="latestEarningsOpen"
-                aria-controls="payroll-latest-earnings-list"
-                :aria-label="t('payroll.toggleEarnings')"
-                @click="latestEarningsOpen = !latestEarningsOpen"
-              >
-                <span>
-                  <span id="payroll-latest-earnings-heading">{{ t('payroll.earnings') }}</span>
-                  <strong>{{ formatMoney(selectedPayroll.grossPay) }}</strong>
-                </span>
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path d="m8 10 4 4 4-4" />
-                </svg>
-              </button>
-              <dl id="payroll-latest-earnings-list" v-show="latestEarningsOpen">
-                <div>
-                  <dt>{{ t('payroll.basePay') }}</dt>
-                  <dd>{{ formatMoney(selectedPayroll.basePay) }}</dd>
-                </div>
-                <div>
-                  <dt>{{ t('payroll.overtimePay') }}</dt>
-                  <dd class="employee-payroll-latest__positive">
-                    {{ formatMoney(selectedPayroll.overtimePay) }}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{{ t('payroll.nightPay') }}</dt>
-                  <dd class="employee-payroll-latest__positive">
-                    {{ formatMoney(selectedPayroll.nightPay) }}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{{ t('payroll.holidayPay') }}</dt>
-                  <dd class="employee-payroll-latest__positive">
-                    {{ formatMoney(selectedPayroll.holidayPay) }}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{{ t('payroll.weeklyHolidayPay') }}</dt>
-                  <dd class="employee-payroll-latest__positive">
-                    {{ formatMoney(selectedPayroll.weeklyHolidayPay) }}
-                  </dd>
-                </div>
-              </dl>
-            </section>
+        <EmployeeStatePanel
+          v-else-if="payrolls.length === 0"
+          tone="empty"
+          :title="t('payroll.emptyTitle')"
+          :message="t('payroll.emptyDescription')"
+        />
 
-            <section
-              class="employee-payroll-latest__section"
-              :class="{ 'is-open': latestDeductionsOpen }"
-              aria-labelledby="payroll-latest-deductions-heading"
-            >
-              <button
-                class="employee-payroll-latest__section-toggle"
-                type="button"
-                :aria-expanded="latestDeductionsOpen"
-                aria-controls="payroll-latest-deductions-list"
-                :aria-label="t('payroll.toggleDeductions')"
-                @click="latestDeductionsOpen = !latestDeductionsOpen"
-              >
-                <span>
-                  <span id="payroll-latest-deductions-heading">{{ t('payroll.deductions') }}</span>
-                  <strong class="employee-payroll-latest__negative">
-                    {{ formatMoney(negativeAmount(selectedPayroll.totalDeductions)) }}
-                  </strong>
-                </span>
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path d="m8 10 4 4 4-4" />
-                </svg>
-              </button>
-              <dl id="payroll-latest-deductions-list" v-show="latestDeductionsOpen">
-                <div>
-                  <dt>{{ t('payroll.nationalPension') }}</dt>
-                  <dd class="employee-payroll-latest__negative">
-                    {{ formatMoney(negativeAmount(selectedPayroll.nationalPension)) }}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{{ t('payroll.healthInsurance') }}</dt>
-                  <dd class="employee-payroll-latest__negative">
-                    {{ formatMoney(negativeAmount(selectedPayroll.healthInsurance)) }}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{{ t('payroll.longTermCare') }}</dt>
-                  <dd class="employee-payroll-latest__negative">
-                    {{ formatMoney(negativeAmount(selectedPayroll.longTermCare)) }}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{{ t('payroll.employmentInsurance') }}</dt>
-                  <dd class="employee-payroll-latest__negative">
-                    {{ formatMoney(negativeAmount(selectedPayroll.employmentInsurance)) }}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{{ t('payroll.incomeTax') }}</dt>
-                  <dd class="employee-payroll-latest__negative">
-                    {{ formatMoney(negativeAmount(selectedPayroll.incomeTax)) }}
-                  </dd>
-                </div>
-                <div>
-                  <dt>{{ t('payroll.localIncomeTax') }}</dt>
-                  <dd class="employee-payroll-latest__negative">
-                    {{ formatMoney(negativeAmount(selectedPayroll.localIncomeTax)) }}
-                  </dd>
-                </div>
-              </dl>
-            </section>
-          </div>
-
-          <button class="employee-payroll-latest__download" type="button" disabled>
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M12 4v10" />
-              <path d="m8 10 4 4 4-4" />
-              <path d="M5 20h14" />
-            </svg>
-            <span>{{ t('payroll.downloadUnavailable') }}</span>
-          </button>
-        </section>
-
-        <EmployeeRecordList
-          class="employee-payroll-history"
-          title-id="payroll-list-heading"
-          :title="t('payroll.historyTitle')"
-          :count-label="t('payroll.listCount', { count: payrolls.length })"
-        >
+        <template v-else>
           <EmployeeRecordCard
             v-for="payroll in payrolls"
             :key="payroll.payrollId"
@@ -252,9 +253,9 @@
               </span>
             </template>
           </EmployeeRecordCard>
-        </EmployeeRecordList>
+        </template>
       </template>
-    </template>
+    </EmployeeRecordList>
   </section>
 </template>
 
