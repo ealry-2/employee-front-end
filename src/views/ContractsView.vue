@@ -123,8 +123,6 @@
         tone="empty"
         :title="t('contracts.emptyTitle')"
         :message="t('contracts.emptyDescription')"
-        :action-label="t('contracts.refresh')"
-        @action="loadContracts"
       />
 
       <template v-else>

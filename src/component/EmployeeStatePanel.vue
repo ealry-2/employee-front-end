@@ -1,7 +1,7 @@
 <template>
   <section
     class="employee-state"
-    :class="`employee-state--${tone}`"
+    :class="[`employee-state--${tone}`, `employee-state--${variant}`]"
     :role="tone === 'error' ? 'alert' : undefined"
     :aria-live="tone === 'loading' ? 'polite' : undefined"
   >
@@ -25,6 +25,7 @@
 withDefaults(
   defineProps<{
     tone?: 'loading' | 'empty' | 'error' | 'neutral'
+    variant?: 'card' | 'plain'
     eyebrow?: string
     title?: string
     message: string
@@ -32,6 +33,7 @@ withDefaults(
   }>(),
   {
     tone: 'neutral',
+    variant: 'card',
     eyebrow: '',
     title: '',
     actionLabel: '',

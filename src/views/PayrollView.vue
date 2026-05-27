@@ -28,8 +28,6 @@
         tone="empty"
         :title="t('payroll.emptyTitle')"
         :message="t('payroll.emptyDescription')"
-        :action-label="t('payroll.refresh')"
-        @action="loadPayrolls"
       />
 
       <template v-else>

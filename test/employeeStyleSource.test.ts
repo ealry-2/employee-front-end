@@ -87,6 +87,7 @@ test('employee payroll selected card keeps the full earnings and deductions brea
   assert.equal(payrollSource.includes('employee-payroll__eyebrow'), false)
   assert.equal(payrollSource.includes('<EmployeeRefreshButton'), false)
   assert.equal(payrollSource.includes('import EmployeeRefreshButton'), false)
+  assert.equal(payrollSource.includes(':action-label="t(\'payroll.refresh\')"'), false)
   assert.equal(appStyle.includes('.employee-payroll__header'), false)
   assert.equal(appStyle.includes('.employee-payroll__eyebrow'), false)
   assert.equal(appStyle.includes('.employee-payroll__refresh'), false)
@@ -712,6 +713,20 @@ test('employee refresh controls use icon-only buttons in repeated screen headers
   assert.ok(attendanceSource.includes('d="M23.2 16H6.8"'))
   assert.equal(appStyle.includes('.employee-attendance__header'), false)
   assert.equal(appStyle.includes('.employee-attendance__refresh'), false)
+  assert.ok(notificationsSource.includes('variant="plain"'))
+  assert.ok(notificationsSource.includes('class="employee-notifications__empty"'))
+  assert.equal(
+    notificationsSource.includes(':action-label="t(\'notifications.refresh\')"'),
+    false,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-state--plain\s*\{[\s\S]*?border:\s*0;[\s\S]*?background:\s*transparent;[\s\S]*?padding:\s*0;[\s\S]*?\}/,
+  )
+  assert.match(
+    appStyle,
+    /\.employee-notifications__empty\s*\{[\s\S]*?text-align:\s*center;[\s\S]*?\}/,
+  )
   const attendanceActionRule = appStyle.match(/\.employee-attendance-ring-action\s*\{[\s\S]*?\}/)?.[0] ?? ''
   assert.equal(attendanceActionRule.includes('box-shadow'), false)
   const disabledAttendanceActionRule = appStyle.match(/\.employee-attendance-ring-action:disabled\s*\{[\s\S]*?\}/)?.[0] ?? ''
@@ -775,6 +790,7 @@ test('employee contracts list avoids nested card headers', () => {
   assert.equal(contractsSource.includes("t('contracts.eyebrow')"), false)
   assert.equal(contractsSource.includes('<EmployeeRefreshButton'), false)
   assert.equal(contractsSource.includes('import EmployeeRefreshButton'), false)
+  assert.equal(contractsSource.includes(':action-label="t(\'contracts.refresh\')"'), false)
   assert.equal(contractsSource.includes('class="employee-contracts__header"'), false)
   assert.equal(contractsSource.includes('class="employee-contracts__count"'), false)
   assert.equal(contractsSource.includes('employee-contracts-list__header'), false)
