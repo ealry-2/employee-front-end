@@ -113,6 +113,38 @@ export function toDurationParts(
   }
 }
 
+export function resolveOpenWorkSeconds(
+  current: AppAttendanceCurrentResponse | null,
+  serverTime: Date | null,
+): number {
+  const openAttendance = current?.openAttendance
+  if (!openAttendance?.clockInAt || openAttendance.clockOutAt || !serverTime) {
+    return 0
+  }
+  const startedAt = new Date(openAttendance.clockInAt).getTime()
+  const serverTimeMs = serverTime.getTime()
+  if (!Number.isFinite(startedAt) || !Number.isFinite(serverTimeMs) || serverTimeMs < startedAt) {
+    return 0
+  }
+  return Math.floor((serverTimeMs - startedAt) / 1000)
+}
+
+export function resolveTodayTotalWorkMinutes(
+  current: AppAttendanceCurrentResponse | null,
+  serverTime: Date | null,
+): number | null {
+  if (!current) {
+    return null
+  }
+  const completedMinutes = current.todayAttendances.reduce((total, record) => {
+    if (!record.clockOutAt || record.totalWorkMinutes == null) {
+      return total
+    }
+    return total + record.totalWorkMinutes
+  }, 0)
+  return completedMinutes + Math.floor(resolveOpenWorkSeconds(current, serverTime) / 60)
+}
+
 function toCamelCaseKey(value: string): string {
   return value
     .toLowerCase()
