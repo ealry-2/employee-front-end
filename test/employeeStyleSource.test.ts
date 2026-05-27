@@ -70,12 +70,22 @@ test('employee payroll selected card keeps the full earnings and deductions brea
   const recordListSource = readSource('../src/component/EmployeeRecordList.vue')
   const recordCardSource = readSource('../src/component/EmployeeRecordCard.vue')
 
-  assert.ok(payrollSource.includes('v-if="selectedPayroll"'))
+  assert.ok(payrollSource.includes('v-if="selectedStore && selectedPayroll"'))
   assert.ok(payrollSource.includes('v-for="payroll in payrolls"'))
   assert.ok(payrollSource.includes('<EmployeeRecordList'))
+  assert.ok(
+    payrollSource.indexOf('<EmployeeRecordList') <
+      payrollSource.indexOf('v-if="loading && payrolls.length === 0"'),
+  )
   assert.ok(payrollSource.includes('<EmployeeRecordCard'))
   assert.ok(payrollSource.includes('import EmployeeRecordList'))
   assert.ok(payrollSource.includes('import EmployeeRecordCard'))
+  assert.ok(payrollSource.includes(':title="t(\'screen.payroll.title\')"'))
+  assert.ok(
+    payrollSource.includes(
+      ':count-label="payrolls.length > 0 ? t(\'payroll.listCount\', { count: payrolls.length }) : \'\'"',
+    ),
+  )
   assert.ok(recordListSource.includes('class="employee-record-list__header"'))
   assert.ok(recordListSource.includes('class="employee-record-list__count"'))
   assert.ok(recordListSource.includes('class="employee-record-list__items"'))
