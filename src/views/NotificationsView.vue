@@ -84,11 +84,11 @@
 
       <EmployeeStatePanel
         v-else-if="visibleNotifications.length === 0"
+        class="employee-notifications__empty"
         tone="empty"
+        variant="plain"
         :title="t('notifications.emptyTitle')"
         :message="emptyMessage"
-        :action-label="t('notifications.refresh')"
-        @action="loadNotifications"
       />
 
       <section v-else class="employee-notifications-list" aria-labelledby="notifications-list-heading">
