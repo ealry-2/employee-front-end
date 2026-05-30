@@ -1,4 +1,5 @@
 import { apiClient } from './client'
+import { appStorePath } from './paths'
 import type { AppNotificationListResponse, AppNotificationResponse } from './types'
 import {
   loadDemoNotifications,
@@ -26,7 +27,7 @@ export async function loadMyNotifications(
   }
 
   const response = await apiClient.get<AppNotificationListResponse>(
-    `/api/app/stores/${encodeURIComponent(request.storeId)}/notifications`,
+    appStorePath(request.storeId, 'notifications'),
     {
       params: {
         unreadOnly: request.unreadOnly,
@@ -46,9 +47,7 @@ export async function markNotificationRead(
   }
 
   const response = await apiClient.post<AppNotificationResponse>(
-    `/api/app/stores/${encodeURIComponent(request.storeId)}/notifications/${encodeURIComponent(
-      request.notificationId,
-    )}/read`,
+    appStorePath(request.storeId, 'notifications', request.notificationId, 'read'),
   )
   return response.data
 }

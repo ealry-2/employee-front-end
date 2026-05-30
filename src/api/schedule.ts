@@ -1,4 +1,5 @@
 import { apiClient } from './client'
+import { appStorePath } from './paths'
 import type { AppScheduleListResponse, ScheduleResponse } from './types'
 import {
   loadDemoScheduleDetail,
@@ -22,7 +23,7 @@ export async function loadEmployeeSchedules(
   }
 
   const response = await apiClient.get<AppScheduleListResponse>(
-    `/api/app/stores/${encodeURIComponent(request.storeId)}/schedules`,
+    appStorePath(request.storeId, 'schedules'),
     {
       params: {
         startDate: request.startDate,
@@ -44,7 +45,7 @@ export async function loadEmployeeScheduleDetail(
   }
 
   const response = await apiClient.get<ScheduleResponse>(
-    `/api/app/stores/${encodeURIComponent(storeId)}/schedules/${encodeURIComponent(scheduleId)}`,
+    appStorePath(storeId, 'schedules', scheduleId),
   )
   return response.data
 }

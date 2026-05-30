@@ -1,4 +1,5 @@
 import { apiClient } from './client'
+import { albaAttendancePath, albaStorePath, appStorePath } from './paths'
 import type {
   AppAttendanceCurrentResponse,
   AttendanceQrClockInResponse,
@@ -39,7 +40,7 @@ export async function loadAttendanceCurrent(
   }
 
   const response = await apiClient.get<AppAttendanceCurrentResponse>(
-    `/api/app/stores/${encodeURIComponent(storeId)}/attendance/current`,
+    appStorePath(storeId, 'attendance', 'current'),
   )
   return response.data
 }
@@ -52,7 +53,7 @@ export async function clockInEmployee(
   }
 
   const response = await apiClient.post<AttendanceResponse>(
-    `/api/alba/stores/${encodeURIComponent(request.storeId)}/attendance/clock-in`,
+    albaStorePath(request.storeId, 'attendance', 'clock-in'),
     {
       employeeId: request.employeeId,
       workDate: request.workDate,
@@ -70,7 +71,7 @@ export async function clockOutEmployee(
   }
 
   const response = await apiClient.post<AttendanceResponse>(
-    `/api/alba/attendance/${encodeURIComponent(request.recordId)}/clock-out`,
+    albaAttendancePath(request.recordId, 'clock-out'),
     {},
   )
   return response.data
@@ -84,7 +85,7 @@ export async function clockInEmployeeByQr(
   }
 
   const response = await apiClient.post<AttendanceQrClockInResponse>(
-    `/api/app/stores/${encodeURIComponent(request.storeId)}/attendance/qr-clock-in`,
+    appStorePath(request.storeId, 'attendance', 'qr-clock-in'),
     {
       qrToken: request.qrToken,
       latitude: request.latitude,
