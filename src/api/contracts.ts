@@ -1,4 +1,5 @@
 import { apiClient } from './client'
+import { appStorePath } from './paths'
 import type {
   AppContractDetailResponse,
   AppContractListResponse,
@@ -37,7 +38,7 @@ export async function loadMyContracts(
   }
 
   const response = await apiClient.get<AppContractListResponse>(
-    `/api/app/stores/${encodeURIComponent(request.storeId)}/contracts`,
+    appStorePath(request.storeId, 'contracts'),
     {
       params: {
         status: request.status,
@@ -57,9 +58,7 @@ export async function loadMyContractDetail(
   }
 
   const response = await apiClient.get<AppContractDetailResponse>(
-    `/api/app/stores/${encodeURIComponent(request.storeId)}/contracts/${encodeURIComponent(
-      request.contractId,
-    )}`,
+    appStorePath(request.storeId, 'contracts', request.contractId),
   )
   return response.data
 }
@@ -72,9 +71,7 @@ export async function createMyContractSigningSession(
   }
 
   const response = await apiClient.post<AppContractSigningSessionResponse>(
-    `/api/app/stores/${encodeURIComponent(request.storeId)}/contracts/${encodeURIComponent(
-      request.contractId,
-    )}/signing-session`,
+    appStorePath(request.storeId, 'contracts', request.contractId, 'signing-session'),
   )
   return response.data
 }
