@@ -103,7 +103,7 @@ async function submit(): Promise<void> {
       response.refreshToken,
       remember.value ? 'local' : 'session',
     )
-    await router.replace(resolveRedirectAfterLogin() ?? { name: 'home' })
+    await router.replace(resolveRedirectAfterLogin() ?? { name: 'schedule' })
   } catch (error) {
     const message = resolveApiMessage(error, t('login.failed'))
     errorMessage.value = message

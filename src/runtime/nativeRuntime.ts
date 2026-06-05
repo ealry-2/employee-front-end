@@ -24,8 +24,8 @@ export interface EmployeeRuntimeCapabilities {
 }
 
 const routeByPath = new Map<string, EmployeeNavRouteName>([
-  ['/', 'home'],
-  ['/schedule', 'home'],
+  ['/', 'schedule'],
+  ['/schedule', 'schedule'],
   ['/attendance', 'attendance'],
   ['/payroll', 'payroll'],
   ['/contracts', 'contracts'],

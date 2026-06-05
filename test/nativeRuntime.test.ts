@@ -41,7 +41,8 @@ test('getEmployeeRuntimeCapabilities reports only installed native plugin surfac
 })
 
 test('resolveEmployeeDeepLinkRoute maps known app paths and rejects unknown links', () => {
-  assert.equal(resolveEmployeeDeepLinkRoute('/schedule'), 'home')
+  assert.equal(resolveEmployeeDeepLinkRoute('/'), 'schedule')
+  assert.equal(resolveEmployeeDeepLinkRoute('/schedule'), 'schedule')
   assert.equal(resolveEmployeeDeepLinkRoute('/notifications'), 'notifications')
   assert.equal(resolveEmployeeDeepLinkRoute('/settings'), 'settings')
   assert.equal(resolveEmployeeDeepLinkRoute('https://employee.il-log.com/contracts'), 'contracts')

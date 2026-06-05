@@ -1,8 +1,8 @@
 export const employeeNavItems = [
   {
-    routeName: 'home',
-    labelKey: 'nav.home',
-    shortLabelKey: 'nav.homeShort',
+    routeName: 'schedule',
+    labelKey: 'nav.schedule',
+    shortLabelKey: 'nav.scheduleShort',
   },
   {
     routeName: 'attendance',

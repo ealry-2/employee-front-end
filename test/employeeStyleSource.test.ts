@@ -563,7 +563,7 @@ test('employee shell keeps store switching in settings and uses notification bel
   assert.equal(shellSource.includes('employee-topbar__brand-arrow'), false)
   assert.equal(shellSource.includes('class="employee-branch-picker__chevron-icon"'), false)
   assert.equal(shellSource.includes('class="employee-topbar__brand"'), false)
-  assert.ok(shellSource.includes(':to="{ name: \'home\' }"'))
+  assert.ok(shellSource.includes(':to="{ name: \'schedule\' }"'))
   assert.ok(shellSource.includes(':to="{ name: \'notifications\' }"'))
   assert.ok(shellSource.includes('v-if="unreadNotificationCount > 0"'))
   assert.ok(shellSource.includes('class="employee-topbar__notification-badge"'))
@@ -590,7 +590,7 @@ test('employee shell keeps store switching in settings and uses notification bel
   assert.ok(shellSource.includes('employee-tabbar__icon-stroke'))
   assert.ok(shellSource.includes('employee-tabbar__icon-fill'))
   assert.ok(navSource.includes("item.routeName !== 'notifications' && item.routeName !== 'settings'"))
-  assert.equal(navSource.includes("routeName: 'schedule'"), false)
+  assert.ok(navSource.includes("routeName: 'schedule'"))
   assert.match(
     appStyle,
     /\.employee-topbar\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?backdrop-filter:\s*saturate\(180%\) blur\(18px\);[\s\S]*?\}/,
@@ -641,7 +641,7 @@ test('employee shell keeps store switching in settings and uses notification bel
   )
   assert.match(
     appStyle,
-    /\.employee-tabbar__item--home\s*\{[\s\S]*?grid-column:\s*1;[\s\S]*?\}/,
+    /\.employee-tabbar__item--schedule\s*\{[\s\S]*?grid-column:\s*1;[\s\S]*?\}/,
   )
   assert.match(
     appStyle,

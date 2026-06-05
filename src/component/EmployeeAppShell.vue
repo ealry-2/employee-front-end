@@ -4,7 +4,7 @@
       <div class="employee-topbar__branch">
         <RouterLink
           class="employee-topbar__brand-link"
-          :to="{ name: 'home' }"
+          :to="{ name: 'schedule' }"
           :aria-label="t('app.brand')"
           :title="t('app.brand')"
         >
@@ -120,10 +120,18 @@
             focusable="false"
             aria-hidden="true"
           >
-            <g v-if="item.routeName === 'home'">
+            <g v-if="item.routeName === 'schedule'">
+              <rect
+                class="employee-tabbar__icon-stroke"
+                x="5.4"
+                y="6.5"
+                width="17.2"
+                height="16.2"
+                rx="3"
+              />
               <path
-                class="employee-tabbar__icon-fill"
-                d="M4.4 12.8 14 5.1l9.6 7.7v10.6h-6.2v-6.8h-6.8v6.8H4.4V12.8Z"
+                class="employee-tabbar__icon-stroke"
+                d="M9.2 4.2v4.8M18.8 4.2v4.8M5.8 11.3h16.4M9.5 15.2h2.2M15.6 15.2h2.2M9.5 19h2.2M15.6 19h2.2"
               />
             </g>
             <g v-else-if="item.routeName === 'attendance'">
@@ -185,7 +193,7 @@ const pageTitle = computed(() => {
   if (isEmployeeNavRouteName(routeName)) {
     return t(`screen.${routeName}.title`)
   }
-  return t('home.title')
+  return t('screen.schedule.title')
 })
 const notificationLinkLabel = computed(() =>
   unreadNotificationCount.value > 0

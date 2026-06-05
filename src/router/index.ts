@@ -31,12 +31,12 @@ export const router = createRouter({
       children: [
         {
           path: '',
-          name: 'home',
-          component: ScheduleView,
+          redirect: { name: 'schedule' },
         },
         {
           path: 'schedule',
-          redirect: { name: 'home' },
+          name: 'schedule',
+          component: ScheduleView,
         },
         {
           path: 'attendance',
@@ -101,7 +101,7 @@ router.beforeEach((to) => {
     return { name: 'login' }
   }
   if (to.name === 'login' && canUseEmployeeApp) {
-    return { name: 'home' }
+    return { name: 'schedule' }
   }
   return true
 })

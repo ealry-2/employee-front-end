@@ -45,10 +45,10 @@ test('notification helpers map backend enum values to i18n keys and tones', () =
 
 test('resolveNotificationRoute maps valid notification targets to shell routes', () => {
   assert.equal(resolveNotificationRoute(notification('contract', 'CONTRACT_COMPLETED', 'CONTRACT')), 'contracts')
-  assert.equal(resolveNotificationRoute(notification('schedule', 'SCHEDULE_UPDATED', 'SCHEDULE')), 'home')
+  assert.equal(resolveNotificationRoute(notification('schedule', 'SCHEDULE_UPDATED', 'SCHEDULE')), 'schedule')
   assert.equal(resolveNotificationRoute(notification('payroll', 'PAYROLL_AVAILABLE', 'PAYROLL')), 'payroll')
   assert.equal(resolveNotificationRoute(notification('attendance', 'ATTENDANCE_STATUS_CHANGED', 'ATTENDANCE')), 'attendance')
-  assert.equal(resolveNotificationRoute(notification('store', 'SYSTEM', 'STORE')), 'home')
+  assert.equal(resolveNotificationRoute(notification('store', 'SYSTEM', 'STORE')), 'settings')
 })
 
 test('resolveNotificationRoute fails closed when target payload is missing', () => {

@@ -71,13 +71,13 @@ export function resolveNotificationRoute(
     case 'CONTRACT':
       return 'contracts'
     case 'SCHEDULE':
-      return 'home'
+      return 'schedule'
     case 'PAYROLL':
       return 'payroll'
     case 'ATTENDANCE':
       return 'attendance'
     case 'STORE':
-      return 'home'
+      return 'settings'
     case 'NONE':
       return null
   }
